@@ -6,8 +6,10 @@
     <title>LilUsage – Your Claude Usage, Right in the Menu Bar</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="favicon/favicon.ico" sizes="any">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" href="../favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
 
     <meta name="description" content="A tiny macOS menu bar meter for your Claude usage. Session and weekly limits as a bar that fills up, with live reset countdowns. Free, no account, no telemetry.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1327,6 +1329,48 @@
 
         .hero-device.shot img { width: 420px; }
 
+        /* --- Hero screenshot --- */
+        .hero-shot {
+            flex: 0 0 auto;
+            max-width: 440px;
+        }
+
+        .hero-shot img {
+            width: 100%;
+            display: block;
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-shot img:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* --- Shared screenshot frame --- */
+        .shot {
+            display: block;
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .shot-narrow {
+            max-width: 420px;
+            margin: 1rem auto 0;
+        }
+
+        .shot-caption {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 0.6rem;
+        }
+
         /* --- Meter strip under each section heading --- */
         .section-header h2::after {
             height: 12px;
@@ -1339,6 +1383,9 @@
 
         /* --- Stat items get a tiny fill bar --- */
         .stat-item h3 { position: relative; display: inline-block; }
+
+        /* --- Pricing: hidden for now. Delete this rule to bring it back. --- */
+        .pricing { display: none; }
 
         /* --- FAQ --- */
         .faq {
@@ -1407,13 +1454,13 @@
         /* --- Responsive tweaks for the new hero pieces --- */
         @media (max-width: 900px) {
             .hero-device.meter { order: 1; }
-            .hero-device.shot { order: 3; }
-            .hero-device.shot img { width: 380px; }
+            .hero-center { order: 2; }
+            .hero-shot { order: 3; max-width: 420px; }
             .meter-mock { width: 320px; }
         }
 
         @media (max-width: 600px) {
-            .hero-device.shot img { width: 100% !important; max-width: 320px; }
+            .hero-shot { max-width: 100%; }
             .meter-mock { width: 100%; max-width: 320px; transform: rotate(0); }
             .faq-item { padding: 1.25rem; }
         }
@@ -1429,10 +1476,9 @@
                 <li><a href="#features">Features</a></li>
                 <li><a href="#setup">Setup</a></li>
                 <li><a href="#faq">FAQ</a></li>
-                <li><a href="#contact">Contact</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#pricing" class="btn btn-primary">Get It Free</a>
+                <a href="LilUsage.dmg" class="btn btn-primary" download>Download</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1444,7 +1490,7 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-top">
-                <!-- Live CSS/JS mock of the menu bar meter + panel. No screenshot needed here. -->
+                <!-- Animated mock: fills 8% -> 74% on a loop. No image, pure CSS + JS. -->
                 <div class="hero-device meter">
                     <div class="meter-mock">
                         <div class="mock-menubar">
@@ -1480,52 +1526,27 @@
                         <div class="badge-dot"></div>
                         Menu Bar Meter for Claude
                     </div>
-                    <h1>Your Claude <span class="highlight">usage</span>, right in the menu bar</h1>
-                    <p class="hero-subtitle">A bar that fills as you use Claude. Click it for your session and weekly windows, plus a live countdown to each reset. No dock icon, no account, no noise.</p>
+                    <h1>Your Claude <span class="highlight">usage</span>, at a glance</h1>
+                    <p class="hero-subtitle">A bar in your menu bar that fills as you use Claude. Click it for your session and weekly windows, and how long until each resets.</p>
                     <div class="hero-buttons">
                         <div class="hero-buttons-row">
                             <div class="download-btn-wrapper">
-                                <!-- Drop the notarized DMG next to index.html -->
                                 <a href="LilUsage.dmg" class="btn btn-primary" download>
                                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                                     Download for Mac
                                 </a>
-                                <span class="system-req">macOS 14+ &middot; Free, no account</span>
-                            </div>
-                            <div class="download-btn-wrapper">
-                                <a href="#setup" class="btn btn-secondary">
-                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                                    How It Works
-                                </a>
-                                <span class="system-req">Needs Claude Code signed in</span>
+                                <span class="system-req">Free &middot; macOS 14+ &middot; No account</span>
                             </div>
                         </div>
                         <div class="privacy-notice">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Your credentials are read locally and sent only to Anthropic, to ask for your own numbers. No server of ours, no analytics. <a href="privacy.html">Privacy Policy</a></p>
+                            <p>Nothing leaves your Mac except one request to Anthropic for your own numbers. <a href="privacy.html">Privacy Policy</a></p>
                         </div>
                     </div>
                 </div>
 
-                <!-- SCREENSHOT: a zoomed crop of the real menu bar showing the meter (wide, ~1200x400) -->
-                <div class="hero-device shot">
-                    <img src="screenshots/menubar-hero.png" alt="LilUsage meter in the macOS menu bar">
-                </div>
-            </div>
-
-            <div class="hero-image">
-                <!-- SCREENSHOTS: the dropdown panel in its various states. Same 8 images = 2 loops of 4. -->
-                <div class="screenshot-carousel">
-                    <div class="screenshot-track">
-                        <img src="screenshots/panel-light.png" alt="LilUsage panel in light mode" class="devices-mockup">
-                        <img src="screenshots/panel-dark.png" alt="LilUsage panel in dark mode" class="devices-mockup">
-                        <img src="screenshots/panel-models.png" alt="Per-model weekly usage" class="devices-mockup">
-                        <img src="screenshots/settings-menu.png" alt="LilUsage settings menu" class="devices-mockup">
-                        <img src="screenshots/panel-light.png" alt="LilUsage panel in light mode" class="devices-mockup">
-                        <img src="screenshots/panel-dark.png" alt="LilUsage panel in dark mode" class="devices-mockup">
-                        <img src="screenshots/panel-models.png" alt="Per-model weekly usage" class="devices-mockup">
-                        <img src="screenshots/settings-menu.png" alt="LilUsage settings menu" class="devices-mockup">
-                    </div>
+                <div class="hero-shot">
+                    <img src="screenshots/menu-panel.png" alt="LilUsage meter in the macOS menu bar, with the panel open showing session and weekly usage">
                 </div>
             </div>
         </div>
@@ -1535,7 +1556,7 @@
         <div class="stats-grid">
             <div class="stat-item">
                 <h3>5H + 7D</h3>
-                <p>Windows Tracked</p>
+                <p>Windows</p>
             </div>
             <div class="stat-item">
                 <h3>30s</h3>
@@ -1547,7 +1568,7 @@
             </div>
             <div class="stat-item">
                 <h3>FREE</h3>
-                <p>No Subscription</p>
+                <p>Forever</p>
             </div>
         </div>
     </section>
@@ -1555,49 +1576,34 @@
     <section class="features" id="features">
         <div class="section-header fade-in">
             <h2>Features</h2>
-            <p>One small meter. Everything you need to know about your limits.</p>
         </div>
         <div class="features-grid">
             <div class="feature-card fade-in stagger-1">
                 <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="9" width="20" height="6" rx="1"/><path d="M2 12h9"/></svg></div>
                 <div>
                     <h3>A Bar That Fills Up</h3>
-                    <p>Your session usage lives in the menu bar as a small fill bar. One glance tells you whether you have room to keep going.</p>
+                    <p>Session usage, always visible in the menu bar.</p>
                 </div>
             </div>
             <div class="feature-card fade-in stagger-2">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
                 <div>
-                    <h3>Session &amp; Weekly</h3>
-                    <p>Click for the full picture: your 5-hour session window and your 7-day window, drawn the same way.</p>
+                    <h3>Reset Countdowns</h3>
+                    <p>Know exactly when each window comes back.</p>
                 </div>
             </div>
             <div class="feature-card fade-in stagger-3">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-                <div>
-                    <h3>Live Reset Countdown</h3>
-                    <p>Know exactly how long until each window resets. The countdown ticks locally, so it stays live without hammering the network.</p>
-                </div>
-            </div>
-            <div class="feature-card fade-in stagger-4">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 3l2.2 5.6L20 9.9l-4 4.3 1 6.1-5-3-5 3 1-6.1-4-4.3 5.8-1.3z"/></svg></div>
-                <div>
-                    <h3>Per-Model Breakdown</h3>
-                    <p>See how your weekly allowance splits across models, so a heavy day on one doesn't surprise you later.</p>
-                </div>
-            </div>
-            <div class="feature-card fade-in stagger-1">
                 <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6M12 19h8"/></svg></div>
                 <div>
                     <h3>No Separate Sign-In</h3>
-                    <p>It reuses the login you already have in Claude Code. Nothing to create, nothing to remember, no OAuth dance.</p>
+                    <p>Uses the Claude Code login you already have.</p>
                 </div>
             </div>
-            <div class="feature-card fade-in stagger-2">
+            <div class="feature-card fade-in stagger-4">
                 <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
                 <div>
                     <h3>Feather-Light</h3>
-                    <p>No dock icon, no notifications, no background bloat. Monochrome by design, so it sits quietly in light and dark mode.</p>
+                    <p>No dock icon, no notifications, light and dark.</p>
                 </div>
             </div>
         </div>
@@ -1605,76 +1611,35 @@
 
     <section class="setup" id="setup">
         <div class="section-header fade-in">
-            <h2>First-Time Setup</h2>
-            <p>About two minutes, most of it downloading.</p>
+            <h2>Setup</h2>
+            <p>Three steps, about two minutes.</p>
         </div>
         <div class="setup-steps">
             <div class="setup-step fade-in stagger-1">
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <h3>Sign In to Claude Code</h3>
-                    <p>LilUsage reads the login Claude Code already keeps on your Mac. If you use the <code>claude</code> command, you're set. If not, install it with <code>npm install -g @anthropic-ai/claude-code</code>, run <code>claude</code>, then <code>/login</code>.</p>
-                    <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">A Claude subscription is what creates the usage figures in the first place — LilUsage just displays them.</p>
+                    <p>Run <code>claude</code> in a terminal, then <code>/login</code>. If you already use it, you're done here.</p>
+                    <img src="screenshots/claude-code-login.png" alt="Claude Code login prompt in the terminal" class="shot shot-narrow">
                 </div>
             </div>
             <div class="setup-step fade-in stagger-2">
                 <div class="step-number">2</div>
                 <div class="step-content">
-                    <h3>Install LilUsage</h3>
-                    <p>Open the downloaded DMG and drag <strong>LilUsage</strong> to your Applications folder.</p>
-                    <!-- SCREENSHOT: the mounted DMG window with the app + Applications alias -->
-                    <img src="setup/install-dmg.png" alt="Drag LilUsage to Applications" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
+                    <h3>Install and Allow Access</h3>
+                    <p>Drag LilUsage to Applications and open it. It explains itself first, then macOS asks for your Claude Code credentials &mdash; choose <strong>Always Allow</strong>.</p>
+                    <div class="setup-images-grid">
+                        <img src="screenshots/first-run.png" alt="LilUsage first-run explainer" class="setup-image-small">
+                        <img src="screenshots/keychain-prompt.png" alt="macOS keychain prompt with Always Allow" class="setup-image-small">
+                    </div>
                 </div>
             </div>
             <div class="setup-step fade-in stagger-3">
                 <div class="step-number">3</div>
                 <div class="step-content">
-                    <h3>Open the App</h3>
-                    <p>Double-click to launch. macOS will show a security prompt the first time — click <strong>Open</strong> to continue. There's no window and no dock icon; look for the meter at the top right of your screen.</p>
-                    <!-- SCREENSHOT: the Gatekeeper "are you sure you want to open it" dialog -->
-                    <img src="setup/open-prompt.png" alt="Click Open to launch LilUsage" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
-                </div>
-            </div>
-            <div class="setup-step fade-in stagger-4">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <h3>Allow Access to Your Claude Login</h3>
-                    <p>On first run, LilUsage explains what it's about to ask for, then macOS requests access to your stored Claude Code credentials. Choose <strong>Always Allow</strong> — otherwise the prompt returns every few minutes.</p>
-                    <div class="setup-images-grid">
-                        <!-- SCREENSHOT: the first-run "How it works" panel -->
-                        <img src="setup/first-run.png" alt="LilUsage first-run explainer" class="setup-image-small">
-                        <!-- SCREENSHOT: the macOS Keychain prompt with Always Allow -->
-                        <img src="setup/keychain-prompt.png" alt="Keychain access prompt — Always Allow" class="setup-image-small">
-                    </div>
-                    <div class="permission-list">
-                        <div class="permission-item"><strong>Keychain</strong> &mdash; reads the token Claude Code already stored</div>
-                        <div class="permission-item"><strong>Network</strong> &mdash; one HTTPS call to Anthropic, every 30 seconds</div>
-                    </div>
-                    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);">Nothing else is touched, and nothing is ever sent anywhere else.</p>
-                </div>
-            </div>
-            <div class="setup-step fade-in stagger-5">
-                <div class="step-number">5</div>
-                <div class="step-content">
                     <h3>Read the Meter</h3>
-                    <p>The bar fills within a few seconds. Click it to open the panel with your session and weekly windows, each with a countdown to its reset.</p>
-                    <!-- SCREENSHOT: the open panel, ideally with a real percentage in it -->
-                    <img src="setup/panel-overview.png" alt="LilUsage panel showing session and weekly usage" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
-                    <p style="margin-top: 1rem;">The <strong>&hellip;</strong> button in the corner of the panel holds everything else:</p>
-                    <div class="permission-list" style="margin-top: 1rem;">
-                        <div class="permission-item"><strong>Show Percentage</strong> &mdash; put the number beside the bar, or keep it bar-only</div>
-                        <div class="permission-item"><strong>Launch at Login</strong> &mdash; start LilUsage when your Mac boots</div>
-                        <div class="permission-item"><strong>Refresh Now</strong> &mdash; skip the wait for the next poll</div>
-                        <div class="permission-item"><strong>How It Works</strong> &mdash; replay the first-run explainer any time</div>
-                        <div class="permission-item"><strong>Quit</strong> &mdash; close the app</div>
-                    </div>
-                    <div class="setup-images-grid">
-                        <!-- SCREENSHOT: the ... settings menu open -->
-                        <img src="setup/settings-menu.png" alt="LilUsage settings menu" class="setup-image-small">
-                        <!-- SCREENSHOT: menu bar with percentage shown vs bar only (side by side crop is fine) -->
-                        <img src="setup/menubar-variants.png" alt="Menu bar with and without the percentage" class="setup-image-small">
-                    </div>
-                    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);"><strong>Seeing "Reconnect"?</strong> Your Claude Code session expired. Run <code>claude</code> once in a terminal and LilUsage picks up the new login on its own within a couple of seconds.</p>
+                    <p>The bar fills within seconds. If it ever says <strong>Sign in</strong>, your Claude Code session expired &mdash; the app walks you through it.</p>
+                    <img src="screenshots/sign-in.png" alt="LilUsage sign-in instructions when the Claude Code session expires" class="shot shot-narrow">
                 </div>
             </div>
         </div>
@@ -1683,7 +1648,7 @@
     <section class="pricing" id="pricing">
         <div class="section-header fade-in">
             <h2>Price</h2>
-            <p>There isn't one. It's a meter.</p>
+            <p>There isn't one.</p>
         </div>
         <div class="pricing-card scale-in">
             <div class="price-tag"><span class="currency">$</span>0</div>
@@ -1699,14 +1664,6 @@
                 </li>
                 <li>
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Per-model weekly breakdown
-                </li>
-                <li>
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Launch at login, light &amp; dark
-                </li>
-                <li>
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                     No account, no telemetry
                 </li>
                 <li>
@@ -1719,64 +1676,45 @@
                 Download for Mac
             </a>
             <p class="trial-note">macOS 14+ &middot; Apple silicon &amp; Intel</p>
-            <p class="price-note">Signed and notarized, distributed directly from this site. Requires Claude Code installed and signed in.</p>
+            <p class="price-note">Requires Claude Code installed and signed in.</p>
         </div>
     </section>
 
     <section class="faq" id="faq">
         <div class="section-header fade-in">
             <h2>Good to Know</h2>
-            <p>The honest fine print, before you download.</p>
         </div>
         <div class="faq-grid">
             <div class="faq-item fade-in stagger-1">
                 <h3>Why does it need Claude Code?</h3>
-                <p>The usage figures come from an Anthropic endpoint that only accepts the session token Claude Code caches on your Mac. A third-party app can't obtain one on its own, so LilUsage borrows the one that's already there rather than asking you to sign in again.</p>
+                <p>The usage numbers come from an endpoint that only accepts the token Claude Code keeps on your Mac. LilUsage borrows that one instead of asking you to sign in again.</p>
             </div>
             <div class="faq-item fade-in stagger-2">
                 <h3>Does it see my conversations?</h3>
-                <p>No. It reads one credential and calls one endpoint that returns percentages. Your prompts, projects and files are never touched, and no data reaches the developer.</p>
+                <p>No. One credential, one request, percentages back. Nothing reaches the developer.</p>
             </div>
             <div class="faq-item fade-in stagger-3">
-                <h3>Why does it say Reconnect?</h3>
-                <p>Claude Code sessions expire after a while. Run <code>claude</code> once and LilUsage detects the fresh login automatically — no restart, no re-approval.</p>
-            </div>
-            <div class="faq-item fade-in stagger-4">
                 <h3>Why not on the Mac App Store?</h3>
-                <p>App Store apps run sandboxed, and a sandboxed app can't reach the credentials Claude Code stores. So LilUsage ships as a signed, notarized direct download instead.</p>
-            </div>
-            <div class="faq-item fade-in stagger-1">
-                <h3>How often does it refresh?</h3>
-                <p>Every 30 seconds, with backoff if the endpoint pushes back. The countdown updates every second locally, so the panel feels live without extra requests.</p>
+                <p>Sandboxed apps can't read Claude Code's credentials, so LilUsage ships as a signed, notarized direct download.</p>
             </div>
         </div>
-        <p class="disclaimer">LilUsage is an independent utility. It is not affiliated with, endorsed by, or sponsored by Anthropic. The usage endpoint it reads is undocumented and may change or stop working without notice.</p>
+        <p class="disclaimer">LilUsage is an independent utility, not affiliated with or endorsed by Anthropic. The usage endpoint it reads is undocumented and may change without notice.</p>
     </section>
 
     <section class="contact" id="contact">
         <div class="section-header fade-in">
             <h2>Get in Touch</h2>
-            <p>Bugs, ideas, or just want to say hi?</p>
         </div>
         <div class="contact-card scale-in">
-            <!-- TODO: swap in a Formspree form ID for LilUsage if you don't want it mixed with LilDisplay mail -->
+            <!-- TODO: replace with a Formspree form ID for LilUsage -->
             <form class="contact-form" action="https://formspree.io/f/xkonoynw" method="POST">
                 <div class="form-group">
                     <label for="email">Your Email (optional)</label>
                     <input type="email" id="email" name="email" placeholder="you@example.com">
                 </div>
                 <div class="form-group">
-                    <label for="subject">Subject</label>
-                    <select id="subject" name="subject">
-                        <option value="feedback">Feedback &amp; Suggestions</option>
-                        <option value="bug">Report a Bug</option>
-                        <option value="help">Need Help</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="4" placeholder="Tell us what's on your mind..." required></textarea>
+                    <textarea id="message" name="message" rows="4" placeholder="Bug, idea, or hello..." required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary contact-btn">
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -1787,56 +1725,37 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 LilUsage. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="mailto:support@lilusage.app">Support</a></p>
+        <p>&copy; 2026 <a href="/">LilStudio</a> &middot; LilUsage | <a href="privacy.html">Privacy Policy</a> | <a href="mailto:hello@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
-        // Theme Toggle
         function toggleTheme() {
             const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
 
-        // Load saved theme
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
 
-        // Scroll Animation Observer
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
-        }, observerOptions);
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
 
-        document.querySelectorAll('.fade-in, .scale-in').forEach(el => {
-            observer.observe(el);
-        });
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
 
-        // Hero meter: fills 8% -> 74% over ~6s, holds, resets. Pauses off-screen.
+        // Hero meter: fills 8% -> 74% over ~6s, holds, resets.
         (function() {
             const fill = document.getElementById('mockFill');
             const percent = document.getElementById('mockPercent');
             const sessionBar = document.getElementById('mockSessionBar');
             const sessionPct = document.getElementById('mockSessionPct');
             if (!fill || !percent) return;
-
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                setValue(74);
-                return;
-            }
 
             const MIN = 8, MAX = 74, RISE = 6000, HOLD = 2500;
             let start = null, running = true;
@@ -1849,16 +1768,16 @@
                 if (sessionPct) sessionPct.textContent = r + '%';
             }
 
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                setValue(MAX);
+                return;
+            }
+
             function frame(ts) {
                 if (!running) return;
                 if (start === null) start = ts;
                 const t = (ts - start) % (RISE + HOLD);
-                if (t < RISE) {
-                    const p = t / RISE;
-                    setValue(MIN + (MAX - MIN) * (1 - Math.pow(1 - p, 3)));
-                } else {
-                    setValue(MAX);
-                }
+                setValue(t < RISE ? MIN + (MAX - MIN) * (1 - Math.pow(1 - t / RISE, 3)) : MAX);
                 requestAnimationFrame(frame);
             }
             requestAnimationFrame(frame);

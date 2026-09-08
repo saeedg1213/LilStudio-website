@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilUsage – Privacy Policy</title>
+    <meta name="description" content="LilUsage collects nothing. Here is exactly what it reads and where it sends it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="../favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFB020;
+            --secondary: #A98BFF;
+            --yellow: #FFE135;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+        }
+
+        [data-theme="light"] {
+            --bg: #F5F0DC;
+            --bg-elevated: #F5F0DC;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .wrap {
+            position: relative;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 5rem;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-decoration: none;
+            color: var(--text);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, var(--primary) 0 10px, transparent 10px 14px);
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        h1 .highlight { position: relative; display: inline-block; }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: -4px; right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 2.5rem 0 0.75rem;
+        }
+
+        p, li { color: var(--text-muted); }
+        .lead { font-size: 1.1rem; margin-bottom: 3rem; }
+        ul { margin: 0.5rem 0 0 1.25rem; }
+        li { margin-bottom: 0.4rem; }
+        strong { color: var(--text); }
+
+        a { color: var(--text); }
+
+        code {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            background: var(--primary);
+            color: #000;
+            padding: 0.1rem 0.4rem;
+            border: 2px solid var(--border);
+        }
+
+        .meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: var(--border-width) solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="wrap">
+        <a href="index.html" class="logo">LilUsage</a>
+
+        <h1>Privacy <span class="highlight">Policy</span></h1>
+        <p class="lead">LilUsage collects nothing. No analytics, no telemetry, no account, no server belonging to this app. Here is exactly what it does.</p>
+
+        <h2>What it reads</h2>
+        <p>LilUsage reads the Claude Code credentials already stored on your Mac, from one of two places:</p>
+        <ul>
+            <li><code>~/.claude/.credentials.json</code></li>
+            <li>The macOS keychain item <strong>Claude Code-credentials</strong></li>
+        </ul>
+        <p>macOS asks for your permission before this happens, and you can revoke it at any time in Keychain Access. Nothing else on your machine is accessed &mdash; not your prompts, projects, files, or Claude conversations.</p>
+
+        <h2>Where it sends things</h2>
+        <p>That credential is used for a single HTTPS request to Anthropic, roughly every 30 seconds, asking for your own usage percentages. The response is a small set of numbers, which the app draws in your menu bar.</p>
+        <p>No other host is contacted. The developer receives nothing, and there is no backend to receive it.</p>
+
+        <h2>What is stored</h2>
+        <p>Your preferences (show percentage, launch at login) are stored locally in macOS user defaults. Usage figures are held in memory only and disappear when the app quits.</p>
+
+        <h2>Third parties</h2>
+        <p>None. No advertising SDKs, no crash reporters, no analytics libraries.</p>
+        <p>Anthropic's own privacy policy governs the data held in your Claude account. LilUsage is an independent utility and is not affiliated with, endorsed by, or sponsored by Anthropic.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about any of this: <a href="mailto:hello@lilstudio.app">hello@lilstudio.app</a></p>
+
+        <p class="meta">Last updated September 2026 &middot; <a href="index.html">Back to LilUsage</a></p>
+    </div>
+
+    <script>
+        (function() {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+        })();
+    </script>
+</body>
+</html>
