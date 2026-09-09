@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilDisplay – Turn Your iPhone or iPad Into a Touchscreen Display</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+
+    <meta name="description" content="Transform any iPhone or iPad into an external monitor for your Mac — over USB or WiFi, with the touch input that macOS is missing. Try it free, then unlock for a one-time $2.99. No subscription.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #00FF88;
+            --secondary: #00CCFF;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(0, 255, 136, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #F9F3E0;
+            --bg-elevated: #F9F3E0;
+            --text: #0D0D0D;
+            --text-muted: #555555;
+            --border: #0D0D0D;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        
+        .btn-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle - Brutalist Style */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-device {
+            flex: 0 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-device:hover {
+            transform: rotate(-3deg) scale(1.06);
+        }
+
+        .hero-device img {
+            width: 180px;
+            height: auto;
+        }
+
+        .hero-device.iphone img {
+            width: 200px;
+        }
+
+        .hero-device.mac img {
+            width: 600px;
+        }
+
+        .hero-device.mac:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .hero-center {
+            flex: 1;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-buttons-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-req {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Privacy Notice - Brutalist */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: var(--border-width) solid var(--border);
+            max-width: 550px;
+        }
+
+        .privacy-notice svg {
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .privacy-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .privacy-notice a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-notice a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Screenshot Carousel */
+        .hero-image {
+            margin-top: 4rem;
+        }
+
+        .screenshot-carousel {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .screenshot-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll-carousel 35s linear infinite;
+            width: max-content;
+            align-items: center;
+        }
+
+        .screenshot-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-carousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .devices-mockup {
+            height: 320px;
+            width: auto;
+            border: var(--border-width) solid var(--border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .devices-mockup:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        /* Stats Bar - Brutalist */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-item {
+            padding: 1rem;
+            text-align: center;
+            border-right: var(--border-width) solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item:hover {
+            background: var(--yellow);
+        }
+
+        .stat-item:hover h3,
+        .stat-item:hover p {
+            color: #000;
+        }
+
+        .stat-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-item {
+                border-bottom: var(--border-width) solid var(--border);
+            }
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+            .stat-item:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid - Brutalist Cards */
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .feature-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .feature-card:nth-child(2) { transform: rotate(0.5deg); }
+        .feature-card:nth-child(3) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .feature-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .feature-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #000;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Setup Section - Brutalist */
+        .setup {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .setup-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .setup-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-step:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .step-content code {
+            background: var(--primary);
+            padding: 0.2rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        .permission-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+        }
+
+        .permission-item::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .setup-image {
+            margin-top: 1rem;
+            max-width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .setup-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .setup-image-small {
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border);
+            transition: transform 0.2s;
+        }
+
+        .setup-image-small:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        /* Pricing - Brutalist */
+        .pricing {
+            text-align: center;
+        }
+
+        .pricing-card {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 3rem;
+            box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .pricing-card::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border: var(--border-width) solid var(--border);
+            transform: rotate(3deg);
+            letter-spacing: 0.05em;
+        }
+
+        .price-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .price-tag sup {
+            font-size: 2rem;
+            vertical-align: top;
+        }
+
+        .price-tag .currency {
+            font-size: 2rem;
+        }
+
+        .price-period {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            background: var(--primary);
+            padding: 4px;
+            border: 2px solid var(--border);
+        }
+
+        .pricing-features li svg polyline {
+            stroke: #000;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .price-note {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trial-note {
+            margin-top: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Contact - Brutalist */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            box-shadow: 8px 8px 0 var(--border);
+            transform: rotate(0.5deg);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 var(--primary);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer - Brutalist */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* Hero Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-image { animation: fadeInUp 0.7s ease 0.3s forwards; opacity: 0; }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 900px) {
+            .hero-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-device { order: 2; }
+            .hero-device.iphone { order: 1; }
+            .hero-device.mac { order: 3; }
+            .hero-center { order: 2; max-width: 100%; }
+
+            .hero-device img,
+            .hero-device.iphone img,
+            .hero-device.mac img {
+                width: 320px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+                min-height: auto;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 160px !important;
+            }
+
+            .hero-device.mac img {
+                width: 280px !important;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-buttons-row {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .download-btn-wrapper {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .devices-mockup {
+                height: 150px;
+            }
+
+            .screenshot-track {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .setup-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .setup-step img {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .setup-images-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            .price-tag {
+                font-size: 3.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 140px !important;
+            }
+
+            .hero-device.mac img {
+                width: 240px !important;
+            }
+
+            .devices-mockup {
+                height: 160px;
+            }
+
+            .price-tag {
+                font-size: 2.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilDisplay</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#setup">Setup</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#setup" class="btn btn-primary">Get Started</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device iphone">
+                    <img src="screenshots/iphone.png" alt="iPhone">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        Touch Input for Mac
+                    </div>
+                    <h1>iPhone &amp; iPad, <span class="highlight">Touchscreen</span> Mac Display</h1>
+                    <p class="hero-subtitle">Transform any iPhone or iPad into an external monitor for your Mac — over USB or WiFi, with the touch input that macOS is missing.</p>
+                    <div class="hero-buttons">
+                        <div class="hero-buttons-row">
+                            <div class="download-btn-wrapper">
+                                <a href="https://apps.apple.com/ca/app/lildisplay/id6757023864" class="btn btn-primary">
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    Download for iOS
+                                </a>
+                                <span class="system-req">iOS 15+ · 3 free sessions, then $2.99</span>
+                            </div>
+                            <div class="download-btn-wrapper">
+                                <a href="LilDisplay-macos.dmg" class="btn btn-secondary" download>
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    Download for Mac
+                                </a>
+                                <span class="system-req">macOS 14+ · Free companion app</span>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>Direct device-to-device connection via USB or peer-to-peer WiFi. No data leaves your devices. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-device mac">
+                    <img src="screenshots/mac.png" alt="Mac">
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <div class="screenshot-carousel">
+                    <div class="screenshot-track">
+                        <img src="screenshots/IMG1.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMGiPad1.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMG2.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMG3.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMG1.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMGiPad1.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMG2.png" alt="LilDisplay screenshot" class="devices-mockup">
+                        <img src="screenshots/IMG3.png" alt="LilDisplay screenshot" class="devices-mockup">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>&lt;10ms</h3>
+                <p>Latency</p>
+            </div>
+            <div class="stat-item">
+                <h3>USB + WiFi</h3>
+                <p>Connection</p>
+            </div>
+            <div class="stat-item">
+                <h3>Touch</h3>
+                <p>For Mac</p>
+            </div>
+            <div class="stat-item">
+                <h3>$2.99</h3>
+                <p>One-Time</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>Everything you need in a portable second display.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div>
+                    <h3>Ultra-Low Latency</h3>
+                    <p>Under 10ms latency with USB connection. Feels instant and responsive.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v6m-3 6v6a2 2 0 002 2h2a2 2 0 002-2v-6M9 8h6M7 8a2 2 0 012-2h6a2 2 0 012 2v6H7V8z"/></svg></div>
+                <div>
+                    <h3>USB Connection</h3>
+                    <p>Plug in via USB for the best performance with ultra-low latency.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 8V6a2 2 0 00-4 0v2m0 0V4a2 2 0 00-4 0v4m0 0V3a2 2 0 00-4 0v9l-1.5-1.5a2 2 0 00-2.83 2.83L7 18.5a6 6 0 006 3.5h2a6 6 0 006-6v-6a2 2 0 00-4 0v2"/></svg></div>                <div>
+                    <h3>Touch for Mac</h3>
+                    <p>Finally, touch input on macOS. Tap, scroll, and interact directly with your Mac.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+                <div>
+                    <h3>True Display</h3>
+                    <p>Works as a real monitor — extend your desktop and move windows freely.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg></div>
+                <div>
+                    <h3>Wireless Mode</h3>
+                    <p>No cable? Connect over peer-to-peer WiFi using the pairing code shown in the Mac menu bar — no shared network required.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></div>
+                <div>
+                    <h3>Streaming Quality Presets</h3>
+                    <p>Pick your balance: Auto, Low (fastest), Medium, High, or Ultra (best image) — right from the menu bar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="setup" id="setup">
+        <div class="section-header fade-in">
+            <h2>First-Time Setup</h2>
+            <p>Get started in just a few steps.</p>
+        </div>
+        <div class="setup-steps">
+            <div class="setup-step fade-in stagger-1">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Download Both Apps</h3>
+                    <p>Get LilDisplay from the App Store on your iPhone or iPad — it's a free download with 3 free sessions, then a one-time unlock. The Mac companion app is free and comes from this website.</p>
+                </div>
+            </div>
+            <div class="setup-step fade-in stagger-2">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Install the Mac App</h3>
+                    <p>Open the downloaded DMG file and drag <strong>LilDisplay Mac</strong> to your Applications folder.</p>
+                    <img src="setup/install-dmg.png" alt="Drag LilDisplay Mac to Applications" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
+                </div>
+            </div>
+            <div class="setup-step fade-in stagger-3">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Open the App</h3>
+                    <p>Double-click to launch. macOS will show a security prompt — click <strong>Open</strong> to continue.</p>
+                    <img src="setup/open-prompt.png" alt="Click Open to launch the app" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
+                </div>
+            </div>
+            <div class="setup-step fade-in stagger-4">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Grant Permissions</h3>
+                    <p>The app will request a few permissions. Click <strong>Allow</strong> on each prompt:</p>
+                    <div class="permission-list">
+                        <div class="permission-item"><strong>Screen Access</strong> — to capture your virtual display</div>
+                        <div class="permission-item"><strong>Screen Recording</strong> — to record screen content</div>
+                    </div>
+                    <div class="setup-images-grid">
+                        <img src="setup/screen-access-prompt.png" alt="Screen Access permission" class="setup-image-small">
+                        <img src="setup/screen-recording.png" alt="Screen Recording permission" class="setup-image-small">
+                    </div>
+                    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);">Tip: If a prompt doesn't appear, enable manually in <code>System Settings → Privacy & Security</code>:</p>
+                    <div class="permission-list" style="margin-top: 0.5rem; margin-bottom: 0.75rem;">
+                        <div class="permission-item" style="font-size: 0.85rem;"><strong>Accessibility</strong></div>
+                        <div class="permission-item" style="font-size: 0.85rem;"><strong>Screen & System Audio Recording</strong></div>
+                    </div>
+                    <div class="setup-images-grid">
+                        <img src="setup/settings-accessibility.png" alt="Accessibility in System Settings" class="setup-image-small">
+                        <img src="setup/settings-screen-recording.png" alt="Screen Recording in System Settings" class="setup-image-small">
+                    </div>
+                    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);"><strong>Still not working after allowing?</strong> If you just installed a new version and the app isn't capturing even though you granted <strong>Screen Recording</strong> and <strong>Accessibility</strong>, remove LilDisplay from that permission list (or toggle it off and back on) in <code>System Settings → Privacy & Security</code>, then reopen the app.</p>
+                </div>
+            </div>
+            <div class="setup-step fade-in stagger-5">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Connect & Enjoy</h3>
+                    <p>Open LilDisplay on your iPhone or iPad and connect via <strong>USB</strong> (lowest latency) or <strong>WiFi</strong>. For WiFi, enter the pairing code shown in the Mac menu bar — it's peer-to-peer, so the devices don't even need to be on the same network. Your new display is ready!</p>
+                    <p style="margin-top: 1rem;">Once launched, the Mac app lives in your <strong>menu bar</strong> at the top of the screen, showing the live pairing code and the app's CPU and memory usage:</p>
+                    <img src="setup/menu-overview.png" alt="LilDisplay menu bar with pairing code and options" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
+                    <div class="permission-list" style="margin-top: 1rem;">
+                        <div class="permission-item"><strong>Streaming Quality</strong> — choose Auto (recommended), Low for the fastest response, Medium, High, or Ultra for the best image</div>
+                        <div class="permission-item"><strong>Reconnect</strong> (⌘R) — manually retry the connection</div>
+                        <div class="permission-item"><strong>Advanced → Keep Awake When Lid Is Closed</strong> — keep streaming even with your MacBook's lid shut</div>
+                        <div class="permission-item"><strong>Launch at Login</strong> — start LilDisplay automatically when your Mac boots</div>
+                        <div class="permission-item"><strong>Quit</strong> (⌘Q) — close the app</div>
+                    </div>
+                    <div class="setup-images-grid">
+                        <img src="setup/menu-streaming-quality.png" alt="Streaming Quality options: Auto, Low, Medium, High, Ultra" class="setup-image-small">
+                        <img src="setup/menu-advanced.png" alt="Advanced menu: Keep Awake When Lid Is Closed" class="setup-image-small">
+                    </div>
+                    <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted);"><strong>Troubleshooting:</strong> If the connection gets stuck, try clicking <strong>Reconnect</strong> from the menu. If that doesn't work, <strong>Quit</strong> the app and reopen it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="section-header fade-in">
+            <h2>Pricing</h2>
+            <p>Pay once. Own it forever. No subscription, ever.</p>
+        </div>
+        <div class="pricing-card scale-in">
+            <div class="price-tag"><span class="currency">$</span>2<sup>99</sup></div>
+            <div class="price-period">One-Time Purchase</div>
+            <ul class="pricing-features">
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Unlimited connections
+                </li>
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    USB &amp; peer-to-peer WiFi
+                </li>
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Touch input for macOS
+                </li>
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    iPhone and iPad, one purchase
+                </li>
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Free Mac companion app
+                </li>
+                <li>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    All future updates included
+                </li>
+            </ul>
+            <a href="https://apps.apple.com/ca/app/lildisplay/id6757023864" class="btn btn-primary pricing-cta">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                Download &amp; Try Free
+            </a>
+            <p class="trial-note">3 free sessions — no card needed</p>
+            <p class="price-note">Price shown in USD. Your local price is set by the App Store and shown before you buy. Already downloaded LilDisplay before it went paid? You keep full access for free.</p>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+            <p>Questions, feedback, or just want to say hi?</p>
+        </div>
+        <div class="contact-card scale-in">
+            <form class="contact-form" action="https://formspree.io/f/xkonoynw" method="POST">
+                <div class="form-group">
+                    <label for="email">Your Email (optional)</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" name="subject">
+                        <option value="feedback">Feedback & Suggestions</option>
+                        <option value="bug">Report a Bug</option>
+                        <option value="help">Need Help</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Tell us what's on your mind..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary contact-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 LilDisplay. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="/cdn-cgi/l/email-protection#60131510100f1214200c090c040913100c01194e011010">Support</a></p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // Scroll Animation Observer
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
