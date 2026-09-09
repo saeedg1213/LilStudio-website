@@ -34,8 +34,8 @@
         }
 
         [data-theme="light"] {
-            --bg: #F5F0DC;
-            --bg-elevated: #F5F0DC;
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
             --text: #17150F;
             --text-muted: #55503F;
             --border: #17150F;
@@ -1464,15 +1464,92 @@
             .meter-mock { width: 100%; max-width: 320px; transform: rotate(0); }
             .faq-item { padding: 1.25rem; }
         }
+
+        /* ===== LilStudio Switcher Ribbon ===== */
+        :root { --studio-other: #00FF88; }
+
+        .studio-ribbon {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 120;
+            display: flex;
+            align-items: stretch;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: 5px 5px 0 var(--border);
+            font-family: 'Space Mono', monospace;
+            transform: translateY(160%);
+            animation: ribbonIn 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 1.1s forwards;
+        }
+
+        @keyframes ribbonIn { to { transform: translateY(0); } }
+
+        .studio-ribbon a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 0.9rem;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .ribbon-home { border-right: var(--border-width) solid var(--border); }
+        .ribbon-home:hover { background: var(--yellow); color: #000; }
+        .ribbon-home:hover .ribbon-mark { background: #000; }
+
+        .ribbon-mark,
+        .ribbon-dot {
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .ribbon-mark { background: var(--yellow); }
+        .ribbon-dot { background: var(--studio-other); }
+
+        .ribbon-app:hover { background: var(--studio-other); color: #000; }
+        .ribbon-app:hover .ribbon-dot { background: #000; }
+
+        .ribbon-arrow { transition: transform 0.18s; }
+        .ribbon-app:hover .ribbon-arrow { transform: translateX(3px); }
+
+        @media (max-width: 600px) {
+            .studio-ribbon { right: 0.75rem; bottom: 0.75rem; }
+            .studio-ribbon a { padding: 0.55rem 0.7rem; font-size: 0.68rem; }
+            .ribbon-home span.rh-text { display: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .studio-ribbon { transform: none; animation: none; }
+        }
+
     </style>
 </head>
 <body>
     <div class="bg-pattern"></div>
 
+    <!-- LilStudio switcher: home + the other app -->
+    <div class="studio-ribbon">
+        <a class="ribbon-home" href="/" aria-label="LilStudio home">
+            <span class="ribbon-mark"></span><span class="rh-text">LilStudio</span>
+        </a>
+        <a class="ribbon-app" href="/lildisplay/">
+            <span class="ribbon-dot"></span>LilDisplay<span class="ribbon-arrow">&rarr;</span>
+        </a>
+    </div>
+
     <nav>
         <div class="nav-inner">
             <div class="logo">LilUsage</div>
             <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#setup">Setup</a></li>
                 <li><a href="#faq">FAQ</a></li>

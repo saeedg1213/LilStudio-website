@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilStudio – Small Mac &amp; iOS apps that do one thing well</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay and LilUsage.">
+    <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
+    <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
+    <meta property="og:url" content="https://lilstudio.app/">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #FFE135;
+            --secondary: #00CCFF;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(255, 225, 53, 0.4);
+
+            /* Product accents - identical across all LilStudio sites */
+            --display: #00FF88;
+            --display-alt: #00CCFF;
+            --usage: #FFB020;
+            --usage-alt: #A98BFF;
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Floating shapes */
+        .shapes {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border: var(--border-width) solid var(--border);
+            opacity: 0.25;
+        }
+
+        .shape.s1 { width: 90px; height: 90px; top: 18%; left: 6%; background: var(--display); animation: drift 14s ease-in-out infinite; }
+        .shape.s2 { width: 60px; height: 60px; top: 62%; left: 10%; background: var(--usage); border-radius: 50%; animation: drift 18s ease-in-out infinite reverse; }
+        .shape.s3 { width: 110px; height: 110px; top: 30%; right: 5%; background: var(--yellow); transform: rotate(12deg); animation: drift 16s ease-in-out infinite 1s; }
+        .shape.s4 { width: 46px; height: 46px; top: 78%; right: 12%; background: var(--pink); animation: drift 12s ease-in-out infinite 2s; }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50%      { transform: translate(18px, -26px) rotate(10deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .hero-center { flex: 1 1 520px; max-width: 640px; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--display);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Hero app grid graphic */
+        .hero-grid-wrap {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 96px);
+            grid-template-rows: repeat(3, 96px);
+            gap: 12px;
+            transform: rotate(-4deg);
+            animation: gridFloat 9s ease-in-out infinite;
+        }
+
+        @keyframes gridFloat {
+            0%, 100% { transform: rotate(-4deg) translateY(0); }
+            50%      { transform: rotate(-4deg) translateY(-14px); }
+        }
+
+        .cell {
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: popIn 0.45s ease forwards;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cell:nth-child(1) { animation-delay: 0.05s; }
+        .cell:nth-child(2) { animation-delay: 0.10s; }
+        .cell:nth-child(3) { animation-delay: 0.15s; }
+        .cell:nth-child(4) { animation-delay: 0.20s; }
+        .cell:nth-child(5) { animation-delay: 0.25s; }
+        .cell:nth-child(6) { animation-delay: 0.30s; }
+        .cell:nth-child(7) { animation-delay: 0.35s; }
+        .cell:nth-child(8) { animation-delay: 0.40s; }
+        .cell:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.6); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .cell.muted { opacity: 0; background: transparent; border-style: dashed; }
+        .cell.muted { animation-name: popInMuted; }
+        @keyframes popInMuted {
+            from { opacity: 0; transform: scale(0.6); }
+            to   { opacity: 0.35; transform: scale(1); }
+        }
+
+        .cell.app {
+            flex-direction: column;
+            gap: 0.4rem;
+            color: #000;
+            text-decoration: none;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .cell.app:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 8px 8px 0 var(--border);
+        }
+
+        .cell.app.display { background: var(--display); }
+        .cell.app.usage { background: var(--usage); }
+
+        .cell.app svg { width: 26px; height: 26px; }
+
+        .cell.next {
+            border-style: dashed;
+            color: var(--text-muted);
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 7px;
+            height: 13px;
+            background: var(--primary);
+            margin-left: 3px;
+            vertical-align: -2px;
+            animation: blink 1s step-end infinite;
+        }
+
+        /* Marquee */
+        .marquee {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+            background: var(--primary);
+            overflow: hidden;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scrollX 28s linear infinite;
+        }
+
+        .marquee-track span {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #000;
+            padding: 0.85rem 1.5rem;
+            white-space: nowrap;
+        }
+
+        @keyframes scrollX {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Product cards */
+        .apps {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .apps-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .app-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+
+        .app-card:nth-child(1) { transform: rotate(-0.6deg); }
+        .app-card:nth-child(2) { transform: rotate(0.6deg); }
+        .app-card:nth-child(1):hover { transform: rotate(-0.6deg) translate(-5px, -5px); }
+        .app-card:nth-child(2):hover { transform: rotate(0.6deg) translate(-5px, -5px); }
+
+        .app-card:hover {
+            box-shadow: calc(var(--shadow-offset) + 5px) calc(var(--shadow-offset) + 5px) 0 var(--border);
+        }
+
+        .app-stage {
+            height: 200px;
+            border-bottom: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-stage.display { background: var(--display); }
+        .app-stage.usage { background: var(--usage); }
+
+        .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .app-title h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .app-dot {
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--border);
+        }
+
+        .app-dot.display { background: var(--display); }
+        .app-dot.usage { background: var(--usage); }
+
+        .app-kicker {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .app-body > p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.3rem 0.6rem;
+            border: 2px solid var(--border);
+            background: var(--bg-elevated);
+            color: var(--text);
+        }
+
+        .app-cta {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-app {
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-app.display { background: var(--display); }
+        .btn-app.usage { background: var(--usage); }
+
+        .btn-app:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-app:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .app-price {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* --- LilDisplay stage animation --- */
+        .dd {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transform: rotate(-2deg);
+        }
+
+        .dd-mac {
+            width: 148px;
+            border: 3px solid #000;
+            background: #0D0D0D;
+            padding: 6px;
+            position: relative;
+        }
+
+        .dd-mac::after {
+            content: '';
+            display: block;
+            width: 78px;
+            height: 7px;
+            background: #000;
+            border: 3px solid #000;
+            border-top: none;
+            margin: 3px auto -10px;
+        }
+
+        .dd-screen {
+            height: 82px;
+            background: #17150F;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 7px;
+        }
+
+        .dd-win { height: 10px; background: var(--display-alt); opacity: 0.9; }
+        .dd-win.w2 { width: 70%; background: var(--yellow); }
+        .dd-win.w3 { width: 45%; background: var(--pink); }
+
+        .dd-phone {
+            width: 54px;
+            border: 3px solid #000;
+            background: #0D0D0D;
+            padding: 5px 4px;
+            border-radius: 8px;
+        }
+
+        .dd-notch {
+            width: 20px;
+            height: 4px;
+            background: #333;
+            border-radius: 3px;
+            margin: 0 auto 4px;
+        }
+
+        .dd-pscreen {
+            height: 78px;
+            background: #17150F;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dd-pscreen span { height: 8px; background: var(--display-alt); opacity: 0.9; }
+        .dd-pscreen span.p2 { width: 65%; background: var(--yellow); }
+
+        .dd-touch {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            left: 14px;
+            top: 20px;
+            animation: tap 3.2s ease-in-out infinite;
+        }
+
+        @keyframes tap {
+            0%   { transform: translate(0,0) scale(1); opacity: 0; }
+            15%  { opacity: 1; }
+            45%  { transform: translate(14px, 30px) scale(1); opacity: 1; }
+            60%  { transform: translate(14px, 30px) scale(0.6); opacity: 1; }
+            75%  { transform: translate(14px, 30px) scale(1.4); opacity: 0; }
+            100% { transform: translate(0,0) scale(1); opacity: 0; }
+        }
+
+        .dd-link {
+            position: relative;
+            width: 40px;
+            height: 3px;
+            background: #000;
+        }
+
+        .dd-link i {
+            position: absolute;
+            top: -4px;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            animation: packet 1.8s linear infinite;
+        }
+
+        .dd-link i:nth-child(2) { animation-delay: 0.6s; }
+        .dd-link i:nth-child(3) { animation-delay: 1.2s; }
+
+        @keyframes packet {
+            from { transform: translateX(0); opacity: 0; }
+            15%  { opacity: 1; }
+            85%  { opacity: 1; }
+            to   { transform: translateX(30px); opacity: 0; }
+        }
+
+        /* --- LilUsage stage animation --- */
+        .uu {
+            width: 230px;
+            border: 3px solid #000;
+            background: #F7F1DE;
+            box-shadow: 5px 5px 0 #000;
+            transform: rotate(2deg);
+        }
+
+        .uu-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 8px;
+            border-bottom: 3px solid #000;
+            background: #17150F;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: #fff;
+        }
+
+        .uu-spacer { flex: 1; }
+
+        .uu-track {
+            width: 34px;
+            height: 9px;
+            border: 2px solid #fff;
+            display: block;
+        }
+
+        .uu-fill {
+            display: block;
+            height: 100%;
+            width: 8%;
+            background: var(--usage);
+            animation: fillUp 6s ease-in-out infinite;
+        }
+
+        @keyframes fillUp {
+            0%   { width: 8%; }
+            55%  { width: 74%; }
+            75%  { width: 74%; }
+            100% { width: 8%; }
+        }
+
+        .uu-panel { padding: 9px 10px; background: #F7F1DE; color: #17150F; }
+
+        .uu-row { margin-bottom: 8px; }
+        .uu-row:last-child { margin-bottom: 0; }
+
+        .uu-row-top {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .uu-meter {
+            height: 12px;
+            border: 2px solid #17150F;
+            background: #fff;
+        }
+
+        .uu-meter span {
+            display: block;
+            height: 100%;
+            background: var(--usage);
+            width: 8%;
+            animation: fillUp 6s ease-in-out infinite;
+        }
+
+        .uu-meter.alt span { background: var(--usage-alt); width: 41%; animation: none; }
+
+        .uu-reset {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            opacity: 0.65;
+            margin-top: 2px;
+        }
+
+        /* Approach cards */
+        .values-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .value-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .value-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .value-card:nth-child(2) { transform: rotate(0.5deg); }
+        .value-card:nth-child(3) { transform: rotate(0.3deg); }
+        .value-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .value-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .value-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .value-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .value-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .value-card:hover {
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .value-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .value-icon svg { width: 24px; height: 24px; color: #000; }
+
+        .value-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .value-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* Contact */
+        .contact {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+        }
+
+        .contact-card {
+            max-width: 620px;
+            margin: 0 auto;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 2.5rem;
+            text-align: center;
+            transform: rotate(-0.5deg);
+        }
+
+        .contact-card h2 { font-size: 2rem; margin-bottom: 0.75rem; }
+        .contact-card p { color: var(--text-muted); margin-bottom: 1.75rem; }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover { background: var(--primary); color: #000; }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible { opacity: 1; transform: scale(1); }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-center > * { animation: fadeInUp 0.7s ease forwards; opacity: 0; }
+        .hero-center > *:nth-child(1) { animation-delay: 0.05s; }
+        .hero-center > *:nth-child(2) { animation-delay: 0.15s; }
+        .hero-center > *:nth-child(3) { animation-delay: 0.25s; }
+        .hero-center > *:nth-child(4) { animation-delay: 0.35s; }
+
+        /* Responsive */
+        @media (max-width: 980px) {
+            .hero-content { flex-direction: column; gap: 3rem; text-align: center; }
+            .hero-center { max-width: 100%; }
+            .badge { justify-content: center; }
+            .hero-buttons { justify-content: center; }
+            .apps-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .values-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 1rem; }
+            .nav-links { display: none; }
+            .theme-toggle { width: 42px; height: 42px; }
+            .hero { padding: 7rem 1rem 3rem; min-height: auto; }
+            h1 { font-size: 1.9rem; }
+            section { padding: 4rem 1rem; }
+            .section-header h2 { font-size: 2rem; }
+            .app-grid { grid-template-columns: repeat(3, 80px); grid-template-rows: repeat(3, 80px); gap: 9px; }
+            .hero-buttons { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+            .app-card:nth-child(1), .app-card:nth-child(2) { transform: rotate(0); }
+            .app-card:nth-child(1):hover, .app-card:nth-child(2):hover { transform: translate(-5px, -5px); }
+            .contact-card { padding: 1.75rem; transform: rotate(0); }
+            footer { font-size: 0.75rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .cell, .cell.muted, .hero-center > * { opacity: 1 !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="shapes" aria-hidden="true">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+        <div class="shape s3"></div>
+        <div class="shape s4"></div>
+    </div>
+
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="logo">LilStudio</a>
+            <ul class="nav-links">
+                <li><a href="#apps">Apps</a></li>
+                <li><a href="#approach">Approach</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#apps" class="btn btn-primary">See the Apps</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-center">
+                <div class="badge">
+                    <div class="badge-dot"></div>
+                    Tiny apps for Mac &amp; iOS
+                </div>
+                <h1>Small apps that do <span class="highlight">one thing</span> well.</h1>
+                <p class="hero-subtitle">LilStudio is a one-person shop building native Mac and iOS utilities. Each one is small, fast, and finished — no subscriptions, no accounts, nothing phoning home.</p>
+                <div class="hero-buttons">
+                    <a href="#apps" class="btn btn-primary">Browse the Apps</a>
+                    <a href="mailto:hello@lilstudio.app" class="btn btn-outline">Say Hello</a>
+                </div>
+            </div>
+
+            <div class="hero-grid-wrap" aria-hidden="true">
+                <div class="app-grid">
+                    <div class="cell muted"></div>
+                    <a class="cell app display" href="/lildisplay/" aria-label="LilDisplay">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="14" height="10" rx="1"/><rect x="17" y="9" width="5" height="11" rx="1"/><path d="M6 18h6"/></svg>
+                        LilDisplay
+                    </a>
+                    <div class="cell muted"></div>
+                    <div class="cell muted"></div>
+                    <a class="cell app usage" href="/lilusage/" aria-label="LilUsage">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M4 10v4h9v-4z" fill="currentColor" stroke="none"/></svg>
+                        LilUsage
+                    </a>
+                    <div class="cell muted"></div>
+                    <div class="cell muted"></div>
+                    <div class="cell next">Next<span class="cursor-blink"></span></div>
+                    <div class="cell muted"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+            <span>★ Native Mac &amp; iOS ★ No Subscriptions ★ No Accounts ★ No Telemetry ★ Built in Montreal ★</span>
+            <span>★ Native Mac &amp; iOS ★ No Subscriptions ★ No Accounts ★ No Telemetry ★ Built in Montreal ★</span>
+        </div>
+    </div>
+
+    <section class="apps" id="apps">
+        <div class="section-header fade-in">
+            <h2>The Apps</h2>
+            <p>Two right now. Each one solves a single annoyance properly.</p>
+        </div>
+
+        <div class="apps-grid">
+            <div class="app-card fade-in stagger-1">
+                <div class="app-stage display" aria-hidden="true">
+                    <div class="dd">
+                        <div class="dd-mac">
+                            <div class="dd-screen">
+                                <span class="dd-win"></span>
+                                <span class="dd-win w2"></span>
+                                <span class="dd-win w3"></span>
+                            </div>
+                        </div>
+                        <div class="dd-link"><i></i><i></i><i></i></div>
+                        <div class="dd-phone">
+                            <div class="dd-notch"></div>
+                            <div class="dd-pscreen">
+                                <span></span>
+                                <span class="p2"></span>
+                                <div class="dd-touch"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot display"></span>
+                        <h3>LilDisplay</h3>
+                    </div>
+                    <div class="app-kicker">iPhone &amp; iPad · macOS</div>
+                    <p>Turns any iPhone or iPad into a second monitor for your Mac — over USB or peer-to-peer WiFi, with the touch input macOS never had.</p>
+                    <div class="chips">
+                        <span class="chip">Touch relay</span>
+                        <span class="chip">USB + WiFi</span>
+                        <span class="chip">No shared network</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lildisplay/" class="btn btn-app display">Open LilDisplay →</a>
+                        <span class="app-price">3 free sessions, then $2.99 once</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-card fade-in stagger-2">
+                <div class="app-stage usage" aria-hidden="true">
+                    <div class="uu">
+                        <div class="uu-bar">
+                            <span></span>
+                            <span class="uu-spacer"></span>
+                            <span class="uu-track"><span class="uu-fill"></span></span>
+                            <span id="stagePct">8</span>
+                            <span>9:41</span>
+                        </div>
+                        <div class="uu-panel">
+                            <div class="uu-row">
+                                <div class="uu-row-top"><span>Session</span><span id="stageSession">8%</span></div>
+                                <div class="uu-meter"><span></span></div>
+                                <div class="uu-reset">Resets in 3h 12m</div>
+                            </div>
+                            <div class="uu-row">
+                                <div class="uu-row-top"><span>Weekly</span><span>41%</span></div>
+                                <div class="uu-meter alt"><span></span></div>
+                                <div class="uu-reset">Resets Sunday</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot usage"></span>
+                        <h3>LilUsage</h3>
+                    </div>
+                    <div class="app-kicker">macOS menu bar</div>
+                    <p>A bar in your menu bar that fills as you use Claude. Click it for your session and weekly windows, and how long until each one resets.</p>
+                    <div class="chips">
+                        <span class="chip">Session + weekly</span>
+                        <span class="chip">Live countdowns</span>
+                        <span class="chip">No account</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilusage/" class="btn btn-app usage">Open LilUsage →</a>
+                        <span class="app-price">Free · macOS 14+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="approach">
+        <div class="section-header fade-in">
+            <h2>How I Build</h2>
+            <p>The same four rules apply to everything here.</p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card fade-in stagger-1">
+                <div class="value-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg>
+                </div>
+                <div>
+                    <h3>One job, done properly</h3>
+                    <p>Every app is scoped to a single annoyance. No dashboards, no feature creep, no onboarding wizard.</p>
+                </div>
+            </div>
+
+            <div class="value-card fade-in stagger-2">
+                <div class="value-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                    <h3>Your data stays put</h3>
+                    <p>No accounts, no analytics, no telemetry. Nothing leaves your machine unless the app literally can't work without it.</p>
+                </div>
+            </div>
+
+            <div class="value-card fade-in stagger-3">
+                <div class="value-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                </div>
+                <div>
+                    <h3>Pay once, or nothing</h3>
+                    <p>Free where it can be free, one small payment where it can't. No subscriptions for a utility that sits in your menu bar.</p>
+                </div>
+            </div>
+
+            <div class="value-card fade-in stagger-4">
+                <div class="value-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
+                </div>
+                <div>
+                    <h3>Native, not a web page</h3>
+                    <p>Swift and SwiftUI, built for the platform. Small binaries, low CPU, no Electron shell eating your battery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="contact-card scale-in">
+            <h2>Got an idea, or a bug?</h2>
+            <p>Feature requests, bug reports, or just to say the thing worked — mail lands with me directly.</p>
+            <a href="mailto:hello@lilstudio.app" class="btn btn-primary">hello@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="mailto:hello@lilstudio.app">Support</a></p>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme (shared key with the product pages)
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // Scroll Animation Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // LilUsage stage: keep the numbers in sync with the CSS fill animation
+        (function() {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const pct = document.getElementById('stagePct');
+            const session = document.getElementById('stageSession');
+            if (!pct || !session) return;
+            const start = performance.now();
+            const DUR = 6000; // must match the fillUp keyframes duration
+            function frame(now) {
+                const t = ((now - start) % DUR) / DUR;
+                let v;
+                if (t < 0.55)      v = 8 + (74 - 8) * (t / 0.55);
+                else if (t < 0.75) v = 74;
+                else               v = 74 - (74 - 8) * ((t - 0.75) / 0.25);
+                const r = Math.round(v);
+                pct.textContent = r;
+                session.textContent = r + '%';
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        })();
+    </script>
+</body>
+</html>
