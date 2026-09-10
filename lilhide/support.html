@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilHide — Support</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 40rem; margin: 0 auto; padding: 4rem 1.5rem 6rem;
+    color: #1c1c1e; background: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8ea; background: #16161a; }
+    a { color: #7aa7e6; }
+    .note { background: #1f1f25; border-color: #33333d; }
+    kbd { background: #26262e; border-color: #3a3a44; }
+  }
+  h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.1rem; margin-top: 2.5rem; }
+  h3 { font-size: 1rem; margin-top: 1.75rem; }
+  .lede { color: #8a8a8e; margin-top: 0; }
+  .note { background: #f5f5f7; border: 1px solid #e2e2e6; border-radius: 10px; padding: 1rem 1.25rem; }
+  kbd {
+    font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: #f0f0f3; border: 1px solid #d8d8dd; border-radius: 5px; padding: 0.1em 0.4em;
+  }
+  footer { margin-top: 4rem; font-size: 0.9rem; color: #8a8a8e; }
+  a { color: #2f6fd0; }
+</style>
+</head>
+<body>
+
+<h1>LilHide Support</h1>
+<p class="lede">Hide your desktop icons from the menu bar.</p>
+
+<div class="note">
+  Need a hand, found a bug, or want a feature? Email
+  <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>. I read every
+  message and usually reply the same day.
+</div>
+
+<h2>Getting started</h2>
+<p>
+  LilHide has no window. After launching, look for a small square icon in your
+  menu bar.
+</p>
+<ul>
+  <li><strong>Left-click</strong> to hide or show your desktop icons.</li>
+  <li><strong>Right-click</strong> to open the settings menu.</li>
+  <li>Press <kbd>⌃⌥⌘H</kbd> from any app to toggle without reaching for the mouse.</li>
+</ul>
+<p>
+  The menu bar icon tells you the current state: four small squares inside a frame
+  means your icons are visible, an empty frame means they're hidden.
+</p>
+
+<h2>Common questions</h2>
+
+<h3>Why is LilHide asking me to choose an image?</h3>
+<p>
+  LilHide hides your icons by covering them with a copy of your wallpaper, so the
+  desktop still looks like your desktop. macOS keeps most wallpaper files in
+  places a sandboxed app isn't allowed to read, so LilHide asks you to point at
+  the image once. It reads that one file and nothing else.
+</p>
+<p>
+  You can skip it. LilHide will use a blurred overlay instead, which works but
+  doesn't look as clean. To change your mind later, right-click the menu bar icon
+  and choose <em>Choose Fallback Image</em>.
+</p>
+
+<h3>The desktop looks blurred instead of showing my wallpaper.</h3>
+<p>
+  That's the fallback. Right-click the menu bar icon, choose <em>Choose Fallback
+  Image</em>, and select your current wallpaper file.
+</p>
+
+<h3>My wallpaper changed but the hidden desktop didn't.</h3>
+<p>
+  If you use rotating or dynamic wallpapers, the cover image can fall out of step
+  while icons are hidden. Right-click the menu bar icon and choose <em>Refresh
+  Wallpaper</em>, or show and hide again.
+</p>
+
+<h3>I can't click on my desktop while icons are hidden.</h3>
+<p>
+  By design — the cover sits over the desktop. If you'd rather keep the desktop
+  clickable, enable <em>Allow Clicks on Desktop</em> in the menu. Note that this
+  turns off double-click-to-reveal, since those clicks now go to Finder instead.
+</p>
+
+<h3>Are my files safe?</h3>
+<p>
+  Yes. LilHide never moves, renames, deletes, or reads your desktop files. It
+  covers them visually. Quit LilHide and everything is exactly where it was.
+</p>
+
+<h3>Does LilHide need any permissions?</h3>
+<p>
+  No. No Screen Recording, no Accessibility, no Automation. If macOS ever prompts
+  you for a permission and claims it's for LilHide, something else is asking —
+  please email me.
+</p>
+
+<h3>Desktop widgets are hidden too.</h3>
+<p>
+  Widgets sit on the same layer as your icons, so they're covered along with them.
+  There's currently no way to hide one without the other.
+</p>
+
+<h3>The keyboard shortcut doesn't work.</h3>
+<p>
+  Another app has probably claimed <kbd>⌃⌥⌘H</kbd>. Check System Settings →
+  Keyboard → Keyboard Shortcuts, and any launcher apps you run. Turn the shortcut
+  off and on again in the LilHide menu after freeing it up.
+</p>
+
+<h3>How do I stop LilHide from starting automatically?</h3>
+<p>
+  Right-click the menu bar icon and turn off <em>Launch at Login</em>. You can
+  also remove it under System Settings → General → Login Items.
+</p>
+
+<h3>How do I uninstall it?</h3>
+<p>
+  Quit LilHide from its menu, then drag the app from your Applications folder to
+  the Trash. Your icons return the moment the app quits.
+</p>
+
+<h2>System requirements</h2>
+<p>macOS 13 Ventura or later. Apple silicon and Intel.</p>
+
+<footer>
+  LilHide is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+</body>
+</html>
