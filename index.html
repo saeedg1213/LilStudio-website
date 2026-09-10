@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay and LilUsage.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage and LilHide.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -42,6 +42,8 @@
             --display-alt: #00CCFF;
             --usage: #FFB020;
             --usage-alt: #A98BFF;
+            --hide: #6C8CFF;
+            --hide-alt: #4EE39B;
         }
 
         [data-theme="light"] {
@@ -440,6 +442,7 @@
 
         .cell.app.display { background: var(--display); }
         .cell.app.usage { background: var(--usage); }
+        .cell.app.hide { background: var(--hide); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -578,6 +581,7 @@
 
         .app-stage.display { background: var(--display); }
         .app-stage.usage { background: var(--usage); }
+        .app-stage.hide { background: var(--hide); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -602,6 +606,7 @@
 
         .app-dot.display { background: var(--display); }
         .app-dot.usage { background: var(--usage); }
+        .app-dot.hide { background: var(--hide); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -652,6 +657,7 @@
 
         .btn-app.display { background: var(--display); }
         .btn-app.usage { background: var(--usage); }
+        .btn-app.hide { background: var(--hide); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1032,6 +1038,51 @@
             }
             .cell, .cell.muted, .hero-center > * { opacity: 1 !important; }
         }
+
+        /* ---- LilHide ---- */
+        .apps-grid > .app-card:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            max-width: 540px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .lh {
+            width: 200px;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg);
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .lh i {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--border);
+            background: var(--hide-alt);
+            animation: lhfade 4.5s ease-in-out infinite;
+        }
+
+        .lh i:nth-child(2) { background: var(--yellow);    animation-delay: 0.10s; }
+        .lh i:nth-child(3) { background: var(--hide);      animation-delay: 0.20s; }
+        .lh i:nth-child(4) { background: var(--pink);      animation-delay: 0.30s; }
+        .lh i:nth-child(5) { background: var(--hide-alt);  animation-delay: 0.40s; }
+        .lh i:nth-child(6) { background: var(--yellow);    animation-delay: 0.50s; }
+
+        @keyframes lhfade {
+            0%, 30%   { opacity: 1; transform: scale(1); }
+            50%, 78%  { opacity: 0; transform: scale(0.55); }
+            100%      { opacity: 1; transform: scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .lh i { animation: none; }
+        }
+
     </style>
 </head>
 <body>
@@ -1090,7 +1141,10 @@
                         LilUsage
                     </a>
                     <div class="cell muted"></div>
-                    <div class="cell muted"></div>
+                    <a class="cell app hide" href="/lilhide/" aria-label="LilHide">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="7" width="4" height="4"/><rect x="7" y="13" width="4" height="4"/></svg>
+                        LilHide
+                    </a>
                     <div class="cell next">Next<span class="cursor-blink"></span></div>
                     <div class="cell muted"></div>
                 </div>
@@ -1108,7 +1162,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Two right now. Each one solves a single annoyance properly.</p>
+            <p>Three right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1194,6 +1248,30 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-3">
+                <div class="app-stage hide" aria-hidden="true">
+                    <div class="lh">
+                        <i></i><i></i><i></i><i></i><i></i><i></i>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot hide"></span>
+                        <h3>LilHide</h3>
+                    </div>
+                    <div class="app-kicker">macOS menu bar</div>
+                    <p>Hides every icon on your desktop with one click, across every display you have. Your files aren't moved or deleted &mdash; just covered, until you click again.</p>
+                    <div class="chips">
+                        <span class="chip">One click</span>
+                        <span class="chip">All displays</span>
+                        <span class="chip">Zero permissions</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilhide/" class="btn btn-app hide">Open LilHide &rarr;</a>
+                        <span class="app-price">$1 once &middot; macOS 13+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1255,7 +1333,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="mailto:hello@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="mailto:hello@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
