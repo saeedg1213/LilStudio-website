@@ -15,7 +15,7 @@
     <meta property="og:description" content="Rain on your desktop, quiet in your head. Four scenes, layered sound, $0.99 once.">
     <meta property="og:url" content="https://lilstudio.app/lilvibe/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://lilstudio.app/lilvibe/screenshots/scene-forest.jpg">
+    <meta property="og:image" content="https://lilstudio.app/lilvibe/screenshots/scene-cafe.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1312,7 +1312,39 @@
         }
 
         /* --- Hero: a tiny Mac with a live scene --- */
-        .hero-top { gap: 3.5rem; }
+        .hero-top { gap: 4rem; }
+
+        /* Hero: the café App Store screenshot, with its sound one click away */
+        .hero-photo-wrap {
+            flex: 0 1 640px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-photo { position: relative; width: 100%; }
+
+        .hero-photo img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .scene-sound.hero-listen { top: 14px; right: 14px; font-size: 0.78rem; padding: 0.45rem 0.7rem; }
+        .hero-listen svg { width: 16px; height: 16px; }
+
+        .shot-hint {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-top: 1.4rem;
+        }
+
+        /* The animated mini-Mac, now in its own section */
+        .try-stage { display: flex; flex-direction: column; align-items: center; }
         .hero-device.vibe { width: 100%; max-width: 460px; }
         .hero-device.vibe:hover { transform: translate(-3px, -3px); }
 
@@ -1716,8 +1748,8 @@
         }
 
         @media (max-width: 900px) {
-            .hero-device.vibe { order: 1; }
-            .hero-center { order: 2; text-align: center; }
+            .hero-center { order: 1; text-align: center; }
+            .hero-photo-wrap { order: 2; flex-basis: auto; width: 100%; max-width: 560px; }
             .hero-center .hero-buttons, .hero-center .download-btn-wrapper { align-items: center; }
             .hero-center .hero-buttons-row { justify-content: center; }
             .hero-appicon { margin: 0 auto 1rem; }
@@ -1725,6 +1757,7 @@
 
         @media (max-width: 600px) {
             .vibe-mac { transform: rotate(0); box-shadow: 6px 6px 0 var(--border); }
+            .scene-sound.hero-listen { top: 8px; right: 8px; font-size: 0.68rem; padding: 0.35rem 0.55rem; }
             .vm-bar .vm-clock { display: none; }
             .vm-foot { gap: 0.4rem; }
             .sound-btn { margin-left: 0; }
@@ -1760,6 +1793,7 @@
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
                 <li><a href="#scenes">Scenes</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#pricing">Price</a></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -1777,32 +1811,6 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-top">
-
-                <div class="hero-device vibe">
-                    <div class="vibe-mac">
-                        <div class="vm-bar">
-                            <span class="vm-apple"></span>
-                            <span>Finder</span>
-                            <span class="vm-spacer"></span>
-                            <span class="vm-now"><span class="eq"><i></i><i></i><i></i></span><span id="vmSceneName">Rainy Forest</span></span>
-                            <span class="vm-clock">Sat 9:41</span>
-                        </div>
-                        <div class="vm-screen scene-host" id="heroScreen">
-                            <div class="vm-icons" aria-hidden="true"><i></i><i></i><i></i></div>
-                        </div>
-                        <div class="vm-foot" role="group" aria-label="Choose a scene">
-                            <button class="scene-chip" data-scene="forest" aria-pressed="true">Forest</button>
-                            <button class="scene-chip" data-scene="falls" aria-pressed="false">Falls</button>
-                            <button class="scene-chip" data-scene="cafe" aria-pressed="false">Caf&eacute;</button>
-                            <button class="scene-chip" data-scene="fire" aria-pressed="false">Campfire</button>
-                            <button class="sound-btn" id="soundBtn" aria-pressed="false" aria-label="Play a sound sketch of this scene">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>
-                                Sound
-                            </button>
-                        </div>
-                    </div>
-                    <p class="sound-note">The sound button plays a rough sketch made in your browser. The app plays full, layered recordings.</p>
-                </div>
 
                 <div class="hero-center">
                     <img src="screenshots/app-icon.png" alt="LilVibe app icon" class="hero-appicon" onerror="this.remove()">
@@ -1827,6 +1835,14 @@
                             <p>Every scene ships inside the app, so it works offline. No account, no analytics, nothing streamed. <a href="privacy.html">Privacy Policy</a></p>
                         </div>
                     </div>
+                </div>
+
+                <div class="hero-photo-wrap">
+                    <div class="hero-photo" id="heroPhoto">
+                        <img src="screenshots/cafe.png" alt="LilVibe's Rainy Café scene playing on a MacBook desktop">
+                        <button class="scene-sound hero-listen" id="heroListen" aria-pressed="false" aria-label="Play the sound of the Rainy Café" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
+                    </div>
+                    <p class="shot-hint" id="heroHint" hidden>Turn the sound on for the full effect</p>
                 </div>
 
             </div>
@@ -1912,6 +1928,41 @@
                     <p>Two chairs, a calm sea and the Milky Way. A steady crackle over a low roar, the odd pop, and a log shifting as it burns down.</p>
                 </div>
             </article>
+        </div>
+    </section>
+
+    <section class="try" id="try">
+        <div class="section-header fade-in">
+            <h2>Try It Here</h2>
+            <p>Pick a scene and turn the sound on. A little taste of what your desktop could look like.</p>
+        </div>
+        <div class="try-stage">
+                <div class="hero-device vibe">
+                <div class="vibe-mac">
+                    <div class="vm-bar">
+                        <span class="vm-apple"></span>
+                        <span>Finder</span>
+                        <span class="vm-spacer"></span>
+                        <span class="vm-now"><span class="eq"><i></i><i></i><i></i></span><span id="vmSceneName">Rainy Forest</span></span>
+                        <span class="vm-clock">Sat 9:41</span>
+                    </div>
+                    <div class="vm-screen scene-host" id="heroScreen">
+                        <div class="vm-icons" aria-hidden="true"><i></i><i></i><i></i></div>
+                    </div>
+                    <div class="vm-foot" role="group" aria-label="Choose a scene">
+                        <button class="scene-chip" data-scene="forest" aria-pressed="true">Forest</button>
+                        <button class="scene-chip" data-scene="falls" aria-pressed="false">Falls</button>
+                        <button class="scene-chip" data-scene="cafe" aria-pressed="false">Caf&eacute;</button>
+                        <button class="scene-chip" data-scene="fire" aria-pressed="false">Campfire</button>
+                        <button class="sound-btn" id="soundBtn" aria-pressed="false" aria-label="Play a sound sketch of this scene">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>
+                            Sound
+                        </button>
+                    </div>
+                </div>
+                <p class="sound-note">The sound button plays a rough sketch made in your browser. The app plays full, layered recordings.</p>
+            </div>
+
         </div>
     </section>
 
@@ -2330,6 +2381,23 @@
 
             stage.stopSound = () => { if (cardPlaying && cardPlaying.stage === stage) stopCardSound(); };
         });
+
+        // ---------- Hero café shot: Listen plays the café sound (one sound at a time, shared with the cards) ----------
+        (function() {
+            const btn = document.getElementById('heroListen');
+            const photo = btn && btn.closest('.hero-photo-wrap');   // the "stage" that holds the button
+            const hint = document.getElementById('heroHint');
+            if (!photo || !btn) return;
+            const audio = new Audio();
+            audio.loop = true;
+            audio.preload = 'metadata';
+            audio.addEventListener('loadedmetadata', () => { btn.hidden = false; hint.hidden = false; }, { once: true });
+            audio.src = 'screenshots/sound-cafe.m4a';   // no file = no button
+            btn.addEventListener('click', () => {
+                if (cardPlaying && cardPlaying.stage === photo) stopCardSound();
+                else startCardSound(photo, audio, true);
+            });
+        })();
 
         // ---------- Hero: switch scenes, auto-cycle until the visitor picks one ----------
         const hero = document.getElementById('heroScreen');
