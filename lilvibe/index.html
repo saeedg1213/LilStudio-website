@@ -10,12 +10,12 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilVibe turns your Mac desktop into a looping nature scene with layered ambient sound: rainy forest, cozy café, fireplace, ocean waves and a night train. Lives in the menu bar, pauses when hidden, works offline. $0.99 once.">
+    <meta name="description" content="LilVibe turns your Mac desktop into a looping nature scene with layered ambient sound: two rainy forests, a rainy-night café and a campfire under the stars. Lives in the menu bar, pauses when hidden, works offline. $0.99 once.">
     <meta property="og:title" content="LilVibe &ndash; A Living Nature Wallpaper With Sound, for Mac">
-    <meta property="og:description" content="Rain on your desktop, quiet in your head. Five scenes, layered sound, $0.99 once.">
+    <meta property="og:description" content="Rain on your desktop, quiet in your head. Four scenes, layered sound, $0.99 once.">
     <meta property="og:url" content="https://lilstudio.app/lilvibe/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://lilstudio.app/lilvibe/screenshots/desktop.png">
+    <meta property="og:image" content="https://lilstudio.app/lilvibe/screenshots/scene-forest.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1491,6 +1491,7 @@
         .v-poles    { animation: vScrollFast 1.4s linear infinite; transform-box: view-box; }
         .v-twinkle  { animation: vTwinkle 2.2s ease-in-out infinite alternate; }
         .v-bump     { animation: vBump 0.62s ease-in-out infinite; transform-box: view-box; }
+        .v-fall     { stroke-dasharray: 7 5; animation: vFall 0.5s linear infinite; }
 
         @keyframes vRain      { from { transform: translate(0, 0); } to { transform: translate(-54px, 180px); } }
         @keyframes vDrift     { from { transform: translateX(-14px); } to { transform: translateX(22px); } }
@@ -1509,6 +1510,7 @@
         @keyframes vScrollFast { from { transform: translateX(0); } to { transform: translateX(-120px); } }
         @keyframes vTwinkle   { from { opacity: 0.25; } to { opacity: 1; } }
         @keyframes vBump      { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.2px); } }
+        @keyframes vFall      { to { stroke-dashoffset: -12; } }
 
         /* Pause every cartoon that's scrolled out of view */
         .scene-host.paused .scene-svg * { animation-play-state: paused !important; }
@@ -1546,12 +1548,11 @@
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
         }
 
         .scene-card {
-            grid-column: span 2;
             background: var(--bg-elevated);
             border: var(--border-width) solid var(--border);
             box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
@@ -1559,7 +1560,6 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .scene-card:nth-child(4) { grid-column: 2 / span 2; }
         .scene-card:nth-child(odd)  { transform: rotate(-0.6deg); }
         .scene-card:nth-child(even) { transform: rotate(0.6deg); }
         .scene-card:hover { transform: translate(-4px, -4px); box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border); }
@@ -1572,14 +1572,23 @@
             background: var(--secondary);
         }
 
-        /* Real recording sits on top of the cartoon once the file exists */
-        .scene-stage video {
+        /* Still photo, with the recording fading in on top once the file exists */
+        .scene-stage img {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             z-index: 1;
+        }
+
+        .scene-stage video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
@@ -1590,7 +1599,7 @@
             position: absolute;
             left: 10px;
             bottom: 10px;
-            z-index: 2;
+            z-index: 3;
             font-family: 'Space Mono', monospace;
             font-size: 0.68rem;
             font-weight: 700;
@@ -1674,9 +1683,6 @@
 
         /* --- Responsive --- */
         @media (max-width: 980px) {
-            .scenes-grid { grid-template-columns: repeat(2, 1fr); }
-            .scene-card, .scene-card:nth-child(4) { grid-column: auto; }
-            .scene-card:nth-child(5) { grid-column: 1 / -1; max-width: 520px; margin: 0 auto; width: 100%; }
             .how-row { grid-template-columns: 1fr; max-width: 560px; }
         }
 
@@ -1757,10 +1763,9 @@
                         </div>
                         <div class="vm-foot" role="group" aria-label="Choose a scene">
                             <button class="scene-chip" data-scene="forest" aria-pressed="true">Forest</button>
+                            <button class="scene-chip" data-scene="falls" aria-pressed="false">Falls</button>
                             <button class="scene-chip" data-scene="cafe" aria-pressed="false">Caf&eacute;</button>
-                            <button class="scene-chip" data-scene="fire" aria-pressed="false">Fire</button>
-                            <button class="scene-chip" data-scene="ocean" aria-pressed="false">Ocean</button>
-                            <button class="scene-chip" data-scene="train" aria-pressed="false">Train</button>
+                            <button class="scene-chip" data-scene="fire" aria-pressed="false">Campfire</button>
                             <button class="sound-btn" id="soundBtn" aria-pressed="false" aria-label="Play a sound sketch of this scene">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>
                                 Sound
@@ -1777,7 +1782,7 @@
                         Live Wallpaper + Ambience for macOS
                     </div>
                     <h1>Rain on your desktop. <span class="highlight">Quiet in your head.</span></h1>
-                    <p class="hero-subtitle">LilVibe turns your Mac's desktop into a slow, looping nature scene and plays the sound of it underneath &mdash; a rainy forest, a busy caf&eacute;, a crackling fire. Pick one from the menu bar and get back to work.</p>
+                    <p class="hero-subtitle">LilVibe turns your Mac's desktop into a slow, looping nature scene and plays the sound of it underneath &mdash; a rainy forest, a caf&eacute; on a wet night, a campfire under the stars. Pick one from the menu bar and get back to work.</p>
                     <div class="hero-buttons">
                         <div class="hero-buttons-row">
                             <div class="download-btn-wrapper">
@@ -1801,15 +1806,15 @@
 
     <div class="ambience-strip" aria-hidden="true">
         <div class="ambience-track">
-            <span>Rain on moss &nbsp;&#9733;&nbsp; Espresso hiss &nbsp;&#9733;&nbsp; Logs settling &nbsp;&#9733;&nbsp; Waves on sand &nbsp;&#9733;&nbsp; Wheels on rails &nbsp;&#9733;&nbsp; Thunder, far off &nbsp;&#9733;&nbsp; Cups clinking &nbsp;&#9733;&nbsp; Embers popping &nbsp;&#9733;&nbsp; A gull, somewhere &nbsp;&#9733;&nbsp; A crossing bell, passing &nbsp;&#9733;&nbsp; A bird between showers &nbsp;&#9733;&nbsp;</span>
-            <span>Rain on moss &nbsp;&#9733;&nbsp; Espresso hiss &nbsp;&#9733;&nbsp; Logs settling &nbsp;&#9733;&nbsp; Waves on sand &nbsp;&#9733;&nbsp; Wheels on rails &nbsp;&#9733;&nbsp; Thunder, far off &nbsp;&#9733;&nbsp; Cups clinking &nbsp;&#9733;&nbsp; Embers popping &nbsp;&#9733;&nbsp; A gull, somewhere &nbsp;&#9733;&nbsp; A crossing bell, passing &nbsp;&#9733;&nbsp; A bird between showers &nbsp;&#9733;&nbsp;</span>
+            <span>Rain on moss &nbsp;&#9733;&nbsp; Espresso hiss &nbsp;&#9733;&nbsp; Logs settling &nbsp;&#9733;&nbsp; A waterfall, far off &nbsp;&#9733;&nbsp; Thunder over the lake &nbsp;&#9733;&nbsp; Cups clinking &nbsp;&#9733;&nbsp; Embers popping &nbsp;&#9733;&nbsp; Wind in the pines &nbsp;&#9733;&nbsp; The grinder, then quiet &nbsp;&#9733;&nbsp; A bird between showers &nbsp;&#9733;&nbsp;</span>
+            <span>Rain on moss &nbsp;&#9733;&nbsp; Espresso hiss &nbsp;&#9733;&nbsp; Logs settling &nbsp;&#9733;&nbsp; A waterfall, far off &nbsp;&#9733;&nbsp; Thunder over the lake &nbsp;&#9733;&nbsp; Cups clinking &nbsp;&#9733;&nbsp; Embers popping &nbsp;&#9733;&nbsp; Wind in the pines &nbsp;&#9733;&nbsp; The grinder, then quiet &nbsp;&#9733;&nbsp; A bird between showers &nbsp;&#9733;&nbsp;</span>
         </div>
     </div>
 
     <section class="stats-bar">
         <div class="stats-grid">
             <div class="stat-item">
-                <h3>5</h3>
+                <h3>4</h3>
                 <p>Scenes</p>
             </div>
             <div class="stat-item">
@@ -1829,54 +1834,49 @@
 
     <section class="scenes" id="scenes">
         <div class="section-header fade-in">
-            <h2>Five Scenes</h2>
+            <h2>Four Scenes</h2>
             <p>Each one is a picture and a room's worth of sound. You pick the name; LilVibe handles the mix.</p>
         </div>
         <div class="scenes-grid">
             <article class="scene-card fade-in stagger-1">
                 <div class="scene-stage scene-host" data-scene="forest">
+                    <img src="screenshots/scene-forest.jpg" alt="Mossy trees framing a rain-rippled pool, a forested valley and a lake under breaking clouds" loading="lazy">
                     <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-forest.mp4" type="video/mp4"></video>
                     <span class="scene-tag">The default</span>
                 </div>
                 <div class="scene-body">
                     <h3>Rainy Forest</h3>
-                    <p>Rain on leaves and a lake, wind through the pines, a bird between showers and thunder a long way off.</p>
+                    <p>Rain on the ferns and the lake below, wind through the pines, a bird between showers and thunder a long way off.</p>
                 </div>
             </article>
             <article class="scene-card fade-in stagger-2">
-                <div class="scene-stage scene-host" data-scene="cafe">
-                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-cafe.mp4" type="video/mp4"></video>
+                <div class="scene-stage scene-host" data-scene="falls">
+                    <img src="screenshots/scene-falls.jpg" alt="A rain-dimpled pool in a mossy forest clearing, with a waterfall in the misty hills behind" loading="lazy">
+                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-falls.mp4" type="video/mp4"></video>
                 </div>
                 <div class="scene-body">
-                    <h3>Cozy Caf&eacute;</h3>
-                    <p>A room full of murmur with no words you can follow, plus the espresso machine, the grinder and a cup set down now and then.</p>
-                </div>
-            </article>
-            <article class="scene-card fade-in stagger-3">
-                <div class="scene-stage scene-host" data-scene="fire">
-                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-fire.mp4" type="video/mp4"></video>
-                </div>
-                <div class="scene-body">
-                    <h3>Fireplace</h3>
-                    <p>A steady crackle over a low roar, with the odd pop and a log shifting as it burns down.</p>
+                    <h3>Forest Falls</h3>
+                    <p>The same soft rain, closer in: a mossy clearing, a puddle full of rings, and a waterfall somewhere in the mist.</p>
                 </div>
             </article>
             <article class="scene-card fade-in stagger-1">
-                <div class="scene-stage scene-host" data-scene="ocean">
-                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-ocean.mp4" type="video/mp4"></video>
+                <div class="scene-stage scene-host" data-scene="cafe">
+                    <img src="screenshots/scene-cafe.jpg" alt="A steaming cup on a wooden café table by a rain-streaked window, city lights blurred outside" loading="lazy">
+                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-cafe.mp4" type="video/mp4"></video>
                 </div>
                 <div class="scene-body">
-                    <h3>Ocean Waves</h3>
-                    <p>Waves rolling in on a sea breeze, one bigger set every so often, and gulls somewhere down the beach.</p>
+                    <h3>Rainy Caf&eacute;</h3>
+                    <p>A window seat on a wet night. A room full of murmur with no words you can follow, plus the espresso machine, the grinder and a cup set down now and then.</p>
                 </div>
             </article>
             <article class="scene-card fade-in stagger-2">
-                <div class="scene-stage scene-host" data-scene="train">
-                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-train.mp4" type="video/mp4"></video>
+                <div class="scene-stage scene-host" data-scene="fire">
+                    <img src="screenshots/scene-fire.jpg" alt="A campfire between two camping chairs on a pebble beach, the Milky Way over a calm sea" loading="lazy">
+                    <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-fire.mp4" type="video/mp4"></video>
                 </div>
                 <div class="scene-body">
-                    <h3>Night Train</h3>
-                    <p>The hum of the cabin and wheels on the rails, a creak in the carriage, a crossing bell and another train going by.</p>
+                    <h3>Campfire Night</h3>
+                    <p>Two chairs, a calm sea and the Milky Way. A steady crackle over a low roar, the odd pop, and a log shifting as it burns down.</p>
                 </div>
             </article>
         </div>
@@ -1942,7 +1942,7 @@
                 <div class="step-number">1</div>
                 <h3>Pick a scene</h3>
                 <p>Click the LilVibe icon in the menu bar and choose a scene. It fades in over your desktop with its sound.</p>
-                <img src="screenshots/menu.png" alt="The LilVibe menu open in the macOS menu bar, listing the five scenes" loading="lazy" onerror="this.remove()">
+                <img src="screenshots/menu.png" alt="The LilVibe menu open in the macOS menu bar, listing the scenes" loading="lazy" onerror="this.remove()">
             </div>
             <div class="how-card fade-in stagger-2">
                 <div class="step-number">2</div>
@@ -1971,7 +1971,7 @@
             <ul class="pricing-features">
                 <li>
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    All five scenes, nothing locked
+                    All four scenes, nothing locked
                 </li>
                 <li>
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2010,7 +2010,7 @@
             </div>
             <div class="faq-item fade-in stagger-3">
                 <h3>Do I need an internet connection?</h3>
-                <p>No. All five scenes and their sounds are inside the app. Nothing is streamed or downloaded after you install it.</p>
+                <p>No. All four scenes and their sounds are inside the app. Nothing is streamed or downloaded after you install it.</p>
             </div>
             <div class="faq-item fade-in stagger-4">
                 <h3>What happens to my own wallpaper?</h3>
@@ -2112,12 +2112,13 @@
                 <g class="v-sway b"><path d="M226 180 C226 162 238 152 250 150 M226 180 C224 164 214 156 204 154" fill="none" stroke="#2F9E5B" stroke-width="5" stroke-linecap="round"/></g>
                 ${rain('#3E6E8E', 46, 7)}` },
 
-            cafe: { name: 'Cozy Café', svg: (id) => `
+            cafe: { name: 'Rainy Café', svg: (id) => `
                 <defs><clipPath id="${id}w"><rect x="22" y="22" width="110" height="82"/></clipPath></defs>
-                <rect width="320" height="180" fill="#F4B98A"/>
-                <rect x="-5" y="112" width="330" height="80" fill="#C9784F" ${S}/>
-                <rect x="22" y="22" width="110" height="82" fill="#9AC7E0" ${S}/>
-                <path d="M22 80 Q50 66 80 78 T132 72 V104 H22Z" fill="#7FA7C9" clip-path="url(#${id}w)"/>
+                <rect width="320" height="180" fill="#B8714E"/>
+                <rect x="-5" y="112" width="330" height="80" fill="#7A4B2A" ${S}/>
+                <rect x="22" y="22" width="110" height="82" fill="#1E2A55" ${S}/>
+                <path d="M22 104 V60 H40 V44 H58 V66 H76 V38 H96 V58 H112 V48 H132 V104Z" fill="#2E3F75" clip-path="url(#${id}w)"/>
+                <g clip-path="url(#${id}w)"><circle class="v-twinkle" cx="46" cy="86" r="3" fill="#FFE135"/><circle class="v-twinkle" style="animation-delay:-1s" cx="92" cy="80" r="3" fill="#FF6B6B"/><circle class="v-twinkle" style="animation-delay:-.5s" cx="118" cy="90" r="2.5" fill="#FFE135"/><circle cx="64" cy="94" r="2.5" fill="#FF6B6B"/></g>
                 ${rain('#fff', 26, 3, id + 'w')}
                 <path d="M77 22 V104 M22 63 H132" stroke="${INK}" stroke-width="3"/>
                 <rect x="22" y="22" width="110" height="82" fill="none" ${S}/>
@@ -2136,59 +2137,51 @@
                     <path class="v-steam" style="animation-delay:-1s" d="M194 80 c-6 -8 6 -12 0 -22"/>
                     <path class="v-steam" style="animation-delay:-2s" d="M206 80 c-6 -8 6 -12 0 -22"/></g>` },
 
-            fire: { name: 'Fireplace', svg: (id) => `
-                <rect width="320" height="180" fill="#6B3F33"/>
-                <g stroke="#55302A" stroke-width="2">${Array.from({length: 6}, (_, r) => `<line x1="0" y1="${r * 22 + 10}" x2="320" y2="${r * 22 + 10}"/>`).join('')}</g>
-                <rect x="-5" y="150" width="330" height="40" fill="#8A5236" ${S}/>
-                <rect x="60" y="22" width="200" height="16" fill="#C9784F" ${S}/>
-                <rect x="78" y="38" width="164" height="114" fill="#D98A5F" ${S}/>
-                <rect x="98" y="56" width="124" height="96" fill="#2A1712" ${S}/>
-                <ellipse class="v-glow" cx="160" cy="150" rx="90" ry="14" fill="#FF9466"/>
-                <g class="v-flame"><path d="M122 140 C116 112 136 104 140 82 C150 98 156 84 160 66 C170 90 188 98 182 116 C190 108 196 120 198 140Z" fill="#FF7A3D" ${S}/></g>
-                <g class="v-flame b"><path d="M136 140 C132 120 146 112 150 98 C158 110 166 102 168 92 C176 110 186 118 182 140Z" fill="#FFB020" ${S}/></g>
-                <g class="v-flame c"><path d="M148 140 C146 128 154 122 158 112 C164 122 172 126 170 140Z" fill="#FFE135" ${S}/></g>
-                <rect x="112" y="136" width="96" height="12" rx="6" fill="#8A5A3C" ${S} transform="rotate(-6 160 142)"/>
-                <rect x="114" y="138" width="92" height="12" rx="6" fill="#7A4B2A" ${S} transform="rotate(7 160 144)"/>
-                <g fill="#FFE135">
-                    <circle class="v-spark" cx="150" cy="100" r="2"/>
-                    <circle class="v-spark" style="animation-delay:-.6s" cx="170" cy="96" r="1.8"/>
-                    <circle class="v-spark" style="animation-delay:-1.2s" cx="160" cy="104" r="1.6"/></g>
-                <rect x="232" y="6" width="12" height="16" fill="#FBF1DC" ${S}/><path class="v-flame c" d="M238 0 c-4 -6 0 -10 0 -12 c2 4 4 6 0 12z" fill="#FFB020" transform="translate(0 6)"/>` },
+            falls: { name: 'Forest Falls', svg: (id) => `
+                <rect width="320" height="180" fill="#DDF0E6"/>
+                <circle cx="252" cy="26" r="14" fill="#FFE135" ${S}/>
+                <path d="M70 110 L110 30 L150 24 L190 30 L230 110Z" fill="#6E8F84" ${S}/>
+                <g class="v-drift slow"><path d="M112 52a12 12 0 0 1 22-6a10 10 0 0 1 19 6z" fill="#fff" ${S}/></g>
+                <rect x="143" y="40" width="14" height="72" fill="#BFE7F2" ${S}/>
+                <g stroke="#fff" stroke-width="3" stroke-linecap="round"><line class="v-fall" x1="147" y1="42" x2="147" y2="110"/><line class="v-fall" style="animation-delay:-.2s" x1="153" y1="42" x2="153" y2="110"/></g>
+                <path d="M-5 104 H325 V185 H-5Z" fill="#7DC96A" ${S}/>
+                ${pine(96, 112, 58, '#3FAE6A', 'b')}${pine(204, 112, 62, '#3FAE6A')}
+                <g class="v-sway"><rect x="24" y="30" width="22" height="118" fill="#7A4B2A" ${S}/><path d="M24 70 q-8 10 -2 26 M46 60 q8 12 2 30" fill="none" stroke="#3FAE6A" stroke-width="5" stroke-linecap="round"/></g>
+                <path d="M-5 20 Q40 -6 90 14 Q60 34 20 34Z" fill="#5FBF5A" ${S}/>
+                ${pine(292, 150, 120, '#2F9E5B', 'b')}
+                <ellipse cx="160" cy="152" rx="56" ry="12" fill="#8ED3E6" ${S}/>
+                <ellipse class="v-ripple" cx="140" cy="152" rx="20" ry="4.5" fill="none" stroke="${INK}" stroke-width="1.8"/>
+                <ellipse class="v-ripple" style="animation-delay:-.6s" cx="178" cy="154" rx="16" ry="3.5" fill="none" stroke="${INK}" stroke-width="1.8"/>
+                <ellipse class="v-ripple" style="animation-delay:-1.2s" cx="160" cy="149" rx="12" ry="3" fill="none" stroke="${INK}" stroke-width="1.8"/>
+                <ellipse cx="226" cy="158" rx="16" ry="10" fill="#5B7A5A" ${S}/>
+                <g class="v-sway b"><path d="M70 182 C70 162 58 152 44 148 M70 182 C72 164 86 156 98 154" fill="none" stroke="#2F9E5B" stroke-width="5" stroke-linecap="round"/></g>
+                ${rain('#3E6E8E', 40, 5)}` },
 
-            ocean: { name: 'Ocean Waves', svg: (id) => `
-                <rect width="320" height="180" fill="#FFD7A3"/>
-                <circle cx="236" cy="74" r="28" fill="#FF9466" ${S}/>
-                <g class="v-drift slow"><path d="M40 40a12 12 0 0 1 22-6a10 10 0 0 1 19 6z" fill="#fff" ${S}/></g>
-                <g class="v-gull"><g class="v-flap"><path d="M40 40 q6 -7 12 0 q6 -7 12 0" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/></g></g>
-                <g class="v-wave c">${wavePath(96, 6, '#3E9CC4')}</g>
-                <g class="v-wave b">${wavePath(114, 8, '#5BB8DA')}</g>
-                <g class="v-wave">${wavePath(132, 10, '#7BD3EA')}</g>
-                <g class="v-foam"><path d="M-5 150 Q40 140 80 150 T160 150 T240 150 T330 150 V185 H-5Z" fill="#F6D9A0" ${S}/></g>
-                <path d="M60 168 l4 -4 l4 4 M250 164 l4 -4 l4 4" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` },
-
-            train: { name: 'Night Train', svg: (id) => {
+            fire: { name: 'Campfire Night', svg: (id) => {
                 const r = rng(11); let stars = '';
-                for (let i = 0; i < 16; i++) stars += `<circle class="v-twinkle" style="animation-delay:-${(r() * 2).toFixed(2)}s" cx="${40 + r() * 240}" cy="${34 + r() * 50}" r="${1 + r() * 1.3}" fill="#FFF3B0"/>`;
-                let hills = 'M0 112';
-                for (let x = 0; x < 640; x += 80) hills += ` q40 -${22 + (x % 160 ? 10 : 0)} 80 0`;
-                let poles = '';
-                for (let x = 0; x < 480; x += 120) poles += `<rect x="${x + 30}" y="60" width="6" height="80" fill="${INK}"/><circle cx="${x + 90}" cy="118" r="2.5" fill="#FFE135"/>`;
+                for (let i = 0; i < 26; i++) stars += `<circle class="v-twinkle" style="animation-delay:-${(r() * 2).toFixed(2)}s" cx="${r() * 320}" cy="${r() * 96}" r="${0.8 + r() * 1.3}" fill="#FFF3B0"/>`;
                 return `
-                <defs><clipPath id="${id}w"><rect x="34" y="26" width="252" height="104" rx="14"/></clipPath></defs>
-                <rect width="320" height="180" fill="#2B2F5A"/>
-                <g class="v-bump">
-                    <g clip-path="url(#${id}w)">
-                        <rect x="34" y="26" width="252" height="104" fill="#16204A"/>
-                        ${stars}
-                        <circle cx="238" cy="52" r="14" fill="#FFF3B0" ${S}/><circle cx="244" cy="47" r="12" fill="#16204A"/>
-                        <g class="v-hills"><path d="${hills} V140 H0Z" fill="#23407A" ${S}/></g>
-                        <g class="v-poles">${poles}</g>
-                    </g>
-                    <rect x="34" y="26" width="252" height="104" rx="14" fill="none" stroke="${INK}" stroke-width="5"/>
-                    <rect x="-5" y="142" width="330" height="10" fill="#8A5A3C" ${S}/>
-                    <rect x="-5" y="152" width="330" height="34" fill="#FF9466" ${S}/>
-                    <path d="M140 142 v-12 h18 v12" fill="#FBF1DC" ${S}/>
-                    <path d="M144 124 c-3 -5 3 -7 0 -12" fill="none" stroke="#FBF1DC" stroke-width="2" class="v-steam"/>
+                <rect width="320" height="180" fill="#16204A"/>
+                <path d="M110 -10 C170 30 230 50 330 70 L330 40 C240 24 180 4 150 -10Z" fill="#2E3F75" opacity="0.8"/>
+                ${stars}
+                <path d="M-5 104 V56 C20 50 40 60 60 70 C80 78 96 92 110 104Z" fill="#101838" ${S}/>
+                <rect x="-5" y="102" width="330" height="30" fill="#23407A" ${S}/>
+                <g fill="#FFB020"><circle cx="160" cy="104" r="1.8"/><circle cx="210" cy="104" r="1.8"/><circle cx="262" cy="104" r="1.8"/></g>
+                <path d="M-5 124 C60 118 120 120 180 126 C240 132 290 124 325 122 V185 H-5Z" fill="#8A7A6A" ${S}/>
+                <g fill="#A99784" stroke="${INK}" stroke-width="1.5"><ellipse cx="40" cy="160" rx="7" ry="4"/><ellipse cx="96" cy="170" rx="6" ry="3.5"/><ellipse cx="236" cy="166" rx="7" ry="4"/><ellipse cx="290" cy="150" rx="6" ry="3.5"/><ellipse cx="70" cy="140" rx="5" ry="3"/></g>
+                <rect x="14" y="94" width="44" height="22" rx="4" fill="#E8DCC0" ${S}/>
+                <rect x="20" y="99" width="12" height="7" fill="#FFE135" stroke="${INK}" stroke-width="2"/><rect x="36" y="99" width="12" height="7" fill="#FFE135" stroke="${INK}" stroke-width="2"/>
+                <circle cx="24" cy="117" r="4" fill="${INK}"/><circle cx="48" cy="117" r="4" fill="${INK}"/>
+                <g fill="#FFE135"><circle class="v-twinkle" cx="62" cy="96" r="1.6"/><circle class="v-twinkle" style="animation-delay:-.7s" cx="70" cy="98" r="1.6"/><circle class="v-twinkle" style="animation-delay:-1.4s" cx="78" cy="100" r="1.6"/></g>
+                <ellipse class="v-glow" cx="160" cy="152" rx="70" ry="16" fill="#FF9466"/>
+                <g class="v-flame"><path d="M140 150 C136 130 150 124 152 110 C158 122 162 114 164 102 C170 118 182 124 178 138 C184 134 186 142 184 150Z" fill="#FF7A3D" ${S}/></g>
+                <g class="v-flame b"><path d="M148 150 C146 136 156 130 158 120 C162 130 170 132 170 150Z" fill="#FFB020" ${S}/></g>
+                <g class="v-flame c"><path d="M154 150 C154 142 158 138 160 132 C164 140 166 144 164 150Z" fill="#FFE135" ${S}/></g>
+                <g fill="#8A7A6A" stroke="${INK}" stroke-width="2"><ellipse cx="136" cy="152" rx="8" ry="5"/><ellipse cx="184" cy="152" rx="8" ry="5"/><ellipse cx="160" cy="156" rx="10" ry="5"/></g>
+                <g fill="#FFE135"><circle class="v-spark" cx="156" cy="112" r="1.8"/><circle class="v-spark" style="animation-delay:-.7s" cx="166" cy="108" r="1.6"/><circle class="v-spark" style="animation-delay:-1.3s" cx="160" cy="116" r="1.5"/></g>
+                <g fill="none" stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+                    <path d="M88 130 h26 v16 h-26z" fill="#2B2F5A"/><path d="M90 146 l20 20 M110 146 l-20 20 M84 136 h4 M114 136 h4"/>
+                    <path d="M206 130 h26 v16 h-26z" fill="#2B2F5A"/><path d="M208 146 l20 20 M228 146 l-20 20 M202 136 h4 M232 136 h4"/>
                 </g>`; } }
         };
 
@@ -2217,9 +2210,11 @@
             });
         }, { threshold: 0.05 });
 
-        // ---------- Scene cards: cartoon now, real recording when the file exists ----------
+        // ---------- Scene cards: photo, recording on top when it exists, cartoon if the photo is missing ----------
         document.querySelectorAll('.scene-stage').forEach(stage => {
-            renderScene(stage, stage.dataset.scene);
+            const photo = stage.querySelector('img');
+            if (!photo) renderScene(stage, stage.dataset.scene);
+            else photo.addEventListener('error', () => { photo.remove(); renderScene(stage, stage.dataset.scene); }, { once: true });
             const v = stage.querySelector('video');
             if (v) {
                 v.querySelector('source').addEventListener('error', () => v.remove());
@@ -2332,23 +2327,16 @@
                 this.bus.gain.setTargetAtTime(1, t, 0.35);
                 this.bus.connect(this.master);
 
-                if (key === 'forest') {
+                if (key === 'forest' || key === 'falls') {
                     this.bed('highpass', 900, 0.22); this.bed('lowpass', 400, 0.35);
                     this.every(2500, 7000, () => { this.blip({ freq: 3200, to: 4200, dur: 0.09, gain: 0.05 }); setTimeout(() => this.blip({ freq: 3600, to: 2900, dur: 0.12, gain: 0.05 }), 130); });
+                    if (key === 'falls') this.bed('bandpass', 1400, 0.3, 0.5);
                 } else if (key === 'cafe') {
-                    this.bed('bandpass', 500, 0.9, 0.8); this.bed('lowpass', 200, 0.25);
+                    this.bed('bandpass', 500, 0.9, 0.8); this.bed('lowpass', 200, 0.25); this.bed('highpass', 2500, 0.06);
                     this.every(3000, 9000, () => this.blip({ freq: 2400, to: 2350, dur: 0.35, gain: 0.04, type: 'triangle' }));
                 } else if (key === 'fire') {
                     this.bed('lowpass', 250, 0.7);
                     this.every(60, 420, () => this.blip({ noise: true, band: 1800 + Math.random() * 2500, dur: 0.02 + Math.random() * 0.03, gain: 0.35 }));
-                } else if (key === 'ocean') {
-                    const g = this.bed('lowpass', 650, 0.5);
-                    const lfo = this.ctx.createOscillator(); lfo.frequency.value = 0.09;
-                    const depth = this.ctx.createGain(); depth.gain.value = 0.4;
-                    lfo.connect(depth).connect(g.gain); lfo.start();
-                } else if (key === 'train') {
-                    this.bed('lowpass', 160, 1.1); this.bed('bandpass', 900, 0.08, 1.5);
-                    this.every(1100, 1300, () => { this.blip({ freq: 90, to: 50, dur: 0.12, gain: 0.35 }); setTimeout(() => this.blip({ freq: 90, to: 50, dur: 0.12, gain: 0.3 }), 170); });
                 }
             },
 
