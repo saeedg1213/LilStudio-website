@@ -1323,12 +1323,25 @@
             align-items: center;
         }
 
-        .hero-photo { position: relative; width: 100%; }
+        .hero-photo {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 10px 10px 0 var(--border);
+            background: var(--bg-elevated);
+            transform: rotate(-1.5deg);
+            transition: transform 0.3s ease;
+        }
 
-        .hero-photo img {
+        .hero-photo:hover { transform: rotate(-0.5deg) translate(-3px, -3px); }
+
+        .hero-photo video {
             display: block;
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: cover;
         }
 
         .scene-sound.hero-listen { top: 14px; right: 14px; font-size: 0.78rem; padding: 0.45rem 0.7rem; }
@@ -1758,6 +1771,7 @@
         @media (max-width: 600px) {
             .vibe-mac { transform: rotate(0); box-shadow: 6px 6px 0 var(--border); }
             .scene-sound.hero-listen { top: 8px; right: 8px; font-size: 0.68rem; padding: 0.35rem 0.55rem; }
+            .hero-photo { transform: rotate(0); box-shadow: 6px 6px 0 var(--border); }
             .vm-bar .vm-clock { display: none; }
             .vm-foot { gap: 0.4rem; }
             .sound-btn { margin-left: 0; }
@@ -1839,7 +1853,9 @@
 
                 <div class="hero-photo-wrap">
                     <div class="hero-photo" id="heroPhoto">
-                        <img src="screenshots/cafe.png" alt="LilVibe's Rainy Café scene playing on a MacBook desktop">
+                        <video id="heroVideo" src="screenshots/scene-cafe.mp4" poster="screenshots/scene-cafe.jpg"
+                               autoplay muted loop playsinline preload="auto"
+                               aria-label="LilVibe's Rainy Café scene playing as the Mac desktop"></video>
                         <button class="scene-sound hero-listen" id="heroListen" aria-pressed="false" aria-label="Play the sound of the Rainy Café" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
                     </div>
                     <p class="shot-hint" id="heroHint" hidden>Turn the sound on for the full effect</p>
@@ -2384,6 +2400,8 @@
 
         // ---------- Hero café shot: Listen plays the café sound (one sound at a time, shared with the cards) ----------
         (function() {
+            const video = document.getElementById('heroVideo');
+            if (video && reduceMotion) { video.removeAttribute('autoplay'); video.pause(); }
             const btn = document.getElementById('heroListen');
             const photo = btn && btn.closest('.hero-photo-wrap');   // the "stage" that holds the button
             const hint = document.getElementById('heroHint');
