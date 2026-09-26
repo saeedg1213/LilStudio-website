@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage and LilHide.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror and LilVibe.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -46,6 +46,8 @@
             --mirror: #F7DC3C;
             --mirror-alt: #5BE49B;
             --hide-alt: #4EE39B;
+            --vibe: #FF9466;
+            --vibe-alt: #7BD3EA;
         }
 
         [data-theme="light"] {
@@ -446,6 +448,7 @@
         .cell.app.usage { background: var(--usage); }
         .cell.app.hide { background: var(--hide); }
         .cell.app.mirror { background: var(--mirror); }
+        .cell.app.vibe { background: var(--vibe); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -586,6 +589,7 @@
         .app-stage.usage { background: var(--usage); }
         .app-stage.hide { background: var(--hide); }
         .app-stage.mirror { background: var(--mirror); }
+        .app-stage.vibe { background: var(--vibe-alt); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -612,6 +616,7 @@
         .app-dot.usage { background: var(--usage); }
         .app-dot.hide { background: var(--hide); }
         .app-dot.mirror { background: var(--mirror); }
+        .app-dot.vibe { background: var(--vibe); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -664,6 +669,7 @@
         .btn-app.usage { background: var(--usage); }
         .btn-app.hide { background: var(--hide); }
         .btn-app.mirror { background: var(--mirror); }
+        .btn-app.vibe { background: var(--vibe); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1178,9 +1184,50 @@
             100%      { opacity: 1; transform: scale(1); }
         }
 
+        /* ---- LilVibe ---- */
+        .lv {
+            position: relative;
+            width: 230px;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg);
+            box-shadow: 5px 5px 0 var(--border);
+            transform: rotate(-2deg);
+        }
+
+        .lv-bar {
+            height: 16px;
+            border-bottom: var(--border-width) solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 6px;
+        }
+
+        .lv-bar i { width: 26px; height: 7px; background: var(--vibe); border: 2px solid var(--border); }
+
+        .lv-scene { display: block; width: 100%; height: auto; }
+
+        .lv-rain   { animation: lvRain 0.75s linear infinite; }
+        .lv-sway   { transform-box: fill-box; transform-origin: 50% 100%; animation: lvSway 3s ease-in-out infinite alternate; }
+        .lv-steam  { animation: lvSteam 2.6s ease-in-out infinite; }
+        .lv-steam.b { animation-delay: -1.3s; }
+
+        @keyframes lvRain  { from { transform: translate(0, 0); } to { transform: translate(-30px, 100px); } }
+        @keyframes lvSway  { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+        @keyframes lvSteam { 0% { transform: translateY(6px); opacity: 0; } 35% { opacity: 1; } 100% { transform: translateY(-12px); opacity: 0; } }
+
+        .lv-mug {
+            position: absolute;
+            right: -26px;
+            bottom: -18px;
+            width: 74px;
+            filter: drop-shadow(4px 4px 0 var(--border));
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .lh i { animation: none; }
             .lm-glass::after, .lm-face i, .lm-spark { animation: none; }
+            .lv-rain, .lv-sway, .lv-steam { animation: none; }
         }
 
     </style>
@@ -1240,7 +1287,10 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M4 10v4h9v-4z" fill="currentColor" stroke="none"/></svg>
                         LilUsage
                     </a>
-                    <div class="cell muted"></div>
+                    <a class="cell app vibe" href="/lilvibe/" aria-label="LilVibe">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 11h12v5a4 4 0 01-4 4H8a4 4 0 01-4-4z"/><path d="M16 12h1.5a2.5 2.5 0 010 5H16"/><path d="M8 3c-1 1.5 1 2.5 0 4M12 3c-1 1.5 1 2.5 0 4"/></svg>
+                        LilVibe
+                    </a>
                     <a class="cell app hide" href="/lilhide/" aria-label="LilHide">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="7" width="4" height="4"/><rect x="7" y="13" width="4" height="4"/></svg>
                         LilHide
@@ -1265,7 +1315,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Four right now. Each one solves a single annoyance properly.</p>
+            <p>Five right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1403,6 +1453,53 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-1">
+                <div class="app-stage vibe" aria-hidden="true">
+                    <div class="lv">
+                        <div class="lv-bar"><i></i></div>
+                        <svg class="lv-scene" viewBox="0 0 180 100">
+                            <defs><clipPath id="lvClip"><rect width="180" height="100"/></clipPath></defs>
+                            <rect width="180" height="100" fill="#CDEBF2"/>
+                            <path d="M-4 62 L34 30 L58 50 L90 22 L124 58 L150 40 L184 62 V74 H-4Z" fill="#8FB4D6" stroke="#17150F" stroke-width="2.5" stroke-linejoin="round"/>
+                            <rect x="-4" y="58" width="188" height="14" fill="#6FC3D9" stroke="#17150F" stroke-width="2.5"/>
+                            <path d="M-4 70 H184 V104 H-4Z" fill="#6DBE6A" stroke="#17150F" stroke-width="2.5"/>
+                            <g class="lv-sway"><path d="M22 86 L38 26 L54 86Z" fill="#2F9E5B" stroke="#17150F" stroke-width="2.5" stroke-linejoin="round"/></g>
+                            <g class="lv-sway" style="animation-delay:-1s"><path d="M140 84 L154 34 L168 84Z" fill="#3FAE6A" stroke="#17150F" stroke-width="2.5" stroke-linejoin="round"/></g>
+                            <ellipse cx="92" cy="88" rx="26" ry="5" fill="#8ED3E6" stroke="#17150F" stroke-width="2.5"/>
+                            <g clip-path="url(#lvClip)"><g class="lv-rain" stroke="#3E6E8E" stroke-width="1.6" stroke-linecap="round" opacity="0.7">
+                                <path d="M20 6l-2 7M52 18l-2 7M84 4l-2 7M116 22l-2 7M148 10l-2 7M176 28l-2 7M36 40l-2 7M68 54l-2 7M100 38l-2 7M132 60l-2 7M164 48l-2 7M12 70l-2 7M60 84l-2 7M124 86l-2 7M172 90l-2 7"/>
+                                <path d="M50 -94l-2 7M82 -82l-2 7M114 -96l-2 7M146 -78l-2 7M178 -90l-2 7M206 -72l-2 7M66 -60l-2 7M98 -46l-2 7M130 -62l-2 7M162 -40l-2 7M194 -52l-2 7M42 -30l-2 7M90 -16l-2 7M154 -14l-2 7M202 -10l-2 7"/>
+                            </g></g>
+                        </svg>
+                        <svg class="lv-mug" viewBox="0 0 64 70">
+                            <g fill="none" stroke="#17150F" stroke-width="2.5" stroke-linecap="round">
+                                <path class="lv-steam" d="M20 20c-4 -6 4 -9 0 -16"/>
+                                <path class="lv-steam b" d="M32 20c-4 -6 4 -9 0 -16"/>
+                            </g>
+                            <path d="M8 28h40v22a12 12 0 0 1-12 12h-16a12 12 0 0 1-12-12z" fill="#FBF1DC" stroke="#17150F" stroke-width="3" stroke-linejoin="round"/>
+                            <path d="M48 34h4a7 7 0 0 1 0 14h-4" fill="none" stroke="#17150F" stroke-width="3"/>
+                            <path d="M20 36l8 16l8-16" fill="none" stroke="#FF9466" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot vibe"></span>
+                        <h3>LilVibe</h3>
+                    </div>
+                    <div class="app-kicker">macOS menu bar</div>
+                    <p>Turns your desktop into a slow, looping nature scene with the sound of it underneath &mdash; rainy forest, caf&eacute;, fireplace, ocean or night train. Pauses itself whenever you can't see it.</p>
+                    <div class="chips">
+                        <span class="chip">5 scenes</span>
+                        <span class="chip">Layered sound</span>
+                        <span class="chip">Works offline</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilvibe/" class="btn btn-app vibe">Open LilVibe &rarr;</a>
+                        <span class="app-price">$0.99 once &middot; macOS 14+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1464,7 +1561,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
