@@ -1611,6 +1611,35 @@
             transform: rotate(-2deg);
         }
 
+        .scene-sound {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid var(--ink);
+            background: var(--yellow);
+            color: #000;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 var(--ink);
+            transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+        }
+
+        .scene-sound:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+        .scene-sound:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+        .scene-sound svg { width: 14px; height: 14px; }
+        .scene-sound .waves { display: none; }
+        .scene-sound[aria-pressed="true"], .scene-sound.previewing { background: var(--secondary); }
+        .scene-sound[aria-pressed="true"] .waves, .scene-sound.previewing .waves { display: inline; }
+        .scene-sound[aria-pressed="true"] .mute, .scene-sound.previewing .mute { display: none; }
+
         .scene-body { padding: 1.25rem 1.4rem 1.4rem; }
         .scene-body h3 { font-size: 1.15rem; margin-bottom: 0.35rem; }
         .scene-body p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.55; }
@@ -1842,6 +1871,7 @@
                 <div class="scene-stage scene-host" data-scene="forest">
                     <img src="screenshots/scene-forest.jpg" alt="Mossy trees framing a rain-rippled pool, a forested valley and a lake under breaking clouds" loading="lazy">
                     <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-forest.mp4" type="video/mp4"></video>
+                    <button class="scene-sound" aria-pressed="false" aria-label="Play the sound of Rainy Forest" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
                     <span class="scene-tag">The default</span>
                 </div>
                 <div class="scene-body">
@@ -1853,6 +1883,7 @@
                 <div class="scene-stage scene-host" data-scene="falls">
                     <img src="screenshots/scene-falls.jpg" alt="A rain-dimpled pool in a mossy forest clearing, with a waterfall in the misty hills behind" loading="lazy">
                     <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-falls.mp4" type="video/mp4"></video>
+                    <button class="scene-sound" aria-pressed="false" aria-label="Play the sound of Forest Falls" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
                 </div>
                 <div class="scene-body">
                     <h3>Forest Falls</h3>
@@ -1863,6 +1894,7 @@
                 <div class="scene-stage scene-host" data-scene="cafe">
                     <img src="screenshots/scene-cafe.jpg" alt="A steaming cup on a wooden café table by a rain-streaked window, city lights blurred outside" loading="lazy">
                     <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-cafe.mp4" type="video/mp4"></video>
+                    <button class="scene-sound" aria-pressed="false" aria-label="Play the sound of Rainy Café" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
                 </div>
                 <div class="scene-body">
                     <h3>Rainy Caf&eacute;</h3>
@@ -1873,6 +1905,7 @@
                 <div class="scene-stage scene-host" data-scene="fire">
                     <img src="screenshots/scene-fire.jpg" alt="A campfire between two camping chairs on a pebble beach, the Milky Way over a calm sea" loading="lazy">
                     <video muted loop playsinline preload="none" aria-hidden="true"><source src="screenshots/scene-fire.mp4" type="video/mp4"></video>
+                    <button class="scene-sound" aria-pressed="false" aria-label="Play the sound of Campfire Night" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z" fill="currentColor"/><g class="mute"><path d="M22 9l-6 6M16 9l6 6"/></g><g class="waves"><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></g></svg>Listen</button>
                 </div>
                 <div class="scene-body">
                     <h3>Campfire Night</h3>
@@ -2203,6 +2236,7 @@
         // Pause cartoons + videos that are off screen, same idea as the app itself.
         const visibility = new IntersectionObserver((entries) => {
             entries.forEach(({ target, isIntersecting }) => {
+                if (!isIntersecting && target.stopSound) target.stopSound();
                 target.classList.toggle('paused', !isIntersecting);
                 const v = target.querySelector('video');
                 if (!v || !v.classList.contains('ready')) return;
@@ -2226,6 +2260,75 @@
                 v.load();
             }
             visibility.observe(stage);
+        });
+
+        // ---------- Card sound: click to play/stop, hover to preview once the page has been clicked ----------
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        let cardPlaying = null;   // { stage, audio, pinned }
+
+        function fadeTo(audio, target, ms, done) {
+            const start = audio.volume, t0 = performance.now();
+            cancelAnimationFrame(audio._fade);
+            const step = (now) => {
+                const k = Math.min(1, (now - t0) / ms);
+                audio.volume = start + (target - start) * k;
+                if (k < 1) audio._fade = requestAnimationFrame(step); else if (done) done();
+            };
+            audio._fade = requestAnimationFrame(step);
+        }
+
+        function stopCardSound() {
+            if (!cardPlaying) return;
+            const { stage, audio } = cardPlaying;
+            const btn = stage.querySelector('.scene-sound');
+            btn.setAttribute('aria-pressed', 'false');
+            btn.classList.remove('previewing');
+            fadeTo(audio, 0, 350, () => audio.pause());
+            cardPlaying = null;
+        }
+
+        function startCardSound(stage, audio, pinned) {
+            if (cardPlaying && cardPlaying.stage === stage) {
+                cardPlaying.pinned = cardPlaying.pinned || pinned;
+            } else {
+                stopCardSound();
+                if (typeof sound !== 'undefined' && sound.on) sound.toggle();   // one sound at a time
+                audio.volume = 0;
+                audio.play().then(() => fadeTo(audio, 0.8, 600)).catch(() => {});
+                cardPlaying = { stage, audio, pinned };
+            }
+            const btn = stage.querySelector('.scene-sound');
+            btn.setAttribute('aria-pressed', String(cardPlaying.pinned));
+            btn.classList.toggle('previewing', !cardPlaying.pinned);
+        }
+
+        document.querySelectorAll('.scene-stage').forEach(stage => {
+            const btn = stage.querySelector('.scene-sound');
+            if (!btn) return;
+            const audio = new Audio();
+            audio.loop = true;
+            audio.preload = 'metadata';
+            audio.addEventListener('loadedmetadata', () => { btn.hidden = false; }, { once: true });
+            audio.src = `screenshots/sound-${stage.dataset.scene}.m4a`;   // no file yet = no button
+
+            btn.addEventListener('click', () => {
+                if (cardPlaying && cardPlaying.stage === stage && cardPlaying.pinned) stopCardSound();
+                else startCardSound(stage, audio, true);
+            });
+
+            if (canHover) {
+                const card = stage.closest('.scene-card');
+                card.addEventListener('mouseenter', () => {
+                    const activated = !navigator.userActivation || navigator.userActivation.hasBeenActive;
+                    if (btn.hidden || !activated || (cardPlaying && cardPlaying.pinned)) return;
+                    startCardSound(stage, audio, false);
+                });
+                card.addEventListener('mouseleave', () => {
+                    if (cardPlaying && cardPlaying.stage === stage && !cardPlaying.pinned) stopCardSound();
+                });
+            }
+
+            stage.stopSound = () => { if (cardPlaying && cardPlaying.stage === stage) stopCardSound(); };
         });
 
         // ---------- Hero: switch scenes, auto-cycle until the visitor picks one ----------
@@ -2343,6 +2446,7 @@
             toggle() {
                 if (!this.ctx) this.init();
                 this.on = !this.on;
+                if (this.on) stopCardSound();
                 const t = this.ctx.currentTime;
                 if (this.on) {
                     this.ctx.resume();
