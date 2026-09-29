@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror and LilVibe.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe and LilDock.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -48,6 +48,8 @@
             --hide-alt: #4EE39B;
             --vibe: #FF9466;
             --vibe-alt: #7BD3EA;
+            --dock: #FF6B5E;
+            --dock-alt: #4A7BDB;
         }
 
         [data-theme="light"] {
@@ -449,6 +451,7 @@
         .cell.app.hide { background: var(--hide); }
         .cell.app.mirror { background: var(--mirror); }
         .cell.app.vibe { background: var(--vibe); }
+        .cell.app.dock { background: var(--dock); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -590,6 +593,7 @@
         .app-stage.hide { background: var(--hide); }
         .app-stage.mirror { background: var(--mirror); }
         .app-stage.vibe { background: var(--vibe-alt); }
+        .app-stage.dock { background: var(--dock-alt); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -617,6 +621,7 @@
         .app-dot.hide { background: var(--hide); }
         .app-dot.mirror { background: var(--mirror); }
         .app-dot.vibe { background: var(--vibe); }
+        .app-dot.dock { background: var(--dock); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -670,6 +675,7 @@
         .btn-app.hide { background: var(--hide); }
         .btn-app.mirror { background: var(--mirror); }
         .btn-app.vibe { background: var(--vibe); }
+        .btn-app.dock { background: var(--dock); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1224,7 +1230,67 @@
             filter: drop-shadow(4px 4px 0 var(--border));
         }
 
+        /* ---- LilDock ---- */
+        .ld {
+            width: 236px;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg);
+            box-shadow: 5px 5px 0 var(--border);
+            transform: rotate(-2deg);
+        }
+
+        .ld-bar {
+            height: 50px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            gap: 7px;
+            padding: 8px 10px 0;
+            border-bottom: var(--border-width) solid var(--border);
+            background: #F5D65C;
+        }
+
+        .ld-bar i {
+            position: relative;
+            width: 22px;
+            height: 22px;
+            border: 2.5px solid var(--border);
+            border-radius: 6px;
+            transform-origin: 50% 0;
+            animation: ldMag 3.2s ease-in-out infinite;
+        }
+
+        .ld-bar i:nth-child(1) { background: var(--display); animation-delay: 0s; }
+        .ld-bar i:nth-child(2) { background: #FAF3E3;       animation-delay: 0.25s; }
+        .ld-bar i:nth-child(3) { background: var(--hide);    animation-delay: 0.5s; }
+        .ld-bar i:nth-child(4) { background: var(--vibe);    animation-delay: 0.75s; }
+        .ld-bar i:nth-child(5) { background: #8FC7EE;       animation-delay: 1s; }
+
+        .ld-bar i::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -8px;
+            width: 4px;
+            height: 4px;
+            margin-left: -2px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .ld-bar i:nth-child(2)::after, .ld-bar i:nth-child(5)::after { display: none; }
+
+        .ld-bar b { width: 2px; height: 16px; margin-top: 3px; background: var(--border); opacity: 0.35; }
+
+        .ld-desk { height: 86px; }
+
+        @keyframes ldMag {
+            0%, 40%, 100% { transform: scale(1); }
+            20%           { transform: scale(1.35); }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            .ld-bar i { animation: none; }
             .lh i { animation: none; }
             .lm-glass::after, .lm-face i, .lm-spark { animation: none; }
             .lv-rain, .lv-sway, .lv-steam { animation: none; }
@@ -1282,7 +1348,10 @@
                         LilDisplay
                     </a>
                     <div class="cell muted"></div>
-                    <div class="cell muted"></div>
+                    <a class="cell app dock" href="/lildock/" aria-label="LilDock">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><rect x="12" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/><rect x="16" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/></svg>
+                        LilDock
+                    </a>
                     <a class="cell app usage" href="/lilusage/" aria-label="LilUsage">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M4 10v4h9v-4z" fill="currentColor" stroke="none"/></svg>
                         LilUsage
@@ -1315,7 +1384,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Five right now. Each one solves a single annoyance properly.</p>
+            <p>Six right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1500,6 +1569,31 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-2">
+                <div class="app-stage dock" aria-hidden="true">
+                    <div class="ld">
+                        <div class="ld-bar"><i></i><i></i><i></i><i></i><b></b><i></i></div>
+                        <div class="ld-desk"></div>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot dock"></span>
+                        <h3>LilDock</h3>
+                    </div>
+                    <div class="app-kicker">macOS menu bar</div>
+                    <p>Your favorite apps and your Downloads in the menu bar, next to Wi-Fi and the clock, with Dock-style magnification. Hide the macOS Dock and your windows get the whole screen.</p>
+                    <div class="chips">
+                        <span class="chip">Running dots</span>
+                        <span class="chip">Downloads stack</span>
+                        <span class="chip">No permissions</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lildock/" class="btn btn-app dock">Open LilDock &rarr;</a>
+                        <span class="app-price">$0.99 once &middot; macOS 14+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1561,7 +1655,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
