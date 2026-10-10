@@ -6,10 +6,12 @@
  * (and an icon in /assets/wheel/).
  *
  * - Apple Watch-style honeycomb: round icons packed in two rings around the
- *   corner (inner ring sits in the gaps of the outer one), so the quarter disc
- *   is used efficiently with bigger icons and a smaller radius.
- * - Hover: the icon under the pointer grows and its neighbours ease away to
- *   make room, like the watch's app grid.
+ *   corner (inner ring sits in the gaps of the outer one).
+ * - Idle drift: when nobody is pointing at the wheel, the icons float very
+ *   slowly anywhere inside it, bumping gently off each other and the edges.
+ *   As soon as the pointer comes near (or keyboard focus enters), they glide
+ *   back to their honeycomb slots so they're easy to click.
+ * - Hover: the icon under the pointer grows and its neighbours ease away.
  * - Open by default. The corner button tucks it away; that choice is kept for
  *   the rest of the visit (sessionStorage).
  * - Styling follows the page's theme variables (--border, --bg-elevated,
@@ -40,13 +42,21 @@
         lilhide:    { r: 3.35, a: 239 },
         lilmirror:  { r: 3.35, a: 267 },
     };
-    const OUTER_R = 3.35;                  // used to size the dial
+    const OUTER_R = 3.35;                  // outer ring, in tile widths
+    const DIAL_R = OUTER_R + 1.1;          // dial radius, in tile widths (room for the drift)
 
     // Hover tuning (in tile widths, so it scales with the phone layout)
     const MAG_MAX = 1.5;      // scale of the icon right under the pointer
     const MAG_RANGE = 1.3;    // distance where magnification fades to 1×
     const SHOVE_MAX = 0.32;   // how far neighbours ease away
     const SHOVE_RANGE = 2.6;  // distance where the shove fades out
+
+    // Idle drift tuning (px and seconds)
+    const DRIFT_SPEED = 7;     // top speed while drifting, px/s — very slow
+    const DRIFT_PUSH = 5;      // strength of the slow wandering, px/s²
+    const DRIFT_START = 1300;  // ms after opening before drifting starts
+    const HOME_SPRING = 55;    // pull back to the slot when the pointer is near
+    const HOME_DAMP = 13;
 
     const STORAGE_KEY = 'lsw-collapsed';
 
@@ -55,7 +65,7 @@
 
     const css = `
     .lsw { --lsw-ink: var(--border, #17150F); --lsw-bg: var(--bg-elevated, #F7F1DE); --lsw-text: var(--text, #17150F);
-           --lsw-bw: var(--border-width, 3px); --lsw-tile: 40px; --lsw-trigger: 46px;
+           --lsw-bw: var(--border-width, 3px); --lsw-tile: 44px; --lsw-trigger: 46px;
            position: fixed; right: 20px; bottom: 20px; top: auto; left: auto; z-index: 1000;
            width: var(--lsw-trigger); height: var(--lsw-trigger);
            /* Pages style bare nav/ul/li/a/button — don't inherit any of it. */
@@ -64,7 +74,7 @@
     .lsw *, .lsw *::before, .lsw *::after { box-sizing: border-box; }
 
     /* Quarter dial that grows out of the corner (decorative; never blocks clicks) */
-    .lsw-dial { --d: calc(var(--lsw-tile) * ${OUTER_R * 2 + 1.7}); position: absolute; left: 50%; top: 50%;
+    .lsw-dial { --d: calc(var(--lsw-tile) * ${DIAL_R * 2}); position: absolute; left: 50%; top: 50%;
                 width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
                 border-radius: 50%; background: var(--lsw-bg); border: var(--lsw-bw) solid var(--lsw-ink);
                 box-shadow: -5px -5px 0 var(--lsw-ink); transform: scale(0.15) rotate(-60deg); opacity: 0;
@@ -94,8 +104,9 @@
     .lsw.open .lsw-glyph { opacity: 0; }
     .lsw.open .lsw-x { opacity: 1; }
 
-    /* Honeycomb. The whole grid swirls in (list rotates -40° → 0°) while each icon counter-rotates
-       to stay upright and travels from the corner to its slot. */
+    /* Honeycomb. The grid swirls in (list rotates -40° → 0°) while each icon counter-rotates to stay
+       upright and travels from the corner to its slot. Once open, the drift loop takes over the
+       position (.live) and drives --px / --py every frame. */
     .lsw-list, .lsw-item { list-style: none; margin: 0; padding: 0; background: none; border: 0; }
     .lsw-list { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2;
                 transform: rotate(-40deg); transition: transform .6s cubic-bezier(.2,.9,.25,1.1); }
@@ -107,6 +118,7 @@
                 transition-delay: calc(var(--i) * 20ms); }
     .lsw.open .lsw-item { transform: translate(var(--x), var(--y)) rotate(0) scale(1); opacity: 1; visibility: visible;
                           transition-delay: calc(var(--i) * 45ms + 100ms); }
+    .lsw.open.live .lsw-item { transform: translate(var(--px), var(--py)); transition: opacity .2s; }
 
     .lsw-link { --m: 1; --dx: 0px; --dy: 0px;
                 position: absolute; left: calc(var(--lsw-tile) / -2); top: calc(var(--lsw-tile) / -2);
@@ -117,11 +129,11 @@
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
     .lsw.magnifying .lsw-link { transition: transform .09s ease-out, box-shadow .15s; }   /* follow the pointer */
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
-    .lsw-letter { font: 700 17px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
-    .lsw-mark { width: 16px; height: 16px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
+    .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
+    .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
     .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-ink); }
     .lsw-link:focus-visible { outline: 3px solid var(--lsw-ink); outline-offset: 3px; }
-    .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 11px; height: 11px;
+    .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 12px; height: 12px;
                                             border-radius: 50%; background: var(--lsw-bg); border: 2.5px solid var(--lsw-ink); }
 
     /* Label pill (left of the icon). Counter-scaled so it stays readable when the icon grows. */
@@ -141,9 +153,9 @@
     @keyframes lsw-arrive { from { transform: translateY(160%) rotate(-25deg); } to { transform: none; } }
 
     @media (max-width: 600px) {
-        .lsw { --lsw-tile: 34px; --lsw-trigger: 42px; right: 12px; bottom: 12px; }
+        .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; right: 12px; bottom: 12px; }
         .lsw-label small { display: none; }
-        .lsw-letter { font-size: 15px; }
+        .lsw-letter { font-size: 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
         .lsw *, .lsw *::before, .lsw *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
@@ -222,21 +234,31 @@
 
             li.appendChild(a);
             list.appendChild(li);
-            tiles.push({ el: a, ux, uy });
+            // x/y: live position relative to the corner (px); vx/vy: velocity; seed: wander phase
+            tiles.push({ el: a, li, ux, uy, x: 0, y: 0, vx: 0, vy: 0, seed: Math.random() * 1000 });
         });
 
         root.append(dial, list, trigger);
         document.body.appendChild(root);
 
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function tileSize() { return parseFloat(getComputedStyle(root).getPropertyValue('--lsw-tile')) || 44; }
+        function corner() { const b = root.getBoundingClientRect(); return { ox: b.left + b.width / 2, oy: b.top + b.height / 2 }; }
+
         // ---- open / collapse --------------------------------------------------
-        let open = false;
+        let open = false, liveTimer = 0;
         function setOpen(next, remember) {
             open = next;
             root.classList.toggle('open', open);
             trigger.setAttribute('aria-expanded', String(open));
             trigger.setAttribute('aria-label', open ? 'Hide LilStudio apps' : 'Show LilStudio apps');
             tiles.forEach(t => { t.el.tabIndex = open ? 0 : -1; });
-            if (!open) resetMagnify();
+            clearTimeout(liveTimer);
+            stopLive();
+            resetMagnify();
+            if (open && !reduced) liveTimer = setTimeout(startLive, DRIFT_START);
             if (remember) storageSet(open ? '0' : '1');
         }
         trigger.addEventListener('click', () => setOpen(!open, true));
@@ -250,67 +272,158 @@
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); all[(idx - 1 + all.length) % all.length].focus(); }
         });
 
-        // ---- Watch-style hover: grow under the pointer, neighbours make room ----
-        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        let raf = 0, px = 0, py = 0, active = false;
+        // ---- pointer tracking ----------------------------------------------------
+        let px = -1e4, py = -1e4, near = false, focusInside = false, touchHold = 0;
+        function pointerNear() {
+            if (!open) return false;
+            const { ox, oy } = corner();
+            return Math.hypot(px - ox, py - oy) < (DIAL_R + 0.6) * tileSize();
+        }
+        window.addEventListener('pointermove', (e) => {
+            if (e.pointerType === 'touch') return;
+            px = e.clientX; py = e.clientY;
+            near = pointerNear();
+            if (!live) requestMagnify();
+        }, { passive: true });
+        document.addEventListener('pointerleave', () => { px = py = -1e4; near = false; if (!live) requestMagnify(); });
+        // A finger on the wheel: settle for a few seconds so the tap lands.
+        root.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') touchHold = performance.now() + 4000; });
+        root.addEventListener('focusin', () => { focusInside = true; });
+        root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) focusInside = false; });
+
+        // ---- Watch-style hover: grow under the pointer, neighbours make room -----
+        let magnifying = false, magRaf = 0;
+        const falloff = (d, range) => d >= range ? 0 : (Math.cos(Math.PI * d / range) + 1) / 2;
 
         function resetMagnify() {
-            active = false;
+            magnifying = false;
             root.classList.remove('magnifying');
             tiles.forEach(t => {
                 t.el.style.setProperty('--m', 1);
                 t.el.style.setProperty('--dx', '0px');
                 t.el.style.setProperty('--dy', '0px');
-                t.el.parentElement.style.zIndex = '';
+                t.li.style.zIndex = '';
             });
         }
+        function requestMagnify() { if (!magRaf) magRaf = requestAnimationFrame(() => { magRaf = 0; magnify(); }); }
 
-        // Resting icon centres come from the layout (not measured), so they're right
-        // even while the grid is still swirling open.
-        function geometry() {
-            const b = root.getBoundingClientRect();
-            const size = parseFloat(getComputedStyle(root).getPropertyValue('--lsw-tile')) || 40;
-            return { ox: b.left + b.width / 2, oy: b.top + b.height / 2, size };
-        }
-        const falloff = (d, range) => d >= range ? 0 : (Math.cos(Math.PI * d / range) + 1) / 2;
-
+        // Uses each icon's live position (from the drift state, or its slot), never measured.
         function magnify() {
-            raf = 0;
-            if (!open) return;
-            const { ox, oy, size } = geometry();
+            if (!open || !canHover || reduced) return;
+            const { ox, oy } = corner();
+            const size = tileSize();
             let any = false;
             tiles.forEach(t => {
-                const cx = ox + t.ux * size, cy = oy + t.uy * size;
+                const cx = ox + (live ? t.x : t.ux * size), cy = oy + (live ? t.y : t.uy * size);
                 const vx = cx - px, vy = cy - py;
                 const d = Math.hypot(vx, vy);
                 const k = falloff(d, MAG_RANGE * size);
                 const m = 1 + (MAG_MAX - 1) * k;
-                // Neighbours ease away from the pointer; the icon under it stays put.
                 const s = falloff(d, SHOVE_RANGE * size) * Math.min(1, d / (size * 0.6));
                 const shove = SHOVE_MAX * size * s;
                 const nx = d > 0.5 ? vx / d : 0, ny = d > 0.5 ? vy / d : 0;
                 t.el.style.setProperty('--m', m.toFixed(3));
                 t.el.style.setProperty('--dx', (nx * shove).toFixed(2) + 'px');
                 t.el.style.setProperty('--dy', (ny * shove).toFixed(2) + 'px');
-                t.el.parentElement.style.zIndex = k > 0.05 ? String(10 + Math.round(k * 10)) : '';
+                t.li.style.zIndex = k > 0.05 ? String(10 + Math.round(k * 10)) : '';
                 if (k > 0 || s > 0) any = true;
             });
-            if (any && !active) { active = true; root.classList.add('magnifying'); }
-            if (!any && active) resetMagnify();
+            if (any && !magnifying) { magnifying = true; root.classList.add('magnifying'); }
+            if (!any && magnifying) resetMagnify();
         }
 
-        if (canHover && !reduced) {
-            window.addEventListener('pointermove', (e) => {
-                if (!open || e.pointerType === 'touch') return;
-                px = e.clientX; py = e.clientY;
-                const g = geometry();
-                const reach = (OUTER_R + SHOVE_RANGE) * g.size;
-                if (Math.hypot(px - g.ox, py - g.oy) > reach) { if (active) resetMagnify(); return; }
-                if (!raf) raf = requestAnimationFrame(magnify);
-            }, { passive: true });
-            document.addEventListener('pointerleave', () => { if (active) resetMagnify(); });
+        // ---- Idle drift (tiny physics loop) --------------------------------------
+        let live = false, raf = 0, last = 0;
+        function startLive() {
+            if (!open || reduced) return;
+            const size = tileSize();
+            tiles.forEach(t => {
+                t.x = t.ux * size; t.y = t.uy * size;
+                const ang = Math.random() * Math.PI * 2;
+                t.vx = Math.cos(ang) * DRIFT_SPEED * 0.5; t.vy = Math.sin(ang) * DRIFT_SPEED * 0.5;
+                write(t);
+            });
+            live = true;
+            root.classList.add('live');
+            last = performance.now();
+            raf = requestAnimationFrame(step);
         }
+        function stopLive() {
+            live = false;
+            root.classList.remove('live');
+            cancelAnimationFrame(raf); raf = 0;
+        }
+        function write(t) {
+            t.li.style.setProperty('--px', t.x.toFixed(2) + 'px');
+            t.li.style.setProperty('--py', t.y.toFixed(2) + 'px');
+        }
+
+        function step(now) {
+            if (!live) return;
+            const dt = Math.min(0.05, (now - last) / 1000); last = now;
+            const size = tileSize();
+            const settle = near || focusInside || now < touchHold;
+            // Allowed area: inside the dial, clear of the corner button, and on the visible
+            // (upper-left) side of the corner.
+            const rMax = (DIAL_R - 0.6) * size, rMin = 1.27 * size, edge = 0.15 * size;
+            const minGap = size * 1.12;
+
+            tiles.forEach((t, i) => {
+                let ax, ay;
+                if (settle) {
+                    // Glide home: damped spring to the honeycomb slot
+                    ax = (t.ux * size - t.x) * HOME_SPRING - t.vx * HOME_DAMP;
+                    ay = (t.uy * size - t.y) * HOME_SPRING - t.vy * HOME_DAMP;
+                } else {
+                    // Slow wander: a smoothly turning push, unique per icon
+                    const w = t.seed + now * 0.00023 * (0.7 + (i % 3) * 0.2);
+                    ax = Math.cos(w) * DRIFT_PUSH + Math.sin(w * 0.61) * DRIFT_PUSH * 0.5;
+                    ay = Math.sin(w * 1.13) * DRIFT_PUSH + Math.cos(w * 0.47) * DRIFT_PUSH * 0.5;
+                    ax -= t.vx * 0.35; ay -= t.vy * 0.35;
+                }
+                t.vx += ax * dt; t.vy += ay * dt;
+                if (!settle) {
+                    const sp = Math.hypot(t.vx, t.vy);
+                    if (sp > DRIFT_SPEED) { t.vx *= DRIFT_SPEED / sp; t.vy *= DRIFT_SPEED / sp; }
+                }
+                t.x += t.vx * dt; t.y += t.vy * dt;
+            });
+
+            // Icons bump gently off each other
+            for (let i = 0; i < tiles.length; i++) {
+                for (let j = i + 1; j < tiles.length; j++) {
+                    const a = tiles[i], b = tiles[j];
+                    let dx = b.x - a.x, dy = b.y - a.y;
+                    const d = Math.hypot(dx, dy) || 0.01;
+                    if (d < minGap) {
+                        const nx = dx / d, ny = dy / d, push = (minGap - d) / 2;
+                        a.x -= nx * push; a.y -= ny * push; b.x += nx * push; b.y += ny * push;
+                        const rel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+                        if (rel < 0) { a.vx += rel * nx; a.vy += rel * ny; b.vx -= rel * nx; b.vy -= rel * ny; }
+                    }
+                }
+            }
+
+            // ...and off the walls
+            tiles.forEach(t => {
+                const r = Math.hypot(t.x, t.y) || 0.01;
+                const nx = t.x / r, ny = t.y / r;
+                if (r > rMax || r < rMin) {
+                    const target = r > rMax ? rMax : rMin;
+                    t.x = nx * target; t.y = ny * target;
+                    const radial = t.vx * nx + t.vy * ny;
+                    if ((r > rMax && radial > 0) || (r < rMin && radial < 0)) { t.vx -= 2 * radial * nx; t.vy -= 2 * radial * ny; }
+                }
+                if (t.x > edge) { t.x = edge; t.vx = -Math.abs(t.vx); }
+                if (t.y > edge) { t.y = edge; t.vy = -Math.abs(t.vy); }
+                write(t);
+            });
+
+            if (canHover) magnify();
+            raf = requestAnimationFrame(step);
+        }
+
+        window.addEventListener('resize', () => { if (live) { stopLive(); startLive(); } }, { passive: true });
 
         // Open by default (after the page has settled, so the swirl is visible),
         // unless the visitor tucked it away earlier in this visit.
@@ -318,11 +431,25 @@
         const startOpen = /[?&]wheel=open\b/.test(location.search) || storageGet() !== '1';
         if (startOpen) setTimeout(() => setOpen(true, false), 650);
 
+        // Test hook: ?wheelsim=<frames>[&wheelnear=1] advances the drift on a fake 60 fps clock
+        // (headless browsers don't run animation frames), optionally with the pointer near.
+        const sim = location.search.match(/[?&]wheelsim=(\d+)/);
+        if (sim) setTimeout(() => {
+            if (!live) startLive();
+            cancelAnimationFrame(raf);
+            let t = performance.now();
+            for (let f = 0; f < +sim[1]; f++) {
+                if (/[?&]wheelnear=1/.test(location.search) && f > +sim[1] / 2) { const { ox, oy } = corner(); px = ox - 60; py = oy - 60; near = true; }
+                t += 1000 / 60; step(t); cancelAnimationFrame(raf);
+            }
+        }, 2500);
+
         // Test hook for screenshots: ?wheelhover=<product id> simulates the pointer on that icon.
         const hov = location.search.match(/[?&]wheelhover=([a-z]+)/);
         if (hov) setTimeout(() => {
             const t = tiles.find(x => x.el.dataset.id === hov[1]); if (!t) return;
-            const g = geometry(); px = g.ox + t.ux * g.size; py = g.oy + t.uy * g.size; magnify();
+            const { ox, oy } = corner(); const size = tileSize();
+            px = ox + t.ux * size; py = oy + t.uy * size; near = true; magnify();
             t.el.classList.add('lsw-hovered');
         }, 1500);
     }
