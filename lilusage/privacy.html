@@ -132,12 +132,35 @@
             padding-top: 1.5rem;
             border-top: var(--border-width) solid var(--border);
         }
+
+        /* Light/dark toggle (same as the app pages) */
+        .theme-toggle {
+            width: 44px; height: 44px; flex-shrink: 0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg-elevated); border: var(--border-width, 3px) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border); transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .theme-toggle:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+        .theme-toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .theme-toggle svg { width: 22px; height: 22px; color: #FFE135; }
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
     </style>
+    <script src="/assets/theme.js"></script>
 </head>
 <body>
     <div class="bg-pattern"></div>
     <div class="wrap">
-        <a href="index.html" class="logo">LilUsage</a>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+            <a href="index.html" class="logo">LilUsage</a>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
 
         <h1>Privacy <span class="highlight">Policy</span></h1>
         <p class="lead">LilUsage collects nothing. No analytics, no telemetry, no account, no server belonging to this app. Here is exactly what it does.</p>
@@ -167,11 +190,6 @@
         <p class="meta">Last updated September 2026 &middot; <a href="index.html">Back to LilUsage</a></p>
     </div>
 
-    <script>
-        (function() {
-            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
-        })();
-    </script>
     <script src="/studio-wheel.js" defer></script>
 </body>
 </html>

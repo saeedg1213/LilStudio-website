@@ -1,0 +1,158 @@
+/* LilStudio subpages (privacy policies, support): the same neo-brutalist look,
+ * light/dark theme and fonts as the app pages. Each page sets its own app
+ * colours with a small :root block (--primary, --secondary, optional --logo-bar). */
+
+:root {
+    --primary: #FFE135;
+    --secondary: #00CCFF;
+    --yellow: #FFE135;
+    --bg: #0D0D0D;
+    --bg-elevated: #1A1A1A;
+    --text: #FFFFFF;
+    --text-muted: #A8A8A8;
+    --border: #FFFFFF;
+    --border-width: 3px;
+    --logo-bar: var(--primary);
+}
+
+[data-theme="light"] {
+    --bg: #F7F1DE;
+    --bg-elevated: #FFFBEF;
+    --text: #17150F;
+    --text-muted: #4A4636;
+    --border: #17150F;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Faint grid, like the app pages */
+.bg-pattern {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.04;
+    background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+}
+
+/* ---- Navigation ---- */
+.sp-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: var(--border-width) solid var(--border);
+}
+.sp-nav-inner {
+    max-width: 960px; margin: 0 auto; padding: 0.9rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.sp-logo {
+    position: relative; z-index: 0;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.35rem;
+    letter-spacing: -0.02em; color: var(--text); text-decoration: none;
+}
+.sp-logo::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 1px; height: 8px;
+    background: var(--logo-bar); z-index: -1;
+}
+.sp-links { display: flex; gap: 1.6rem; list-style: none; }
+.sp-links a {
+    color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s;
+}
+.sp-links a:hover, .sp-links a[aria-current="page"] { color: var(--text); }
+
+.theme-toggle {
+    width: 44px; height: 44px; flex-shrink: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-elevated); border: var(--border-width) solid var(--border);
+    box-shadow: 4px 4px 0 var(--border); transition: transform 0.15s, box-shadow 0.15s;
+}
+.theme-toggle:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+.theme-toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+.theme-toggle svg { width: 22px; height: 22px; color: var(--yellow); }
+.sun-icon { display: block; }
+.moon-icon { display: none; }
+[data-theme="light"] .sun-icon { display: none; }
+[data-theme="light"] .moon-icon { display: block; }
+[data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+/* ---- Content ---- */
+.sp {
+    position: relative; z-index: 1;
+    max-width: 760px; margin: 0 auto; padding: 3.5rem 1.5rem 7rem;
+}
+
+.sp h1 {
+    position: relative; display: inline-block; z-index: 0;
+    font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 700; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 0.6rem;
+}
+.sp h1::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 4px; height: 12px;
+    background: var(--primary); z-index: -1; transform: skewX(-3deg);
+}
+
+.sp .lede, .sp .updated {
+    font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em; margin: 0.25rem 0 2.25rem;
+}
+
+/* Highlighted box: solid app colour, ink text in both themes (always readable) */
+.sp .note {
+    background: var(--primary); color: #17150F;
+    border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border);
+    padding: 1.15rem 1.35rem; margin: 0 0 2.5rem; font-weight: 500;
+}
+.sp .note a { color: #17150F; border-bottom-color: #17150F; }
+.sp .note a:hover { background: #17150F; color: var(--primary); }
+.sp .note strong { color: #17150F; }
+
+.sp h2 {
+    display: inline-block; font-size: 1.3rem; font-weight: 700; line-height: 1.3;
+    margin: 2.4rem 0 0.9rem; padding-bottom: 0.3rem;
+    border-bottom: 4px solid var(--primary);
+}
+.sp h3 { font-size: 1.05rem; font-weight: 700; margin: 1.8rem 0 0.4rem; }
+
+.sp p, .sp li { color: var(--text-muted); }
+.sp p { margin-bottom: 1rem; }
+.sp strong, .sp b { color: var(--text); }
+.sp em { color: var(--text); }
+.sp ul { margin: 0 0 1rem 1.25rem; }
+.sp li { margin-bottom: 0.4rem; }
+.sp li::marker { color: var(--text); }
+
+.sp a {
+    color: var(--text); font-weight: 600; text-decoration: none;
+    border-bottom: 2px solid var(--primary); transition: background 0.2s, color 0.2s;
+}
+.sp a:hover { background: var(--primary); color: #17150F; }
+
+.sp kbd, .sp code {
+    font: 600 0.82em 'Space Mono', ui-monospace, Menlo, monospace;
+    color: var(--text); background: var(--bg-elevated);
+    border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border);
+    padding: 0.05em 0.4em; white-space: nowrap;
+}
+
+.sp footer {
+    margin-top: 3.5rem; padding-top: 1.25rem; border-top: var(--border-width) solid var(--border);
+    font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+}
+.sp footer a { font-weight: 700; }
+
+@media (max-width: 640px) {
+    .sp-links { gap: 1rem; }
+    .sp-links li.sp-hide-sm { display: none; }
+    .sp { padding-top: 2.5rem; }
+}

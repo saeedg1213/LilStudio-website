@@ -1,30 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LilHide — Privacy Policy</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
 <style>
-  :root { color-scheme: light dark; }
-  body {
-    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    max-width: 40rem; margin: 0 auto; padding: 4rem 1.5rem 6rem;
-    color: #1c1c1e; background: #fff;
-  }
-  @media (prefers-color-scheme: dark) {
-    body { color: #e8e8ea; background: #16161a; }
-    a { color: #7aa7e6; }
-    .note { background: #1f1f25; border-color: #33333d; }
-  }
-  h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
-  h2 { font-size: 1.1rem; margin-top: 2.5rem; }
-  .updated { color: #8a8a8e; font-size: 0.9rem; margin-top: 0; }
-  .note { background: #f5f5f7; border: 1px solid #e2e2e6; border-radius: 10px; padding: 1rem 1.25rem; }
-  footer { margin-top: 4rem; font-size: 0.9rem; color: #8a8a8e; }
-  a { color: #2f6fd0; }
+        /* LilHide colours (same as its main page) */
+        :root { --primary: #6C8CFF; --secondary: #4EE39B; }
 </style>
+<script src="/assets/theme.js"></script>
 </head>
 <body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilHide</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilHide</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html" aria-current="page">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
 
 <h1>Privacy Policy</h1>
 <p class="updated">LilHide for macOS — last updated 10 September 2026</p>
@@ -88,6 +100,10 @@
 <footer>
   LilHide is part of <a href="https://lilstudio.app">LilStudio</a>.
 </footer>
+
+    
+
+    </main>
 
     <script src="/studio-wheel.js" defer></script>
 </body>
