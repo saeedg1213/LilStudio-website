@@ -2,13 +2,16 @@
  * LilStudio product wheel — the switcher in the bottom-right of every page.
  *
  * Include once per page:  <script src="/studio-wheel.js" defer></script>
- * To add a product: add it to PRODUCTS (and an icon in /assets/wheel/).
+ * To add a product: add it to PRODUCTS and give it a slot in LAYOUT
+ * (and an icon in /assets/wheel/).
  *
- * - Open by default. The corner button tucks it away; that choice is kept
- *   for the rest of the visit (sessionStorage), so it doesn't pop back open
- *   on every page.
- * - Dock-style magnification: tiles grow as the pointer gets close and are
- *   nudged outward along the arc so neighbours don't collide.
+ * - Apple Watch-style honeycomb: round icons packed in two rings around the
+ *   corner (inner ring sits in the gaps of the outer one), so the quarter disc
+ *   is used efficiently with bigger icons and a smaller radius.
+ * - Hover: the icon under the pointer grows and its neighbours ease away to
+ *   make room, like the watch's app grid.
+ * - Open by default. The corner button tucks it away; that choice is kept for
+ *   the rest of the visit (sessionStorage).
  * - Styling follows the page's theme variables (--border, --bg-elevated,
  *   --text, --border-width) with fallbacks, so light and dark mode match.
  */
@@ -25,10 +28,25 @@
         { id: 'lilmirror',  name: 'LilMirror',  tag: 'A mirror before your call',      href: '/lilmirror/',  color: '#F7DC3C', icon: null },
     ];
 
-    // Magnification tuning (Dock-like)
-    const MAG_MAX = 1.8;     // scale of the tile right under the pointer
-    const MAG_RANGE = 78;    // px from a tile's centre where magnification fades to 1×
-    const MAG_PUSH = 0.55;   // how far a magnified tile moves outward (× its extra size)
+    // Honeycomb slots around the corner: radius in tile widths, angle in degrees
+    // (180° = left of the corner, 270° = straight up). The outer ring's angles
+    // fall between the inner ring's, so neighbours are evenly spaced.
+    const LAYOUT = {
+        studio:     { r: 2.2,  a: 225 },   // inner ring, centre
+        lildisplay: { r: 2.2,  a: 195 },   // inner ring
+        lildock:    { r: 2.2,  a: 255 },   // inner ring
+        lilusage:   { r: 3.35, a: 183 },   // outer ring
+        lilvibe:    { r: 3.35, a: 211 },
+        lilhide:    { r: 3.35, a: 239 },
+        lilmirror:  { r: 3.35, a: 267 },
+    };
+    const OUTER_R = 3.35;                  // used to size the dial
+
+    // Hover tuning (in tile widths, so it scales with the phone layout)
+    const MAG_MAX = 1.5;      // scale of the icon right under the pointer
+    const MAG_RANGE = 1.3;    // distance where magnification fades to 1×
+    const SHOVE_MAX = 0.32;   // how far neighbours ease away
+    const SHOVE_RANGE = 2.6;  // distance where the shove fades out
 
     const STORAGE_KEY = 'lsw-collapsed';
 
@@ -37,7 +55,7 @@
 
     const css = `
     .lsw { --lsw-ink: var(--border, #17150F); --lsw-bg: var(--bg-elevated, #F7F1DE); --lsw-text: var(--text, #17150F);
-           --lsw-bw: var(--border-width, 3px); --lsw-r: 150px; --lsw-tile: 32px; --lsw-trigger: 48px;
+           --lsw-bw: var(--border-width, 3px); --lsw-tile: 40px; --lsw-trigger: 46px;
            position: fixed; right: 20px; bottom: 20px; top: auto; left: auto; z-index: 1000;
            width: var(--lsw-trigger); height: var(--lsw-trigger);
            /* Pages style bare nav/ul/li/a/button — don't inherit any of it. */
@@ -46,20 +64,20 @@
     .lsw *, .lsw *::before, .lsw *::after { box-sizing: border-box; }
 
     /* Quarter dial that grows out of the corner (decorative; never blocks clicks) */
-    .lsw-dial { --d: calc(var(--lsw-r) * 2 + 64px); position: absolute; left: 50%; top: 50%;
+    .lsw-dial { --d: calc(var(--lsw-tile) * ${OUTER_R * 2 + 1.7}); position: absolute; left: 50%; top: 50%;
                 width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
                 border-radius: 50%; background: var(--lsw-bg); border: var(--lsw-bw) solid var(--lsw-ink);
                 box-shadow: -5px -5px 0 var(--lsw-ink); transform: scale(0.15) rotate(-60deg); opacity: 0;
                 transition: transform .5s cubic-bezier(.2,.9,.25,1.15), opacity .25s ease; pointer-events: none; }
-    .lsw-dial::before { content: ''; position: absolute; inset: 14px; border-radius: 50%;
-                        border: 2px dashed var(--lsw-ink); opacity: .3; animation: lsw-spin 28s linear infinite; }
+    .lsw-dial::before { content: ''; position: absolute; inset: 12px; border-radius: 50%;
+                        border: 2px dashed var(--lsw-ink); opacity: .28; animation: lsw-spin 28s linear infinite; }
     .lsw.open .lsw-dial { transform: scale(1) rotate(0); opacity: 1; }
 
     /* Toggle (tuck away / bring back) */
     .lsw-trigger { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; cursor: pointer;
                    background: #FFE135; border: var(--lsw-bw) solid var(--lsw-ink); box-shadow: 4px 4px 0 var(--lsw-ink);
                    padding: 0; margin: 0; color: #17150F; transition: transform .2s cubic-bezier(.2,.9,.25,1.3), box-shadow .15s;
-                   animation: lsw-arrive .6s cubic-bezier(.2,.9,.25,1.2) .5s both; }
+                   animation: lsw-arrive .6s cubic-bezier(.2,.9,.25,1.2) .4s both; }
     .lsw-trigger:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--lsw-ink); }
     .lsw-trigger:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--lsw-ink); }
     .lsw-trigger:focus-visible { outline: 3px solid var(--lsw-ink); outline-offset: 4px; }
@@ -76,35 +94,37 @@
     .lsw.open .lsw-glyph { opacity: 0; }
     .lsw.open .lsw-x { opacity: 1; }
 
-    /* Items on the arc: rotate(angle) → translate(radius) → rotate(-angle) swings them round the
-       corner like a wheel and keeps the icons upright. */
+    /* Honeycomb. The whole grid swirls in (list rotates -40° → 0°) while each icon counter-rotates
+       to stay upright and travels from the corner to its slot. */
     .lsw-list, .lsw-item { list-style: none; margin: 0; padding: 0; background: none; border: 0; }
-    .lsw-list { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2; }
-    .lsw-item { position: absolute; left: 0; top: 0; width: 0; height: 0;
-                transform: rotate(180deg) translateX(0) rotate(-180deg) scale(.2); opacity: 0; visibility: hidden;
-                transition: transform .5s cubic-bezier(.2,.95,.25,1.25), opacity .2s, visibility 0s .5s;
-                transition-delay: calc(var(--i) * 25ms); }
-    .lsw.open .lsw-item { transform: rotate(var(--a)) translateX(var(--lsw-r)) rotate(calc(-1 * var(--a))) scale(1);
-                          opacity: 1; visibility: visible; transition-delay: calc(var(--i) * 45ms + 120ms); }
+    .lsw-list { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2;
+                transform: rotate(-40deg); transition: transform .6s cubic-bezier(.2,.9,.25,1.1); }
+    .lsw.open .lsw-list { transform: rotate(0); }
+    .lsw-item { --x: calc(var(--ux) * var(--lsw-tile)); --y: calc(var(--uy) * var(--lsw-tile));
+                position: absolute; left: 0; top: 0; width: 0; height: 0;
+                transform: translate(0, 0) rotate(40deg) scale(.2); opacity: 0; visibility: hidden;
+                transition: transform .55s cubic-bezier(.2,.95,.25,1.25), opacity .2s, visibility 0s .55s;
+                transition-delay: calc(var(--i) * 20ms); }
+    .lsw.open .lsw-item { transform: translate(var(--x), var(--y)) rotate(0) scale(1); opacity: 1; visibility: visible;
+                          transition-delay: calc(var(--i) * 45ms + 100ms); }
 
     .lsw-link { --m: 1; --dx: 0px; --dy: 0px;
                 position: absolute; left: calc(var(--lsw-tile) / -2); top: calc(var(--lsw-tile) / -2);
                 width: var(--lsw-tile); height: var(--lsw-tile); display: grid; place-items: center; text-decoration: none;
                 background: var(--c); border: var(--lsw-bw) solid var(--lsw-ink); box-shadow: 3px 3px 0 var(--lsw-ink);
-                border-radius: 10px; color: #17150F; outline: none; padding: 0; margin: 0;
+                border-radius: 50%; color: #17150F; outline: none; padding: 0; margin: 0;
                 transform: translate(var(--dx), var(--dy)) scale(var(--m));
-                transition: transform .12s ease-out, box-shadow .15s; will-change: transform; }
-    .lsw.magnifying .lsw-link { transition: transform .06s linear, box-shadow .15s; }   /* follow the pointer tightly */
-    .lsw-link img { width: 100%; height: 100%; border-radius: 7px; display: block; object-fit: cover; pointer-events: none; }
-    .lsw-letter { font: 700 15px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
-    .lsw-mark { width: 14px; height: 14px; background: #FFE135; border: 2.5px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
-    .lsw-link[data-id="studio"] { border-radius: 3px; }
-    .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-ink); z-index: 5; }
+                transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
+    .lsw.magnifying .lsw-link { transition: transform .09s ease-out, box-shadow .15s; }   /* follow the pointer */
+    .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
+    .lsw-letter { font: 700 17px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
+    .lsw-mark { width: 16px; height: 16px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
+    .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-ink); }
     .lsw-link:focus-visible { outline: 3px solid var(--lsw-ink); outline-offset: 3px; }
-    .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -6px; top: -6px; width: 10px; height: 10px;
+    .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 11px; height: 11px;
                                             border-radius: 50%; background: var(--lsw-bg); border: 2.5px solid var(--lsw-ink); }
 
-    /* Label pill (left of the tile). Counter-scaled so it stays readable when the tile is magnified. */
+    /* Label pill (left of the icon). Counter-scaled so it stays readable when the icon grows. */
     .lsw-label { position: absolute; right: calc(100% + 10px); top: 50%; white-space: nowrap; pointer-events: none;
                  transform-origin: right center; transform: translateY(-50%) scale(calc(1 / var(--m))) translateX(6px);
                  opacity: 0; transition: opacity .15s;
@@ -115,14 +135,15 @@
                            background: var(--c); border: 2px solid var(--lsw-ink); }
     .lsw-label small { display: block; font-size: 10.5px; opacity: .75; margin-top: 1px; }
     .lsw-label .here { font-size: 10px; margin-left: 6px; opacity: .7; text-transform: none; letter-spacing: 0; font-weight: 400; }
-    .lsw-link:hover .lsw-label, .lsw-link:focus-visible .lsw-label { opacity: 1; transform: translateY(-50%) scale(calc(1 / var(--m))); }
+    .lsw-link:hover .lsw-label, .lsw-link:focus-visible .lsw-label, .lsw-link.lsw-hovered .lsw-label { opacity: 1; transform: translateY(-50%) scale(calc(1 / var(--m))); }
 
     @keyframes lsw-spin { to { transform: rotate(360deg); } }
     @keyframes lsw-arrive { from { transform: translateY(160%) rotate(-25deg); } to { transform: none; } }
 
     @media (max-width: 600px) {
-        .lsw { --lsw-r: 124px; --lsw-tile: 28px; --lsw-trigger: 44px; right: 12px; bottom: 12px; }
+        .lsw { --lsw-tile: 34px; --lsw-trigger: 42px; right: 12px; bottom: 12px; }
         .lsw-label small { display: none; }
+        .lsw-letter { font-size: 15px; }
     }
     @media (prefers-reduced-motion: reduce) {
         .lsw *, .lsw *::before, .lsw *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
@@ -160,14 +181,16 @@
         list.className = 'lsw-list';
         list.id = 'lsw-list';
 
-        // Spread the products over the quarter from "left" (180°) to "up" (270°).
-        const n = PRODUCTS.length;
         const tiles = [];
         PRODUCTS.forEach((p, i) => {
-            const angle = 180 + (n === 1 ? 45 : (90 * i) / (n - 1));
+            const slot = LAYOUT[p.id] || { r: OUTER_R, a: 225 };
+            const rad = slot.a * Math.PI / 180;
+            const ux = slot.r * Math.cos(rad), uy = slot.r * Math.sin(rad);   // in tile widths
+
             const li = document.createElement('li');
             li.className = 'lsw-item';
-            li.style.setProperty('--a', angle + 'deg');
+            li.style.setProperty('--ux', ux.toFixed(4));
+            li.style.setProperty('--uy', uy.toFixed(4));
             li.style.setProperty('--i', i);
 
             const a = document.createElement('a');
@@ -199,7 +222,7 @@
 
             li.appendChild(a);
             list.appendChild(li);
-            tiles.push({ el: a, rad: angle * Math.PI / 180 });
+            tiles.push({ el: a, ux, uy });
         });
 
         root.append(dial, list, trigger);
@@ -227,7 +250,7 @@
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); all[(idx - 1 + all.length) % all.length].focus(); }
         });
 
-        // ---- Dock-style magnification -----------------------------------------
+        // ---- Watch-style hover: grow under the pointer, neighbours make room ----
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         let raf = 0, px = 0, py = 0, active = false;
@@ -239,41 +262,39 @@
                 t.el.style.setProperty('--m', 1);
                 t.el.style.setProperty('--dx', '0px');
                 t.el.style.setProperty('--dy', '0px');
-                t.el.style.zIndex = '';
+                t.el.parentElement.style.zIndex = '';
             });
         }
 
-        // Resting tile centres, computed from the arc (not measured), so they're right even
-        // while the wheel is still sweeping open. Recomputed on resize.
-        let centres = [], tileSize = 32;
-        function measure() {
+        // Resting icon centres come from the layout (not measured), so they're right
+        // even while the grid is still swirling open.
+        function geometry() {
             const b = root.getBoundingClientRect();
-            const ox = b.left + b.width / 2, oy = b.top + b.height / 2;
-            const cs = getComputedStyle(root);
-            const R = parseFloat(cs.getPropertyValue('--lsw-r')) || 150;
-            tileSize = parseFloat(cs.getPropertyValue('--lsw-tile')) || 32;
-            centres = tiles.map(t => ({ x: ox + R * Math.cos(t.rad), y: oy + R * Math.sin(t.rad) }));
-            return { ox, oy, R };
+            const size = parseFloat(getComputedStyle(root).getPropertyValue('--lsw-tile')) || 40;
+            return { ox: b.left + b.width / 2, oy: b.top + b.height / 2, size };
         }
-        window.addEventListener('resize', () => { centres = []; }, { passive: true });
+        const falloff = (d, range) => d >= range ? 0 : (Math.cos(Math.PI * d / range) + 1) / 2;
 
         function magnify() {
             raf = 0;
             if (!open) return;
-            if (!centres.length) measure();
-            const size = tileSize;
+            const { ox, oy, size } = geometry();
             let any = false;
-            tiles.forEach((t, i) => {
-                const d = Math.hypot(px - centres[i].x, py - centres[i].y);
-                // Smooth cosine falloff, like the Dock
-                const k = d >= MAG_RANGE ? 0 : (Math.cos(Math.PI * d / MAG_RANGE) + 1) / 2;
+            tiles.forEach(t => {
+                const cx = ox + t.ux * size, cy = oy + t.uy * size;
+                const vx = cx - px, vy = cy - py;
+                const d = Math.hypot(vx, vy);
+                const k = falloff(d, MAG_RANGE * size);
                 const m = 1 + (MAG_MAX - 1) * k;
-                const push = (m - 1) * size * MAG_PUSH;
+                // Neighbours ease away from the pointer; the icon under it stays put.
+                const s = falloff(d, SHOVE_RANGE * size) * Math.min(1, d / (size * 0.6));
+                const shove = SHOVE_MAX * size * s;
+                const nx = d > 0.5 ? vx / d : 0, ny = d > 0.5 ? vy / d : 0;
                 t.el.style.setProperty('--m', m.toFixed(3));
-                t.el.style.setProperty('--dx', (Math.cos(t.rad) * push).toFixed(2) + 'px');
-                t.el.style.setProperty('--dy', (Math.sin(t.rad) * push).toFixed(2) + 'px');
-                t.el.style.zIndex = k > 0.05 ? String(10 + Math.round(k * 10)) : '';
-                if (k > 0) any = true;
+                t.el.style.setProperty('--dx', (nx * shove).toFixed(2) + 'px');
+                t.el.style.setProperty('--dy', (ny * shove).toFixed(2) + 'px');
+                t.el.parentElement.style.zIndex = k > 0.05 ? String(10 + Math.round(k * 10)) : '';
+                if (k > 0 || s > 0) any = true;
             });
             if (any && !active) { active = true; root.classList.add('magnifying'); }
             if (!any && active) resetMagnify();
@@ -283,23 +304,27 @@
             window.addEventListener('pointermove', (e) => {
                 if (!open || e.pointerType === 'touch') return;
                 px = e.clientX; py = e.clientY;
-                // Only bother when the pointer is near the wheel's corner
-                const g = measure();
-                if (Math.hypot(px - g.ox, py - g.oy) > g.R + MAG_RANGE + 20) { if (active) resetMagnify(); return; }
+                const g = geometry();
+                const reach = (OUTER_R + SHOVE_RANGE) * g.size;
+                if (Math.hypot(px - g.ox, py - g.oy) > reach) { if (active) resetMagnify(); return; }
                 if (!raf) raf = requestAnimationFrame(magnify);
             }, { passive: true });
             document.addEventListener('pointerleave', () => { if (active) resetMagnify(); });
         }
 
-        // Open by default (after the page has settled, so the sweep is visible),
+        // Open by default (after the page has settled, so the swirl is visible),
         // unless the visitor tucked it away earlier in this visit.
         setOpen(false, false);
         const startOpen = /[?&]wheel=open\b/.test(location.search) || storageGet() !== '1';
-        if (startOpen) setTimeout(() => setOpen(true, false), 700);
+        if (startOpen) setTimeout(() => setOpen(true, false), 650);
 
-        // Test hook for screenshots: ?wheelmag=<x>,<y> simulates the pointer.
-        const mag = location.search.match(/[?&]wheelmag=(\d+),(\d+)/);
-        if (mag) setTimeout(() => { px = +mag[1]; py = +mag[2]; magnify(); }, 2000);
+        // Test hook for screenshots: ?wheelhover=<product id> simulates the pointer on that icon.
+        const hov = location.search.match(/[?&]wheelhover=([a-z]+)/);
+        if (hov) setTimeout(() => {
+            const t = tiles.find(x => x.el.dataset.id === hov[1]); if (!t) return;
+            const g = geometry(); px = g.ox + t.ux * g.size; py = g.oy + t.uy * g.size; magnify();
+            t.el.classList.add('lsw-hovered');
+        }, 1500);
     }
 
     function letter(p) {
