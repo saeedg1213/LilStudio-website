@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilDock — Support</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 40rem; margin: 0 auto; padding: 4rem 1.5rem 6rem;
+    color: #1c1c1e; background: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8ea; background: #16161a; }
+    a { color: #7aa7e6; }
+    .note { background: #1f1f25; border-color: #33333d; }
+    kbd { background: #26262e; border-color: #3a3a44; }
+  }
+  h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.1rem; margin-top: 2.5rem; }
+  h3 { font-size: 1rem; margin-top: 1.75rem; }
+  .lede { color: #8a8a8e; margin-top: 0; }
+  .note { background: #f5f5f7; border: 1px solid #e2e2e6; border-radius: 10px; padding: 1rem 1.25rem; }
+  kbd {
+    font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: #f0f0f3; border: 1px solid #d8d8dd; border-radius: 5px; padding: 0.1em 0.4em;
+  }
+  footer { margin-top: 4rem; font-size: 0.9rem; color: #8a8a8e; }
+  a { color: #2f6fd0; }
+</style>
+</head>
+<body>
+
+<h1>LilDock Support</h1>
+<p class="lede">Your Dock, in the Mac menu bar.</p>
+
+<div class="note">
+  Missing something from your old Dock, found a bug, or an app looks off in the strip? Email
+  <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>. Mail lands with me
+  directly, and I answer.
+</div>
+
+<h2>Getting started</h2>
+<p>
+  LilDock has no window. After launching, it appears as a strip of icons in your menu
+  bar, next to Wi-Fi and the clock. Right-click the strip and choose <em>Settings</em> to
+  add apps from your Applications folder or from what's open right now, and drag them to
+  reorder. Click an app to open it, or to bring it forward if it's already running.
+</p>
+
+<h2>Common questions</h2>
+
+<h3>How do I hide the macOS Dock?</h3>
+<p>
+  In Settings, click <em>Copy &amp; Open Terminal</em>, then paste and press
+  <kbd>Return</kbd>. The Dock stays away, even at the bottom edge. To bring it back, use
+  the button right under it and do the same.
+</p>
+
+<h3>Why does hiding the Dock go through Terminal?</h3>
+<p>
+  LilDock is sandboxed for the App Store, so it isn't allowed to change another app's
+  settings, the Dock included. It copies the one-line command for you instead.
+</p>
+
+<h3>Can the strip sit on the left or in the middle?</h3>
+<p>
+  No. macOS puts menu bar items like LilDock on the right. Hold <kbd>⌘</kbd> and drag the
+  strip to move it among the other icons there; it remembers where you left it.
+</p>
+
+<h3>My MacBook has a notch and some icons are missing.</h3>
+<p>
+  The icons size themselves to your menu bar's height, but the space left of the notch is
+  limited and macOS hides items that don't fit. Keep the list to the apps you really reach
+  for, or lower the icon size and spacing in Settings.
+</p>
+
+<h3>Does it need any permissions?</h3>
+<p>
+  No prompts at all. It doesn't use Accessibility or Screen Recording and doesn't read
+  other apps' settings. It can see the apps you pick and your Downloads folder, read-only.
+</p>
+
+<h3>Will it slow my Mac down?</h3>
+<p>
+  It's one small menu bar item. It never polls or runs timers; it only wakes up when an app
+  launches or quits, or when you point at it.
+</p>
+
+<h3>How do I uninstall it?</h3>
+<p>
+  If you hid the macOS Dock, bring it back first from Settings. Then quit LilDock and drag
+  it from your Applications folder to the Trash.
+</p>
+
+<h2>System requirements</h2>
+<p>macOS 14 Sonoma or later. Apple silicon and Intel.</p>
+
+<footer>
+  LilDock is part of <a href="https://lilstudio.app">LilStudio</a> · <a href="./">LilDock</a> · <a href="privacy.html">Privacy Policy</a>
+</footer>
+
+</body>
+</html>
