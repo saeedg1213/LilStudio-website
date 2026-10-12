@@ -108,6 +108,10 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 
 1. `/<appid>/index.html`, `privacy.html`, `support.html`, `screenshots/app-icon.png`
    (`sips -Z 512 icon-1024.png --out …`).
+   Big screenshots: keep the original and serve a WebP (`cwebp -q 82 -alpha_q 90 -resize 1600 0 in.png -o out.webp`,
+   which keeps transparency for device mockups) via `<picture>` with the PNG as the fallback. Give the
+   `<img>` width/height and `loading="lazy"`. LilStats' "On Your Mac" section adds pulsing callout pins
+   at percentage positions over the screenshot. Reuse that pattern for showing an app in context.
 2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`.
 3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`) **and**
    give it a slot in `LAYOUT`. Slots: inner ring `r: 2.2` (studio 225°, lildisplay 195°, lildock 255°);
@@ -115,9 +119,16 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
    ≥ ~1.15 tile widths between centres (chord = 2·r·sin(Δa/2)), so the outer ring is full at 5.
    A ninth app means re-spacing the rings (e.g. a third ring around r ≈ 4.5 and bumping `OUTER_R`,
    which sizes the dial) and checking it with `?wheel=open&wheelhover=<id>`.
-4. Homepage `index.html`: hero `.app-grid` cell (3×3 grid; the cells are `muted`/app/`next`),
-   an `.app-card` in `.apps-grid` (stage animation, kicker, chips, CTA + price), the "N right now"
-   count in the apps header, the meta description list, and the footer links.
+4. Homepage `index.html`:
+   - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
+     e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
+     `.app-dot.<short>`, `.btn-app.<short>`.
+   - Hero `.app-grid` (3×3): currently LilStats, LilDisplay, *muted* / LilDock, LilUsage, LilVibe /
+     LilHide, LilMirror, *next*. One empty `muted` cell is left; after that the grid needs a new layout.
+   - An `.app-card` in `.apps-grid` with a small pure-CSS stage animation in a `/* ---- AppName ---- */`
+     CSS block (add it to the `prefers-reduced-motion` block too). An odd last card spans the full
+     row, centred, at max 540px.
+   - Update the "N right now" count, the meta description's app list, and the footer links.
 5. Preview locally: `python3 -m http.server 8765` from the repo root, then open
    `http://localhost:8765/<appid>/`. Check light and dark, ~390px mobile width, and the wheel.
 6. Commit and push to `main` (that's the deploy).
@@ -130,4 +141,5 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs
   killed early produce blank images. Hero sections are `min-height: 100vh`, so a tall window
-  doesn't show the sections below it.
+  doesn't show the sections below it. Hash URLs (`#section`) screenshot blank, so to check a lower section,
+  temporarily copy the page with `<style>.hero{display:none}</style>` injected, then delete the copy.

@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe and LilDock.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock and LilStats.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -50,6 +50,8 @@
             --vibe-alt: #7BD3EA;
             --dock: #FF6B5E;
             --dock-alt: #4A7BDB;
+            --stats: #7ED48A;
+            --stats-alt: #FF6B3D;
         }
 
         [data-theme="light"] {
@@ -452,6 +454,7 @@
         .cell.app.mirror { background: var(--mirror); }
         .cell.app.vibe { background: var(--vibe); }
         .cell.app.dock { background: var(--dock); }
+        .cell.app.stats { background: var(--stats); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -594,6 +597,7 @@
         .app-stage.mirror { background: var(--mirror); }
         .app-stage.vibe { background: var(--vibe-alt); }
         .app-stage.dock { background: var(--dock-alt); }
+        .app-stage.stats { background: var(--stats); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -622,6 +626,7 @@
         .app-dot.mirror { background: var(--mirror); }
         .app-dot.vibe { background: var(--vibe); }
         .app-dot.dock { background: var(--dock); }
+        .app-dot.stats { background: var(--stats); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -676,6 +681,7 @@
         .btn-app.mirror { background: var(--mirror); }
         .btn-app.vibe { background: var(--vibe); }
         .btn-app.dock { background: var(--dock); }
+        .btn-app.stats { background: var(--stats); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1289,7 +1295,80 @@
             20%           { transform: scale(1.35); }
         }
 
+        /* ---- LilStats ---- */
+        @property --ls-p { syntax: '<number>'; inherits: false; initial-value: 24; }
+
+        .ls {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 18px;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg);
+            box-shadow: 5px 5px 0 var(--border);
+            transform: rotate(-2deg);
+        }
+
+        .ls-ring {
+            position: relative;
+            width: 92px;
+            height: 92px;
+            border-radius: 50%;
+            border: var(--border-width) solid var(--border);
+            background: conic-gradient(var(--stats-alt) calc(var(--ls-p) * 1%), var(--bg-elevated) 0);
+            animation: lsRing 5s ease-in-out infinite;
+        }
+
+        .ls-ring::after {
+            content: '';
+            position: absolute;
+            inset: 15px;
+            border-radius: 50%;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg);
+        }
+
+        @keyframes lsRing {
+            0%, 100% { --ls-p: 24; }
+            30%      { --ls-p: 71; }
+            55%      { --ls-p: 46; }
+            78%      { --ls-p: 88; }
+        }
+
+        .ls-bars { display: flex; align-items: flex-end; gap: 8px; height: 92px; }
+
+        .ls-bars i {
+            position: relative;
+            width: 20px;
+            height: 100%;
+            border: 2.5px solid var(--border);
+            background: var(--bg-elevated);
+            overflow: hidden;
+        }
+
+        .ls-bars i::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 30%;
+            background: var(--stats);
+            animation: lsBar 3.6s ease-in-out infinite;
+        }
+
+        .ls-bars i:nth-child(2)::after { background: var(--yellow); animation-delay: -1.2s; animation-duration: 4.2s; }
+        .ls-bars i:nth-child(3)::after { background: var(--stats-alt); animation-delay: -2.1s; animation-duration: 3.1s; }
+
+        @keyframes lsBar {
+            0%, 100% { height: 28%; }
+            35%      { height: 82%; }
+            60%      { height: 45%; }
+            80%      { height: 66%; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            .ls-ring, .ls-bars i::after { animation: none; }
             .ld-bar i { animation: none; }
             .lh i { animation: none; }
             .lm-glass::after, .lm-face i, .lm-spark { animation: none; }
@@ -1342,7 +1421,10 @@
 
             <div class="hero-grid-wrap" aria-hidden="true">
                 <div class="app-grid">
-                    <div class="cell muted"></div>
+                    <a class="cell app stats" href="/lilstats/" aria-label="LilStats">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="15" cy="9" r="6"/><path d="M15 3a6 6 0 016 6" stroke-width="3"/><path d="M3 21v-6M7 21v-9M3 21h18"/></svg>
+                        LilStats
+                    </a>
                     <a class="cell app display" href="/lildisplay/" aria-label="LilDisplay">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="14" height="10" rx="1"/><rect x="17" y="9" width="5" height="11" rx="1"/><path d="M6 18h6"/></svg>
                         LilDisplay
@@ -1384,7 +1466,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Six right now. Each one solves a single annoyance properly.</p>
+            <p>Seven right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1594,6 +1676,31 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-3">
+                <div class="app-stage stats" aria-hidden="true">
+                    <div class="ls">
+                        <div class="ls-ring"></div>
+                        <div class="ls-bars"><i></i><i></i><i></i></div>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot stats"></span>
+                        <h3>LilStats</h3>
+                    </div>
+                    <div class="app-kicker">macOS menu bar</div>
+                    <p>CPU, GPU and RAM in your menu bar, in twelve styles from plain numbers to rings and per-core bars. Click for P-cores, E-cores and a minute of history. Light enough not to show up in its own numbers.</p>
+                    <div class="chips">
+                        <span class="chip">12 styles</span>
+                        <span class="chip">P + E cores</span>
+                        <span class="chip">No permissions</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilstats/" class="btn btn-app stats">Open LilStats &rarr;</a>
+                        <span class="app-price">Mac App Store &middot; macOS 14.6+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1655,7 +1762,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
