@@ -17,6 +17,7 @@ no npm: every page is a hand-written `.html` file with its CSS in a `<style>` bl
 /<appid>/privacy.html  Privacy policy (built on subpage.css)
 /<appid>/support.html  Support page (built on subpage.css)
 /<appid>/screenshots/  app-icon.png (512 or 1024) + real screenshots
+/icons/<AppName>.png    Source app icons, 1024×1024 (the wheel and app-icon.png files are made from these)
 ```
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
