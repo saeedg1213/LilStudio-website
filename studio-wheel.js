@@ -28,6 +28,7 @@
         { id: 'lilvibe',    name: 'LilVibe',    tag: 'Living nature wallpaper',        href: '/lilvibe/',    color: '#FF9466', icon: '/assets/wheel/lilvibe.png' },
         { id: 'lilhide',    name: 'LilHide',    tag: 'Hide desktop icons in a click',  href: '/lilhide/',    color: '#6C8CFF', icon: '/assets/wheel/lilhide.png' },
         { id: 'lilmirror',  name: 'LilMirror',  tag: 'A mirror before your call',      href: '/lilmirror/',  color: '#F7DC3C', icon: null },
+        { id: 'lilstats',   name: 'LilStats',   tag: 'CPU, GPU & RAM in the menu bar', href: '/lilstats/',   color: '#7ED48A', icon: '/assets/wheel/lilstats.png' },
     ];
 
     // Honeycomb slots around the corner: radius in tile widths, angle in degrees
@@ -37,10 +38,11 @@
         studio:     { r: 2.2,  a: 225 },   // inner ring, centre
         lildisplay: { r: 2.2,  a: 195 },   // inner ring
         lildock:    { r: 2.2,  a: 255 },   // inner ring
-        lilusage:   { r: 3.35, a: 183 },   // outer ring
-        lilvibe:    { r: 3.35, a: 211 },
-        lilhide:    { r: 3.35, a: 239 },
-        lilmirror:  { r: 3.35, a: 267 },
+        lilusage:   { r: 3.35, a: 183 },   // outer ring: five slots, 21° apart
+        lilvibe:    { r: 3.35, a: 204 },
+        lilhide:    { r: 3.35, a: 225 },
+        lilmirror:  { r: 3.35, a: 246 },
+        lilstats:   { r: 3.35, a: 267 },
     };
     const OUTER_R = 3.35;                  // outer ring, in tile widths
     const DIAL_R = OUTER_R + 1.1;          // dial radius, in tile widths (room for the drift)

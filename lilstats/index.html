@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilStats &ndash; CPU, GPU &amp; RAM in Your Mac's Menu Bar</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilStats puts your Mac's CPU, GPU and RAM in the menu bar, in twelve styles. P and E cores, live history, monochrome or load colours. Sandboxed, no helpers, no permissions, and light on resources itself.">
+    <meta property="og:title" content="LilStats &ndash; CPU, GPU &amp; RAM in Your Mac's Menu Bar">
+    <meta property="og:description" content="Your Mac's vitals, tiny and live. Twelve menu bar styles, P and E cores, zero permissions.">
+    <meta property="og:url" content="https://lilstudio.app/lilstats/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lilstats/screenshots/app-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="/assets/theme.js"></script>
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode. Primary/secondary come from the app icon. */
+            --primary: #7ED48A;
+            --secondary: #FF6B3D;
+            --accent: #FF6B3D;
+            --yellow: #FFD43B;
+            --load-low: #33C759;
+            --load-mid: #FFC200;
+            --load-high: #FF453A;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #9A9A9A;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #FFFBEF;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .bg-pattern {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---- Navigation ---- */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.5rem;
+            color: var(--text); letter-spacing: -0.02em; position: relative; z-index: 0;
+        }
+
+        /* Three load bars under the logo: green, yellow, orange, like the icon */
+        .logo::before {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 8px; z-index: -1;
+            background: linear-gradient(90deg, var(--primary) 0 33%, var(--yellow) 33% 66%, var(--secondary) 66%);
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; position: relative;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 3px;
+            background: var(--primary); transition: width 0.2s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+        /* ---- Buttons ---- */
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 0.03em; text-decoration: none; cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s; position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary); color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        .btn-primary:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+
+        .theme-toggle {
+            width: 48px; height: 48px; background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s; box-shadow: 4px 4px 0 var(--border);
+        }
+        .theme-toggle:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+        .theme-toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .theme-toggle svg { width: 24px; height: 24px; color: var(--yellow); }
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* ---- Hero ---- */
+        .hero {
+            position: relative; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 8rem 2rem 4rem; z-index: 1;
+        }
+
+        .hero-content { max-width: 1400px; width: 100%; }
+
+        .hero-top {
+            display: flex; align-items: center; justify-content: center; gap: 3rem;
+        }
+
+        .hero-device { flex: 0 0 auto; transition: transform 0.3s ease; }
+        .hero-device:hover { transform: rotate(-3deg) scale(1.06); }
+        .hero-appicon { width: 150px; height: 150px; display: block; animation: bob 5s ease-in-out infinite; }
+
+        @keyframes bob {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .hero-center { flex: 1; text-align: center; max-width: 560px; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em; color: #000;
+            margin-bottom: 1.5rem; transform: rotate(-1deg); box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px; height: 8px; background: var(--load-low); border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; line-height: 1.1;
+            letter-spacing: -0.03em; margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight { position: relative; display: inline-block; z-index: 0; }
+        h1 .highlight::before {
+            content: ''; position: absolute; bottom: 0; left: -4px; right: -4px; height: 35%;
+            background: var(--primary); z-index: -1; transform: skewX(-3deg);
+            transform-origin: left; animation: highlightFill 0.9s cubic-bezier(.2,.9,.25,1) 0.6s both;
+        }
+
+        @keyframes highlightFill { from { transform: skewX(-3deg) scaleX(0); } to { transform: skewX(-3deg) scaleX(1); } }
+
+        .hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.7; }
+
+        .hero-buttons { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
+        .download-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+        .system-req {
+            font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-muted);
+            margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .privacy-notice {
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            padding: 1rem 1.5rem; border: var(--border-width) solid var(--border); max-width: 550px;
+        }
+        .privacy-notice svg { flex-shrink: 0; color: var(--primary); }
+        .privacy-notice p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; text-align: left; }
+        .privacy-notice a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .privacy-notice a:hover { background: var(--primary); color: #000; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-top > * { opacity: 0; animation: fadeInUp 0.7s ease forwards; }
+        .hero-top > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-top > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-top > *:nth-child(3) { animation-delay: 0.35s; }
+
+        /* ---- Live mock: menu bar + popover ---- */
+        .mock {
+            width: 330px; background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transform: rotate(1deg); transition: transform 0.3s ease;
+        }
+        .mock:hover { transform: rotate(0) translate(-3px, -3px); }
+
+        .menubar {
+            display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+            height: 38px; padding: 0 10px; border-bottom: var(--border-width) solid var(--border);
+            color: var(--text); overflow: hidden;
+        }
+        .menubar canvas { display: block; flex-shrink: 0; }
+        .menubar .mb-glyph { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.85; }
+        .menubar .mb-clock { font: 600 0.78rem/1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; white-space: nowrap; }
+
+        .pop { padding: 12px; }
+
+        .pop-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 12px; }
+        .pop-tile { border: 2px solid var(--border); padding: 6px 7px 7px; background: var(--bg); }
+        .pop-tile small {
+            display: block; font-family: 'Space Mono', monospace; font-size: 0.6rem;
+            text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);
+        }
+        .pop-tile b { display: block; font: 700 0.98rem/1.3 'Space Mono', monospace; white-space: nowrap; }
+        .pop-tile b.small { font-size: 0.72rem; line-height: 1.75; }
+        .pop-cap { height: 5px; border: 1.5px solid var(--border); margin-top: 4px; overflow: hidden; }
+        .pop-cap span { display: block; height: 100%; width: 0; background: var(--load-low);
+                        transition: width 0.3s cubic-bezier(.2,.9,.25,1), background-color 0.3s; }
+
+        .pop-cores { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 12px; }
+        .core-group small {
+            display: block; font-family: 'Space Mono', monospace; font-size: 0.58rem;
+            text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 3px;
+        }
+        .core-bars { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
+        .core-bars i {
+            display: block; width: 14px; height: 100%; position: relative;
+            border: 1.5px solid var(--border); background: var(--bg); overflow: hidden;
+        }
+        .core-bars i::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+            height: calc(var(--v, 0) * 100%); background: var(--c, var(--load-low));
+            transition: height 0.3s cubic-bezier(.2,.9,.25,1), background-color 0.3s;
+        }
+
+        .pop-graph { margin-bottom: 8px; }
+        .pop-graph:last-child { margin-bottom: 0; }
+        .pop-graph-top {
+            display: flex; justify-content: space-between;
+            font-family: 'Space Mono', monospace; font-size: 0.62rem; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 2px;
+        }
+        .pop-graph-top span:last-child { color: var(--text); font-weight: 700; }
+        .pop-graph svg { display: block; width: 100%; height: 30px; border: 1.5px solid var(--border); background: var(--bg); }
+        .pop-graph path.area { opacity: 0.28; }
+        .pop-graph path.line { fill: none; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+        .mock-caption {
+            font-family: 'Space Mono', monospace; font-size: 0.66rem; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--text-muted); text-align: center; margin-top: 0.9rem;
+        }
+        .mock-caption b { color: var(--text); }
+
+        /* ---- Stats bar ---- */
+        .stats-bar {
+            position: relative; z-index: 1;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+        .stats-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+        .stat-item { padding: 1rem; text-align: center; border-right: var(--border-width) solid var(--border); transition: background 0.2s; }
+        .stat-item:last-child { border-right: none; }
+        .stat-item:hover { background: var(--yellow); }
+        .stat-item:hover h3, .stat-item:hover p { color: #000; }
+        .stat-item h3 { font-family: 'Space Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+        .stat-item p { font-family: 'Space Mono', monospace; color: var(--text); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+
+        /* ---- Sections ---- */
+        section { position: relative; z-index: 1; padding: 6rem 2rem; }
+
+        .section-header { text-align: center; max-width: 620px; margin: 0 auto 3.5rem; }
+        .section-header h2 { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; position: relative; display: inline-block; z-index: 0; }
+
+        /* Heading underline is a load meter that fills green -> yellow -> red when it scrolls in */
+        .section-header h2::after {
+            content: ''; position: absolute; bottom: 4px; left: 0; right: 0; height: 12px; z-index: -1;
+            background: linear-gradient(90deg, var(--load-low), var(--load-mid) 55%, var(--load-high));
+            transform: skewX(-5deg) scaleX(0); transform-origin: left;
+            transition: transform 1.1s cubic-bezier(.2,.9,.25,1) 0.2s;
+        }
+        .section-header.visible h2::after { transform: skewX(-5deg) scaleX(1); }
+
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+        /* ---- Styles gallery ---- */
+        .styles { background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
+
+        .style-controls { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: -1.5rem auto 2.5rem; }
+
+        .seg { display: inline-flex; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); background: var(--bg); }
+        .seg button {
+            font: 700 0.78rem 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 0.55rem 0.9rem; border: 0; background: transparent; color: var(--text); cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .seg button + button { border-left: var(--border-width) solid var(--border); }
+        .seg button[aria-pressed="true"] { background: var(--primary); color: #000; }
+        .seg button:focus-visible { outline: 3px solid var(--secondary); outline-offset: -3px; }
+
+        .style-grid {
+            max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem;
+        }
+
+        .style-tile {
+            display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+            padding: 1.1rem 0.75rem 0.9rem; cursor: pointer; color: var(--text);
+            background: var(--bg); border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border); font: inherit;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+        }
+        .style-tile:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--border); }
+        .style-tile:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .style-tile:focus-visible { outline: 3px solid var(--secondary); outline-offset: 3px; }
+        .style-tile[aria-pressed="true"] { background: var(--primary); color: #000; }
+        .style-tile[aria-pressed="true"] .tile-screen { border-color: #000; }
+
+        .tile-screen {
+            width: 100%; height: 56px; display: grid; place-items: center;
+            border: 2px solid var(--border); background: var(--bg-elevated); color: var(--text);
+        }
+        .style-tile span {
+            font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+
+        .style-note {
+            text-align: center; margin-top: 2.25rem; font-family: 'Space Mono', monospace; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);
+        }
+
+        /* ---- Features ---- */
+        .features-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+        .feature-card {
+            background: var(--bg-elevated); border: var(--border-width) solid var(--border);
+            padding: 1.75rem; display: flex; gap: 1.25rem; align-items: flex-start;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+        .feature-card:hover { box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border); }
+
+        .feature-icon {
+            width: 48px; height: 48px; background: var(--primary); border: var(--border-width) solid var(--border);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(.2,.9,.25,1.4);
+        }
+        .feature-card:nth-child(even) .feature-icon { background: var(--yellow); }
+        .feature-card:hover .feature-icon { transform: rotate(-8deg) scale(1.08); }
+        .feature-icon svg { width: 24px; height: 24px; color: #000; }
+
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* ---- Light on resources ---- */
+        .lean { background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
+
+        .lean-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 2rem; align-items: center; }
+
+        .lean-list { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+        .lean-list li {
+            display: flex; gap: 0.9rem; align-items: flex-start; padding: 1rem 1.1rem;
+            background: var(--bg); border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border); color: var(--text-muted); font-size: 0.95rem;
+        }
+        .lean-list li b { color: var(--text); display: block; margin-bottom: 0.1rem; }
+        .lean-list li::before {
+            content: ''; width: 14px; height: 14px; flex-shrink: 0; margin-top: 0.35rem;
+            background: var(--primary); border: 2px solid var(--border);
+        }
+
+        /* Redraw timeline: one tick per menu bar redraw */
+        .redraws {
+            background: var(--bg); border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); padding: 1.4rem;
+        }
+        .redraws h3 { font-size: 1.05rem; margin-bottom: 0.25rem; }
+        .redraws > p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.1rem; }
+        .rd-row { margin-bottom: 1rem; }
+        .rd-row:last-child { margin-bottom: 0; }
+        .rd-label {
+            display: flex; justify-content: space-between; font-family: 'Space Mono', monospace;
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem;
+        }
+        .rd-label span:last-child { color: var(--text-muted); }
+        .rd-track { position: relative; height: 34px; border: 2px solid var(--border); overflow: hidden; background: var(--bg-elevated); }
+        .rd-track i {
+            position: absolute; top: 5px; bottom: 5px; width: 3px; background: var(--c, var(--secondary));
+            animation: rdScroll var(--dur, 8s) linear infinite; animation-delay: var(--d, 0s); left: 100%;
+        }
+        .rd-row.lean-row .rd-track i { --c: var(--load-low); }
+        @keyframes rdScroll { from { left: 100%; } to { left: -4px; } }
+
+        /* ---- FAQ ---- */
+        .faq-grid { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+        .faq-item {
+            background: var(--bg-elevated); border: var(--border-width) solid var(--border); padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .faq-item:hover { transform: translate(-3px, -3px); box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border); }
+        .faq-item h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .faq-item p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* ---- Contact ---- */
+        .contact { text-align: center; background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); }
+        .contact-card {
+            max-width: 500px; margin: 0 auto; background: var(--bg); border: var(--border-width) solid var(--border);
+            padding: 2.5rem; box-shadow: 8px 8px 0 var(--border); transform: rotate(0.5deg);
+        }
+        .contact-card h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .contact-card p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+        /* ---- Footer ---- */
+        footer {
+            position: relative; z-index: 1; text-align: center; padding: 2rem;
+            border-top: var(--border-width) solid var(--border); background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+        }
+        footer a { color: var(--text); text-decoration: none; border-bottom: 2px solid var(--primary); transition: background 0.2s, color 0.2s; }
+        footer a:hover { background: var(--primary); color: #000; }
+
+        /* ---- Scroll animations ---- */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .scale-in { opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .scale-in.visible { opacity: 1; transform: scale(1); }
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        /* Hover lifts shouldn't wait for the reveal delay */
+        .fade-in.visible:hover { transition-delay: 0s; }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 1000px) {
+            .hero-top { flex-direction: column; gap: 2.25rem; }
+            .style-grid { grid-template-columns: repeat(3, 1fr); }
+            .lean-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-item { border-bottom: var(--border-width) solid var(--border); }
+            .stat-item:nth-child(2) { border-right: none; }
+            .stat-item:nth-last-child(-n+2) { border-bottom: none; }
+            .features-grid { grid-template-columns: 1fr; }
+            .style-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 1rem; }
+            .nav-links { display: none; }
+            .nav-right .btn { padding: 0.6rem 0.9rem; font-size: 0.8rem; width: auto; }
+            .theme-toggle { width: 42px; height: 42px; }
+            .hero { padding: 6.5rem 1rem 3rem; min-height: auto; }
+            .hero-appicon { width: 110px; height: 110px; }
+            h1 { font-size: 2rem; }
+            .btn { width: 100%; justify-content: center; }
+            .download-btn-wrapper { width: 100%; }
+            .mock { width: 100%; max-width: 340px; transform: none; }
+            section { padding: 4rem 1rem; }
+            .section-header h2 { font-size: 2rem; }
+            .style-controls { margin-top: -1rem; }
+            .style-grid { gap: 0.8rem; }
+            .contact-card { padding: 1.5rem; transform: none; }
+            footer { font-size: 0.75rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+            }
+            .hero-top > * { opacity: 1; }
+            .rd-track i { animation: none !important; left: var(--x, 50%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilStats</div>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#styles">Styles</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="https://apps.apple.com/app/id6821720769" class="btn btn-primary" data-appstore>Get It</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device">
+                    <img src="screenshots/app-icon.png" alt="LilStats app icon" class="hero-appicon" width="150" height="150">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        Menu Bar Monitor for macOS
+                    </div>
+                    <h1>Your Mac's vitals, <span class="highlight">lil</span> and live.</h1>
+                    <p class="hero-subtitle">LilStats keeps CPU, GPU and RAM in your menu bar, drawn however you like &mdash; rings, bars, graphs, per-core meters or plain numbers. Click it for P&#8209;cores, E&#8209;cores and the last minute of history.</p>
+                    <div class="hero-buttons">
+                        <div class="download-btn-wrapper">
+                            <a href="https://apps.apple.com/app/id6821720769" class="btn btn-primary" data-appstore>
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                Mac App Store
+                            </a>
+                            <span class="system-req">macOS 14.6+ &middot; Apple silicon &amp; Intel &middot; No account</span>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>Sandboxed. No helper tools, no admin password, no permissions, no network. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-mock">
+                    <div class="mock" aria-label="Animated preview of LilStats in the menu bar with its popover open" role="img">
+                        <div class="menubar">
+                            <canvas id="heroBar" aria-hidden="true"></canvas>
+                            <svg class="mb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
+                            <svg class="mb-glyph" viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="width:22px"><rect x="1" y="2" width="22" height="12" rx="3"/><rect x="4" y="5" width="13" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg>
+                            <span class="mb-clock" id="clock">9:41</span>
+                        </div>
+                        <div class="pop">
+                            <div class="pop-tiles">
+                                <div class="pop-tile"><small>CPU</small><b id="tCpu">–</b><div class="pop-cap"><span id="cCpu"></span></div></div>
+                                <div class="pop-tile"><small>GPU</small><b id="tGpu">–</b><div class="pop-cap"><span id="cGpu"></span></div></div>
+                                <div class="pop-tile"><small>RAM</small><b id="tRam" class="small">–</b><div class="pop-cap"><span id="cRam"></span></div></div>
+                            </div>
+                            <div class="pop-cores">
+                                <div class="core-group"><div class="core-bars" id="pCores"></div><small>P-cores</small></div>
+                                <div class="core-group"><div class="core-bars" id="eCores"></div><small>E-cores</small></div>
+                            </div>
+                            <div class="pop-graph" data-metric="cpu"><div class="pop-graph-top"><span>CPU</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
+                            <div class="pop-graph" data-metric="gpu"><div class="pop-graph-top"><span>GPU</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
+                            <div class="pop-graph" data-metric="ram"><div class="pop-graph-top"><span>RAM</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
+                        </div>
+                    </div>
+                    <p class="mock-caption">Showing <b id="heroStyleName">Ring + %</b> &middot; <a href="#styles" style="color:inherit">try another style</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar" style="padding:0">
+        <div class="stats-grid">
+            <div class="stat-item"><h3 data-count="3">3</h3><p>Metrics</p></div>
+            <div class="stat-item"><h3 data-count="12">12</h3><p>Menu bar styles</p></div>
+            <div class="stat-item"><h3 data-count="0">0</h3><p>Permissions</p></div>
+            <div class="stat-item"><h3>~16MB</h3><p>Memory</p></div>
+        </div>
+    </section>
+
+    <section class="styles" id="styles">
+        <div class="section-header fade-in">
+            <h2>Twelve Styles</h2>
+            <p>Every metric gets its own look. Pick one below and the menu bar up top switches to it.</p>
+        </div>
+        <div class="style-controls fade-in">
+            <div class="seg" role="group" aria-label="Colour">
+                <button type="button" data-color="mono" aria-pressed="false">Mono</button>
+                <button type="button" data-color="colored" aria-pressed="true">Colored</button>
+            </div>
+            <div class="seg" role="group" aria-label="Labels">
+                <button type="button" data-labels="1" aria-pressed="true">Labels</button>
+                <button type="button" data-labels="0" aria-pressed="false">No labels</button>
+            </div>
+        </div>
+        <div class="style-grid" id="styleGrid"></div>
+        <p class="style-note fade-in">Mono follows your menu bar like any system icon &middot; Colored runs green &rarr; yellow &rarr; red with load</p>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>Everything you'd glance at, nothing you'd have to manage.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+                <div>
+                    <h3>P-cores &amp; E-cores</h3>
+                    <p>On Apple silicon, per-core bars split into performance and efficiency groups, so you can see which ones are doing the work.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 4-7 5 5"/><path d="M3 21h18"/></svg></div>
+                <div>
+                    <h3>A Minute of History</h3>
+                    <p>Click the menu bar for big numbers, every core, and live graphs of the last 60 seconds. While it's open it updates every second.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></svg></div>
+                <div>
+                    <h3>Mono or Colored</h3>
+                    <p>Monochrome blends into the menu bar in light and dark mode. Colored shifts from green to yellow to red as things heat up.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 4v16M7 4l-3 3M7 4l3 3M17 20V4M17 20l-3-3M17 20l3-3"/></svg></div>
+                <div>
+                    <h3>Yours to Arrange</h3>
+                    <p>Turn each metric on or off, reorder them, hide the labels, and check it all in a live preview on light and dark menu bars.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+                <div>
+                    <h3>Your Pace</h3>
+                    <p>Update every 1, 2 or 5 seconds. Values glide between readings, and the animation pauses in Low Power Mode.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div>
+                    <h3>Asks For Nothing</h3>
+                    <p>Fully sandboxed. No helper tool, no admin password, no permission prompts. It reads the same counters Activity Monitor does.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lean" id="lean">
+        <div class="section-header fade-in">
+            <h2>Light on Its Feet</h2>
+            <p>A system monitor shouldn't show up in its own numbers.</p>
+        </div>
+        <div class="lean-grid">
+            <ul class="lean-list">
+                <li class="fade-in stagger-1"><div><b>Redraws only when it would look different</b>If 41% is still 41%, the menu bar isn't touched.</div></li>
+                <li class="fade-in stagger-2"><div><b>Sleeps when your display does</b>No one's looking, so sampling stops until the screen wakes or you switch back to your account.</div></li>
+                <li class="fade-in stagger-3"><div><b>Built when you open it, gone when you close it</b>The popover and Settings window are released from memory as soon as they close.</div></li>
+                <li class="fade-in stagger-4"><div><b>One image, drawn natively</b>Every metric is drawn into a single menu bar image. No web views, no background helpers.</div></li>
+            </ul>
+            <div class="redraws scale-in" aria-hidden="true">
+                <h3>Menu bar redraws, a quiet minute</h3>
+                <p>Each tick is one redraw. Small wiggles in the numbers don't animate.</p>
+                <div class="rd-row"><div class="rd-label"><span>Animate everything</span><span>busy</span></div><div class="rd-track" id="rdBusy"></div></div>
+                <div class="rd-row lean-row"><div class="rd-label"><span>LilStats</span><span>calm</span></div><div class="rd-track" id="rdLean"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Does it need any permissions?</h3>
+                <p>No. LilStats reads the CPU, memory and GPU counters macOS makes available to any app. No Accessibility, no Full Disk Access, no helper tool, no admin password.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Why does RAM match Activity Monitor?</h3>
+                <p>On purpose. "Used" is app memory plus wired plus compressed, the same sum Activity Monitor shows as Memory Used. Files macOS is just caching don't count.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Does it work on Intel Macs?</h3>
+                <p>Yes. On Intel the per-core view shows one group of cores instead of P and E. Some older GPUs don't report utilization; if yours doesn't, GPU shows a dash instead of a made-up number.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Will it drain my battery?</h3>
+                <p>It's built not to. Readings take a fraction of a millisecond, redraws only happen when something visibly changes, and everything stops while your display sleeps. Want it even calmer? Set the interval to 5 seconds.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Does it collect any data?</h3>
+                <p>None. LilStats has no account, no analytics, and no network connection. Your numbers stay on your Mac. See the <a href="privacy.html" style="color:inherit;font-weight:600">privacy policy</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>Found a bug, or want a style?</h2>
+            <p>Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilhide/">LilHide</a> &middot; <a href="/lilusage/">LilUsage</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // Every "Get It" button picks this up.
+        const APP_STORE_URL = 'https://apps.apple.com/app/id6821720769';
+        document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ---- Scroll reveal --------------------------------------------------------
+        const revealer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealer.unobserve(e.target); } });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => revealer.observe(el));
+
+        // Count-up for the stats bar
+        const counter = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                counter.unobserve(e.target);
+                const end = +e.target.dataset.count;
+                if (reduced || end === 0) return;
+                const t0 = performance.now();
+                const tick = (now) => {
+                    const p = Math.min(1, (now - t0) / 900);
+                    e.target.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+                    if (p < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
+
+        // ---- Simulated readings ---------------------------------------------------
+        // A gentle random walk with the odd spike, sampled like the app: a new reading,
+        // then a 250 ms ease-out glide. Changes under 2 points jump instead of animating.
+        const P_CORES = 6, E_CORES = 4, HISTORY = 60, SPARK = 24;
+        const SAMPLE_MS = 1400, GLIDE_MS = 250;
+        const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+        const rnd = (a, b) => a + Math.random() * (b - a);
+
+        const target = { cpu: 0.32, gpu: 0.18, ram: 0.64, cores: [] };
+        for (let i = 0; i < P_CORES + E_CORES; i++) target.cores.push(rnd(0.1, 0.5));
+        let from = structuredClone(target), shown = structuredClone(target), glideStart = 0;
+        const history = { cpu: [], gpu: [], ram: [] };
+        for (let i = 0; i < HISTORY; i++) {
+            history.cpu.push(clamp(0.3 + 0.12 * Math.sin(i / 5) + rnd(-0.06, 0.06)));
+            history.gpu.push(clamp(0.18 + 0.08 * Math.sin(i / 7 + 1) + rnd(-0.04, 0.04)));
+            history.ram.push(clamp(0.63 + 0.01 * Math.sin(i / 9)));
+        }
+
+        let spike = 0;
+        function nextReading() {
+            if (spike <= 0 && Math.random() < 0.12) spike = Math.floor(rnd(2, 5));
+            const busy = spike-- > 0;
+            const t = {
+                cpu: clamp(busy ? rnd(0.62, 0.94) : target.cpu * 0.55 + rnd(0.12, 0.42) * 0.45 + rnd(-0.05, 0.05), 0.04, 0.98),
+                gpu: clamp(busy ? rnd(0.35, 0.7) : target.gpu * 0.6 + rnd(0.06, 0.3) * 0.4, 0.02, 0.95),
+                ram: clamp(target.ram + rnd(-0.012, 0.014) + (busy ? 0.01 : -0.002), 0.55, 0.82),
+                cores: []
+            };
+            for (let i = 0; i < P_CORES + E_CORES; i++) {
+                const isE = i >= P_CORES;
+                const base = isE ? t.cpu * 0.7 + 0.1 : t.cpu * 1.1 - 0.05;
+                t.cores.push(clamp(base + rnd(-0.22, 0.22), 0.02, 1));
+            }
+            return t;
+        }
+
+        function lerpState(a, b, k) {
+            return {
+                cpu: a.cpu + (b.cpu - a.cpu) * k, gpu: a.gpu + (b.gpu - a.gpu) * k, ram: a.ram + (b.ram - a.ram) * k,
+                cores: a.cores.map((v, i) => v + (b.cores[i] - v) * k)
+            };
+        }
+
+        function loadColor(v) {
+            v = clamp(v);
+            const g = [51, 199, 89], y = [255, 194, 0], r = [255, 69, 58];
+            const [a, b, t] = v < 0.5 ? [g, y, v / 0.5] : [y, r, (v - 0.5) / 0.5];
+            return `rgb(${a.map((c, i) => Math.round(c + (b[i] - c) * t)).join(',')})`;
+        }
+        const pct = v => Math.round(clamp(v) * 100);
+
+        // ---- Menu bar renderer (canvas port of the app's Core Graphics renderer) ----
+        const LAYOUTS = [
+            ['text', 'Percentage'], ['ringText', 'Ring + %'], ['barText', 'Bar + %'], ['labelBar', 'Label + bar'],
+            ['stacked', 'Stacked'], ['capsule', 'Capsule'], ['signal', 'Signal'], ['bar', 'Bar'],
+            ['perCore', 'Per-core bars'], ['sparkline', 'Graph'], ['ring', 'Ring'], ['icon', 'Icon']
+        ];
+        const SYS = '-apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif';
+        const F = {
+            value: `500 12px ${SYS}`, label: `400 12px ${SYS}`, small: `600 9px ${SYS}`, tiny: `600 8px ${SYS}`,
+            stack: `600 10px ${SYS}`, lineLabel: `500 11px ${SYS}`, lineValue: `600 11px ${SYS}`,
+            labelBar: `600 10px ${SYS}`, capsule: `700 9.5px ${SYS}`
+        };
+        const H = 18, GH = 14, GY = 2, SPACING = 8;
+        const measureCtx = document.createElement('canvas').getContext('2d');
+        const widthCache = {};
+        function tw(str, font) {
+            const k = font + '|' + str;
+            if (!(k in widthCache)) { measureCtx.font = font; widthCache[k] = Math.ceil(measureCtx.measureText(str).width); }
+            return widthCache[k];
+        }
+
+        const opts = { colored: true, labels: true };
+        let ink = '#17150F';
+        function readInk() { ink = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#17150F'; }
+        readInk();
+
+        function withAlpha(color, a) {
+            measureCtx.fillStyle = color;
+            const c = measureCtx.fillStyle;   // normalised to #rrggbb or rgb()
+            if (c[0] === '#') {
+                const n = parseInt(c.slice(1), 16);
+                return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
+            }
+            return c.replace(/rgba?\(([^)]+)\)/, (_, p) => `rgba(${p.split(',').slice(0, 3).join(',')},${a})`);
+        }
+        const fill = v => opts.colored ? loadColor(v) : ink;
+        const track = () => withAlpha(ink, opts.colored ? 0.22 : 0.25);
+        const secondary = () => withAlpha(ink, 0.7);
+        const title = k => k.toUpperCase();
+
+        function stackWidth(kind, labels) {
+            return labels ? Math.max(tw(title(kind), F.tiny), tw('100%', F.stack)) : tw('100%', F.lineValue);
+        }
+        function barTextWidth(kind, labels) {
+            return (labels ? tw(title(kind), F.lineLabel) + 3 : 0) + tw('100%', F.lineValue);
+        }
+        function graphicWidth(item) {
+            switch (item.layout) {
+                case 'capsule': return 32;
+                case 'signal': return 5 * 2.5 + 4 * 1.5;
+                case 'bar': return 5;
+                case 'ring': return 14;
+                case 'icon': return 16;
+                case 'sparkline': return 30;
+                case 'perCore': {
+                    const n = item.cores.length;
+                    return n * 2.5 + (n - 2) * 1 + 3;
+                }
+            }
+            return 0;
+        }
+        function itemWidth(item, labels) {
+            switch (item.layout) {
+                case 'text': return (labels ? tw(title(item.kind) + ' ', F.label) : 0) + tw('100%', F.value);
+                case 'ringText': return 15 + 4 + stackWidth(item.kind, labels);
+                case 'barText': return barTextWidth(item.kind, labels);
+                case 'labelBar': return Math.max(tw(title(item.kind), F.labelBar), 24);
+                case 'stacked': return 3 + 4 + stackWidth(item.kind, true);
+            }
+            return (labels ? tw(title(item.kind), F.small) + 3 : 0) + graphicWidth(item);
+        }
+
+        function rrect(ctx, x, y, w, h, r) {
+            r = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h);
+        }
+        function text(ctx, str, font, color, x, baselineFromBottom) {
+            ctx.font = font; ctx.fillStyle = color;
+            if (baselineFromBottom === undefined) { ctx.textBaseline = 'middle'; ctx.fillText(str, x, H / 2 + 0.5); }
+            else { ctx.textBaseline = 'alphabetic'; ctx.fillText(str, x, H - baselineFromBottom); }
+        }
+        // Vertical meter that fills from the bottom
+        function vbar(ctx, x, y, w, h, v, r) {
+            rrect(ctx, x, y, w, h, r); ctx.fillStyle = track(); ctx.fill();
+            const f = clamp(v); if (f <= 0) return;
+            ctx.save(); rrect(ctx, x, y, w, h, r); ctx.clip();
+            ctx.fillStyle = fill(v); ctx.fillRect(x, y + h * (1 - f), w, h * f); ctx.restore();
+        }
+        // Horizontal bar that thickens with load
+        function thickBar(ctx, x, yBottom, w, minT, maxT, v) {
+            ctx.fillStyle = track(); rrect(ctx, x, H - yBottom - minT, w, minT, minT / 2); ctx.fill();
+            const f = clamp(v); if (f <= 0) return;
+            const t = minT + (maxT - minT) * f;
+            ctx.fillStyle = fill(v); rrect(ctx, x, H - yBottom - t, Math.max(t, w * f), t, t / 2); ctx.fill();
+        }
+        function arc(ctx, cx, cy, r, f, lw, color) {
+            ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * f);
+            ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.strokeStyle = color; ctx.stroke();
+        }
+
+        const ICONS = {
+            cpu: new Path2D('M4 4h8v8H4zM6 6h4v4H6zM6 1.5v2.5M10 1.5v2.5M6 12v2.5M10 12v2.5M1.5 6H4M1.5 10H4M12 6h2.5M12 10h2.5'),
+            gpu: new Path2D('M8 2l6 3-6 3-6-3zM2 8l6 3 6-3M2 11l6 3 6-3'),
+            ram: new Path2D('M1.5 4.5h13v6h-13zM4 7h1.5M7.25 7h1.5M10.5 7H12M3 10.5V13M6 10.5V13M10 10.5V13M13 10.5V13')
+        };
+
+        function drawItem(ctx, item, x, labels) {
+            const v = item.value, k = item.kind;
+            switch (item.layout) {
+                case 'text': {
+                    let cx = x;
+                    if (labels) { text(ctx, title(k) + ' ', F.label, ink, cx); cx += tw(title(k) + ' ', F.label); }
+                    text(ctx, pct(v) + '%', F.value, fill(v), cx);
+                    return;
+                }
+                case 'ringText': {
+                    const cx = x + 7.5, cy = H / 2, r = (15 - 3.25) / 2, f = clamp(v);
+                    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.lineWidth = 1.5; ctx.strokeStyle = track(); ctx.stroke();
+                    if (f > 0.005) arc(ctx, cx, cy, r, f, 1.5 + 1.75 * f, fill(v));
+                    const tx = x + 19;
+                    if (labels) { text(ctx, title(k), F.tiny, secondary(), tx, 10.5); text(ctx, pct(v) + '%', F.stack, ink, tx, 1.5); }
+                    else text(ctx, pct(v) + '%', F.lineValue, ink, tx);
+                    return;
+                }
+                case 'barText': {
+                    let cx = x;
+                    if (labels) { text(ctx, title(k), F.lineLabel, secondary(), cx, 7); cx += tw(title(k), F.lineLabel) + 3; }
+                    text(ctx, pct(v) + '%', F.lineValue, ink, cx, 7);
+                    thickBar(ctx, x, 1.5, barTextWidth(k, labels), 1.5, 3.5, v);
+                    return;
+                }
+                case 'labelBar': {
+                    const w = itemWidth(item, labels), t = tw(title(k), F.labelBar);
+                    text(ctx, title(k), F.labelBar, ink, x + (w - t) / 2, 8.5);
+                    thickBar(ctx, x, 2, w, 2, 3.5, v);
+                    return;
+                }
+                case 'stacked': {
+                    vbar(ctx, x, GY, 3, GH, v, 1.5);
+                    text(ctx, title(k), F.tiny, secondary(), x + 7, 10.5);
+                    text(ctx, pct(v) + '%', F.stack, ink, x + 7, 1.5);
+                    return;
+                }
+            }
+
+            let cx = x;
+            if (labels) { text(ctx, title(k), F.small, ink, cx); cx += tw(title(k), F.small) + 3; }
+            switch (item.layout) {
+                case 'capsule': {
+                    const y = 2, w = 32, h = 14, f = clamp(v);
+                    rrect(ctx, cx + 0.5, y + 0.5, w - 1, h - 1, 4.5); ctx.lineWidth = 1; ctx.strokeStyle = withAlpha(ink, 0.45); ctx.stroke();
+                    if (f > 0) {
+                        ctx.save(); rrect(ctx, cx + 2, y + 2, w - 4, h - 4, 2.5); ctx.clip();
+                        ctx.fillStyle = fill(v); ctx.fillRect(cx + 2, y + 2, (w - 4) * f, h - 4); ctx.restore();
+                    }
+                    const s = pct(v) + '%';
+                    ctx.save(); ctx.globalCompositeOperation = 'xor';
+                    ctx.font = F.capsule; ctx.fillStyle = ink; ctx.textBaseline = 'middle';
+                    ctx.fillText(s, cx + w / 2 - tw(s, F.capsule) / 2, H / 2 + 0.5);
+                    ctx.restore();
+                    break;
+                }
+                case 'signal': {
+                    const scaled = clamp(v) * 5;
+                    for (let i = 0; i < 5; i++) {
+                        const bh = 4 + (GH - 4) * (i / 4), bx = cx + i * 4, by = GY + GH - bh;
+                        rrect(ctx, bx, by, 2.5, bh, 1); ctx.fillStyle = track(); ctx.fill();
+                        const f = clamp(scaled - i);
+                        if (f > 0) { ctx.save(); rrect(ctx, bx, by, 2.5, bh, 1); ctx.clip(); ctx.fillStyle = fill(v); ctx.fillRect(bx, by + bh * (1 - f), 2.5, bh * f); ctx.restore(); }
+                    }
+                    break;
+                }
+                case 'bar': vbar(ctx, cx, GY, 5, GH, v, 1.5); break;
+                case 'perCore': {
+                    const groups = [item.cores.slice(0, P_CORES), item.cores.slice(P_CORES)];
+                    groups.forEach((g, gi) => {
+                        if (gi > 0) cx += 2;
+                        g.forEach(c => { vbar(ctx, cx, GY, 2.5, GH, c, 1); cx += 3.5; });
+                    });
+                    break;
+                }
+                case 'sparkline': {
+                    const w = 30, s = item.history, n = s.length;
+                    rrect(ctx, cx, GY, w, GH, 2); ctx.fillStyle = withAlpha(ink, opts.colored ? 0.12 : 0.15); ctx.fill();
+                    if (n < 2) break;
+                    const color = fill(s[n - 1]), step = w / (SPARK - 1), x0 = cx + w - step * (n - 1);
+                    const pts = s.map((p, i) => [x0 + step * i, GY + GH - 0.5 - (GH - 1) * clamp(p)]);
+                    ctx.save(); rrect(ctx, cx, GY, w, GH, 2); ctx.clip();
+                    ctx.beginPath(); ctx.moveTo(pts[0][0], GY + GH); pts.forEach(p => ctx.lineTo(p[0], p[1])); ctx.lineTo(pts[n - 1][0], GY + GH); ctx.closePath();
+                    ctx.fillStyle = withAlpha(color, opts.colored ? 0.35 : 0.45); ctx.fill();
+                    ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+                    ctx.lineWidth = 1.2; ctx.lineJoin = 'round'; ctx.strokeStyle = color; ctx.stroke();
+                    ctx.restore();
+                    break;
+                }
+                case 'ring': {
+                    const r = (14 - 2.5) / 2, ccx = cx + 7, cy = H / 2, f = clamp(v);
+                    ctx.beginPath(); ctx.arc(ccx, cy, r, 0, Math.PI * 2); ctx.lineWidth = 2.5; ctx.strokeStyle = track(); ctx.stroke();
+                    if (f > 0.005) arc(ctx, ccx, cy, r, f, 2.5, fill(v));
+                    break;
+                }
+                case 'icon': {
+                    ctx.save(); ctx.translate(cx, 1);
+                    ctx.strokeStyle = opts.colored ? loadColor(v) : withAlpha(ink, 0.35 + 0.65 * clamp(v));
+                    ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                    ctx.stroke(ICONS[k]); ctx.restore();
+                    break;
+                }
+            }
+        }
+
+        // A canvas showing one or more metrics, sized in menu bar points × zoom.
+        function makeBar(canvas, items, zoom) {
+            const bar = { canvas, ctx: canvas.getContext('2d'), items, zoom, visible: true, w: 0 };
+            bars.push(bar);
+            visibility.observe(canvas);
+            return bar;
+        }
+        const bars = [];
+        const visibility = new IntersectionObserver((entries) => {
+            entries.forEach(e => { const b = bars.find(x => x.canvas === e.target); if (b) b.visible = e.isIntersecting; });
+        });
+
+        function renderBar(bar, state, force) {
+            if (!bar.visible && !force) return;
+            const items = bar.items.map(spec => ({
+                kind: spec.kind, layout: spec.layout(),
+                value: state[spec.kind], cores: state.cores,
+                history: history[spec.kind].slice(-SPARK)
+            }));
+            const widths = items.map(it => itemWidth(it, opts.labels));
+            const w = Math.ceil(widths.reduce((a, b) => a + b, 0) + SPACING * (items.length - 1));
+            const dpr = Math.min(window.devicePixelRatio || 1, 3), z = bar.zoom;
+            if (w !== bar.w || bar.dpr !== dpr) {
+                bar.w = w; bar.dpr = dpr;
+                bar.canvas.width = Math.ceil(w * z * dpr); bar.canvas.height = Math.ceil(H * z * dpr);
+                bar.canvas.style.width = (w * z) + 'px'; bar.canvas.style.height = (H * z) + 'px';
+            }
+            const ctx = bar.ctx;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, bar.canvas.width, bar.canvas.height);
+            ctx.setTransform(z * dpr, 0, 0, z * dpr, 0, 0);
+            let x = 0;
+            items.forEach((it, i) => { drawItem(ctx, it, x, opts.labels); x += widths[i] + SPACING; });
+        }
+
+        // ---- Hero menu bar + gallery -------------------------------------------------
+        let heroLayout = 'ringText';
+        const heroFor = kind => () => (heroLayout === 'perCore' && kind !== 'cpu') ? 'bar' : heroLayout;
+        const hero = makeBar(document.getElementById('heroBar'),
+            ['cpu', 'gpu', 'ram'].map(kind => ({ kind, layout: heroFor(kind) })), 1.15);
+
+        const grid = document.getElementById('styleGrid');
+        const heroName = document.getElementById('heroStyleName');
+        LAYOUTS.forEach(([id, name], i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'style-tile fade-in stagger-' + ((i % 4) + 1);
+            btn.setAttribute('aria-pressed', String(id === heroLayout));
+            btn.setAttribute('aria-label', name + ' style');
+            btn.innerHTML = '<div class="tile-screen"><canvas aria-hidden="true"></canvas></div><span></span>';
+            btn.querySelector('span').textContent = name;
+            // Spread the kinds around so the gallery isn't all CPU
+            const kind = id === 'perCore' ? 'cpu' : ['cpu', 'gpu', 'ram'][i % 3];
+            makeBar(btn.querySelector('canvas'), [{ kind, layout: () => id }], 1.6);
+            btn.addEventListener('click', () => {
+                heroLayout = id;
+                heroName.textContent = name;
+                grid.querySelectorAll('.style-tile').forEach(t => t.setAttribute('aria-pressed', String(t === btn)));
+                renderAll(true);
+            });
+            grid.appendChild(btn);
+            revealer.observe(btn);
+        });
+
+        document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('click', () => {
+            opts.colored = b.dataset.color === 'colored';
+            document.querySelectorAll('[data-color]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+            renderAll(true);
+        }));
+        document.querySelectorAll('[data-labels]').forEach(b => b.addEventListener('click', () => {
+            opts.labels = b.dataset.labels === '1';
+            document.querySelectorAll('[data-labels]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+            renderAll(true);
+        }));
+
+        // Theme changes swap the ink colour
+        new MutationObserver(() => { readInk(); renderAll(true); })
+            .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        function renderAll(force) { bars.forEach(b => renderBar(b, shown, force)); }
+
+        // ---- Popover ------------------------------------------------------------------
+        const $ = id => document.getElementById(id);
+        const coreEls = [];
+        [[$('pCores'), P_CORES], [$('eCores'), E_CORES]].forEach(([el, n]) => {
+            for (let i = 0; i < n; i++) { const b = document.createElement('i'); el.appendChild(b); coreEls.push(b); }
+        });
+        const graphs = [...document.querySelectorAll('.pop-graph')].map(g => ({
+            metric: g.dataset.metric, value: g.querySelector('.pop-graph-top span:last-child'),
+            area: g.querySelector('.area'), line: g.querySelector('.line'),
+            color: { cpu: '#3B82F6', gpu: '#A855F7', ram: '#FF8A1F' }[g.dataset.metric]
+        }));
+        graphs.forEach(g => { g.area.setAttribute('fill', g.color); g.line.setAttribute('stroke', g.color); });
+
+        function updatePopover(t) {
+            $('tCpu').textContent = pct(t.cpu) + '%';
+            $('tGpu').textContent = pct(t.gpu) + '%';
+            $('tRam').textContent = (t.ram * 16).toFixed(1) + '/16 GB';
+            [['cCpu', t.cpu], ['cGpu', t.gpu], ['cRam', t.ram]].forEach(([id, v]) => {
+                const el = $(id); el.style.width = Math.max(4, pct(v)) + '%'; el.style.backgroundColor = loadColor(v);
+            });
+            t.cores.forEach((v, i) => { coreEls[i].style.setProperty('--v', v.toFixed(3)); coreEls[i].style.setProperty('--c', loadColor(v)); });
+            graphs.forEach(g => {
+                const s = history[g.metric], step = 100 / (HISTORY - 1);
+                const pts = s.map((v, i) => `${(i * step).toFixed(2)},${(29 - 28 * v).toFixed(2)}`);
+                g.line.setAttribute('d', 'M' + pts.join('L'));
+                g.area.setAttribute('d', `M0,30L${pts.join('L')}L100,30Z`);
+                g.value.textContent = pct(s[s.length - 1]) + '%';
+            });
+        }
+
+        // ---- Loop -------------------------------------------------------------------------
+        let gliding = false, sampleTimer = 0;
+        const heroVisible = { v: true };
+        new IntersectionObserver(es => { heroVisible.v = es[0].isIntersecting; }).observe(document.querySelector('.mock'));
+
+        function sample() {
+            const next = nextReading();
+            ['cpu', 'gpu', 'ram'].forEach(k => { history[k].push(next[k]); if (history[k].length > HISTORY) history[k].shift(); });
+            from = structuredClone(shown);
+            Object.assign(target, next);
+            if (heroVisible.v) updatePopover(next);
+            const big = ['cpu', 'gpu', 'ram'].some(k => Math.abs(next[k] - shown[k]) >= 0.02) ||
+                        next.cores.some((v, i) => Math.abs(v - shown.cores[i]) >= 0.02);
+            if (reduced || !big) { shown = structuredClone(target); renderAll(false); return; }
+            glideStart = performance.now();
+            if (!gliding) { gliding = true; requestAnimationFrame(glide); }
+        }
+        function glide(now) {
+            const p = Math.min(1, (now - glideStart) / GLIDE_MS);
+            shown = lerpState(from, target, 1 - Math.pow(1 - p, 3));
+            renderAll(false);
+            if (p < 1) requestAnimationFrame(glide); else gliding = false;
+        }
+        function start() { if (!sampleTimer) sampleTimer = setInterval(sample, SAMPLE_MS); }
+        function stop() { clearInterval(sampleTimer); sampleTimer = 0; }
+        // Like the app: stop when nobody's looking
+        document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+
+        updatePopover(target);
+        renderAll(true);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderAll(true));
+        window.addEventListener('resize', () => renderAll(true), { passive: true });
+        start();
+
+        // Live clock in the fake menu bar
+        const clock = $('clock');
+        const setClock = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
+        setClock(); setInterval(setClock, 15000);
+
+        // ---- Redraw timeline --------------------------------------------------------------
+        // Busy: a few frames per reading. Lean: one redraw per visibly-changed reading.
+        function ticks(el, positions, dur) {
+            positions.forEach(x => {
+                const i = document.createElement('i');
+                i.style.setProperty('--dur', dur + 's');
+                i.style.setProperty('--d', (-x * dur) + 's');
+                i.style.setProperty('--x', ((1 - x) * 100).toFixed(1) + '%');
+                el.appendChild(i);
+            });
+        }
+        const busy = [], lean = [];
+        for (let s = 0; s < 14; s++) {
+            const base = s / 14;
+            for (let f = 0; f < 6; f++) busy.push(base + f * 0.006);
+            if (s % 3 !== 1) lean.push(base);
+        }
+        ticks($('rdBusy'), busy, 12);
+        ticks($('rdLean'), lean, 12);
+    })();
+    </script>
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>
