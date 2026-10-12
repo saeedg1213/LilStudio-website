@@ -112,7 +112,8 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
    which keeps transparency for device mockups) via `<picture>` with the PNG as the fallback. Give the
    `<img>` width/height and `loading="lazy"`. LilStats' "On Your Mac" section adds pulsing callout pins
    at percentage positions over the screenshot. Reuse that pattern for showing an app in context.
-2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`.
+2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`. When replacing an existing
+   wheel icon, bump `ICON_VERSION` in `studio-wheel.js` so browsers drop the cached image.
 3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`) **and**
    give it a slot in `LAYOUT`. Slots: inner ring `r: 2.2` (studio 225°, lildisplay 195°, lildock 255°);
    outer ring `r: 3.35`, currently 5 icons 21° apart (183, 204, 225, 246, 267). Neighbours need

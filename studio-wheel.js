@@ -20,6 +20,9 @@
 (function () {
     'use strict';
 
+    // Bump when an icon in /assets/wheel/ changes, so browsers don't keep the old one cached.
+    const ICON_VERSION = '2';
+
     const PRODUCTS = [
         { id: 'studio',     name: 'LilStudio',  tag: 'All apps',                       href: '/',            color: '#FFE135', icon: null },
         { id: 'lildisplay', name: 'LilDisplay', tag: 'iPhone & iPad as a Mac display', href: '/lildisplay/', color: '#00FF88', icon: '/assets/wheel/lildisplay.png' },
@@ -218,7 +221,7 @@
                 a.insertAdjacentHTML('beforeend', '<span class="lsw-mark" aria-hidden="true"></span>');
             } else if (p.icon) {
                 const img = document.createElement('img');
-                img.src = p.icon; img.alt = ''; img.decoding = 'async';
+                img.src = p.icon + '?v=' + ICON_VERSION; img.alt = ''; img.decoding = 'async';
                 img.onerror = () => { img.replaceWith(letter(p)); };
                 a.appendChild(img);
             } else {
