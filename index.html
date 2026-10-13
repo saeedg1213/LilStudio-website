@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock and LilStats.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats and LilPad.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -52,6 +52,8 @@
             --dock-alt: #4A7BDB;
             --stats: #7ED48A;
             --stats-alt: #FF6B3D;
+            --pad: #FF7AC6;
+            --pad-alt: #5BA3F5;
         }
 
         [data-theme="light"] {
@@ -455,6 +457,7 @@
         .cell.app.vibe { background: var(--vibe); }
         .cell.app.dock { background: var(--dock); }
         .cell.app.stats { background: var(--stats); }
+        .cell.app.pad { background: var(--pad); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -592,6 +595,7 @@
         }
 
         .app-stage.display { background: var(--display); }
+        .app-stage.pad { background: var(--pad); }
         .app-stage.usage { background: var(--usage); }
         .app-stage.hide { background: var(--hide); }
         .app-stage.mirror { background: var(--mirror); }
@@ -621,6 +625,7 @@
         }
 
         .app-dot.display { background: var(--display); }
+        .app-dot.pad { background: var(--pad); }
         .app-dot.usage { background: var(--usage); }
         .app-dot.hide { background: var(--hide); }
         .app-dot.mirror { background: var(--mirror); }
@@ -676,6 +681,7 @@
         }
 
         .btn-app.display { background: var(--display); }
+        .btn-app.pad { background: var(--pad); }
         .btn-app.usage { background: var(--usage); }
         .btn-app.hide { background: var(--hide); }
         .btn-app.mirror { background: var(--mirror); }
@@ -1367,7 +1373,37 @@
             80%      { height: 66%; }
         }
 
+        /* ---- LilPad ---- */
+        .lp { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .lp-screen {
+            position: relative; width: 150px; height: 74px; background: var(--bg);
+            border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border);
+            background-image: radial-gradient(var(--text-muted) 1px, transparent 1px); background-size: 12px 12px;
+        }
+        .lp-cursor {
+            position: absolute; width: 12px; height: 17px; background: #17150F;
+            clip-path: polygon(0 0, 0 100%, 30% 72%, 52% 100%, 66% 92%, 46% 66%, 85% 66%);
+            animation: lpCursor 3.2s ease-in-out infinite;
+        }
+        .lp-phone {
+            position: relative; width: 120px; height: 58px; border-radius: 14px; background: #17150F; padding: 5px;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+        .lp-phone::before {
+            content: ""; display: block; width: 100%; height: 100%; border-radius: 10px; background: #FBF3D5;
+        }
+        .lp-finger {
+            position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+            background: var(--pad-alt); border: 2.5px solid #17150F; animation: lpFinger 3.2s ease-in-out infinite;
+        }
+        @keyframes lpCursor { 0%, 100% { left: 18%; top: 62%; } 45%, 55% { left: 72%; top: 18%; } }
+        @keyframes lpFinger {
+            0%, 100% { left: 25%; top: 68%; transform: scale(1); } 45% { left: 75%; top: 32%; transform: scale(1); }
+            50% { transform: scale(.7); } 55% { left: 75%; top: 32%; transform: scale(1); }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            .lp-cursor, .lp-finger { animation: none; }
             .ls-ring, .ls-bars i::after { animation: none; }
             .ld-bar i { animation: none; }
             .lh i { animation: none; }
@@ -1429,7 +1465,10 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="14" height="10" rx="1"/><rect x="17" y="9" width="5" height="11" rx="1"/><path d="M6 18h6"/></svg>
                         LilDisplay
                     </a>
-                    <div class="cell muted"></div>
+                    <a class="cell app pad" href="/lilpad/" aria-label="LilPad">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="13" cy="12" r="2.5"/><circle cx="8" cy="14" r="1.5"/></svg>
+                        LilPad
+                    </a>
                     <a class="cell app dock" href="/lildock/" aria-label="LilDock">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><rect x="12" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/><rect x="16" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/></svg>
                         LilDock
@@ -1466,7 +1505,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Seven right now. Each one solves a single annoyance properly.</p>
+            <p>Eight right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1701,6 +1740,31 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-4">
+                <div class="app-stage pad" aria-hidden="true">
+                    <div class="lp">
+                        <div class="lp-screen"><span class="lp-cursor"></span></div>
+                        <div class="lp-phone"><span class="lp-finger"></span></div>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot pad"></span>
+                        <h3>LilPad</h3>
+                    </div>
+                    <div class="app-kicker">iPhone &rarr; Mac</div>
+                    <p>Turns your iPhone into a Mac trackpad: click, scroll, pinch, drag windows, Mission Control and Spaces. Nothing to install on the Mac &mdash; it uses the Screen Sharing already built in.</p>
+                    <div class="chips">
+                        <span class="chip">Every gesture</span>
+                        <span class="chip">No Mac app</span>
+                        <span class="chip">Day &amp; night</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilpad/" class="btn btn-app pad">Open LilPad &rarr;</a>
+                        <span class="app-price">App Store &middot; iOS 17+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1762,7 +1826,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>

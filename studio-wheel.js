@@ -32,6 +32,7 @@
         { id: 'lilhide',    name: 'LilHide',    tag: 'Hide desktop icons in a click',  href: '/lilhide/',    color: '#6C8CFF', icon: '/assets/wheel/lilhide.png' },
         { id: 'lilmirror',  name: 'LilMirror',  tag: 'A mirror before your call',      href: '/lilmirror/',  color: '#F7DC3C', icon: '/assets/wheel/lilmirror.png' },
         { id: 'lilstats',   name: 'LilStats',   tag: 'CPU, GPU & RAM in the menu bar', href: '/lilstats/',   color: '#7ED48A', icon: '/assets/wheel/lilstats.png' },
+        { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png' },
     ];
 
     // Honeycomb slots around the corner: radius in tile widths, angle in degrees
@@ -41,13 +42,14 @@
         studio:     { r: 2.2,  a: 225 },   // inner ring, centre
         lildisplay: { r: 2.2,  a: 195 },   // inner ring
         lildock:    { r: 2.2,  a: 255 },   // inner ring
-        lilusage:   { r: 3.35, a: 183 },   // outer ring: five slots, 21° apart
-        lilvibe:    { r: 3.35, a: 204 },
-        lilhide:    { r: 3.35, a: 225 },
-        lilmirror:  { r: 3.35, a: 246 },
-        lilstats:   { r: 3.35, a: 267 },
+        lilusage:   { r: 3.85, a: 181 },   // outer ring: six slots, 17.6° apart (chord ≥ 1.17 tiles at r 3.85)
+        lilvibe:    { r: 3.85, a: 198.6 },
+        lilhide:    { r: 3.85, a: 216.2 },
+        lilmirror:  { r: 3.85, a: 233.8 },
+        lilstats:   { r: 3.85, a: 251.4 },
+        lilpad:     { r: 3.85, a: 269 },
     };
-    const OUTER_R = 3.35;                  // outer ring, in tile widths
+    const OUTER_R = 3.85;                  // outer ring, in tile widths
     const DIAL_R = OUTER_R + 1.1;          // dial radius, in tile widths (room for the drift)
 
     // Hover tuning (in tile widths, so it scales with the phone layout)

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilPad — Privacy Policy</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilPad colours (same as its main page) */
+        :root { --primary: #FF7AC6; --secondary: #5BA3F5; }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilPad</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilPad</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html" aria-current="page">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>Privacy Policy</h1>
+<p class="updated">LilPad for iPhone — last updated 13 October 2026</p>
+
+<div class="note">
+  <strong>LilPad collects nothing.</strong> No personal data, no usage data, no
+  analytics, no crash reports, no identifiers. There is no LilStudio server,
+  no account, and no third-party SDK. The app talks only to the Mac you choose.
+</div>
+
+<h2>How LilPad connects to your Mac</h2>
+<p>
+  LilPad uses the Screen Sharing service built into macOS. It looks for Macs on
+  your local network using Bonjour and connects directly to the one you pick.
+  The connection stays on your local network; it never passes through the internet
+  or any server of ours.
+</p>
+<p>
+  Over that connection LilPad sends only input: pointer movements, clicks,
+  scrolls, and a few standard keyboard shortcuts (for example Mission Control or
+  zoom). It never requests, receives, or records an image of your Mac's screen.
+</p>
+<p>
+  iOS asks for <strong>Local Network</strong> permission the first time, because
+  LilPad needs it to find and reach your Mac. It is used for nothing else.
+</p>
+
+<h2>Your Mac sign-in</h2>
+<p>
+  To connect, you sign in with your Mac username and password. The password is
+  stored in your iPhone's Keychain, protected by iOS, and is sent only to your
+  Mac, encrypted using the Screen Sharing sign-in that macOS provides. It is
+  never sent anywhere else. The name of your Mac and your username are saved in
+  the app's local settings so it can reconnect.
+</p>
+
+<h2>What LilPad stores on your iPhone</h2>
+<p>
+  Your settings — tracking and scroll speed, natural scrolling, tap to click,
+  haptics, theme, which gestures are on, and whether the trackpad is locked — are
+  saved locally using the standard iOS preferences system. They never leave your
+  iPhone. Deleting the app removes them.
+</p>
+
+<h2>What LilPad does not do</h2>
+<ul>
+  <li>It does not view, capture, or record your Mac's screen or your iPhone's screen.</li>
+  <li>It does not connect to the internet or to any LilStudio server.</li>
+  <li>It does not use analytics, advertising, tracking, or third-party SDKs.</li>
+  <li>It does not access your contacts, photos, location, camera, or microphone.</li>
+</ul>
+
+<h2>Children</h2>
+<p>
+  LilPad is suitable for all ages and collects no data from anyone, including
+  children under 13.
+</p>
+
+<h2>Changes to this policy</h2>
+<p>
+  If this policy ever changes, the updated version will be posted on this page
+  with a new date. Material changes will also be described in the app's release
+  notes on the App Store.
+</p>
+
+<h2>Contact</h2>
+<p>
+  Questions about privacy in LilPad: <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>
+</p>
+
+<footer>
+  LilPad is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+
+    </main>
+
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>
