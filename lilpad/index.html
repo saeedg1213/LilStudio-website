@@ -15,7 +15,7 @@
     <meta property="og:description" content="The trackpad you already own. Every gesture, nothing to install on your Mac.">
     <meta property="og:url" content="https://lilstudio.app/lilpad/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://lilstudio.app/lilpad/screenshots/app-icon.png">
+    <meta property="og:image" content="https://lilstudio.app/lilpad/screenshots/App.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1474,6 +1474,14 @@
     
 
         /* ---- LilPad additions ---- */
+        .hero-shot img.hero-phone {
+            width: 100%; max-width: 300px; height: auto; margin: 0 auto;
+            border: 0; box-shadow: none; transform: rotate(2deg);
+            filter: drop-shadow(8px 8px 0 var(--primary));
+        }
+        .hero-shot img.hero-phone:hover { transform: rotate(0deg) scale(1.02); }
+        .in-action { padding: 5rem 2rem; position: relative; z-index: 1; }
+        .in-action-stage { display: flex; justify-content: center; }
         .hero-appicon { width: 140px; height: 140px; display: block; margin: 0 auto;
             border: var(--border-width) solid var(--border); border-radius: 30px;
             box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
@@ -1710,6 +1718,30 @@
                 </div>
 
                 <div class="hero-shot">
+                    <picture>
+                        <source srcset="screenshots/App.webp" type="image/webp">
+                        <img src="screenshots/App.png" alt="LilPad on iPhone, showing nearby Macs and the one-time setup" class="hero-phone" width="1077" height="2201">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item"><h3>0</h3><p>Mac apps to install</p></div>
+            <div class="stat-item"><h3>11</h3><p>Gestures</p></div>
+            <div class="stat-item"><h3>3</h3><p>Orientations</p></div>
+            <div class="stat-item"><h3>2</h3><p>Themes: day &amp; night</p></div>
+        </div>
+    </section>
+
+    <section class="in-action" id="demo">
+        <div class="section-header fade-in">
+            <h2>Feel It Move</h2>
+            <p>Your fingers on the iPhone, the pointer on your Mac. Move, click, scroll, Mission Control.</p>
+        </div>
+        <div class="in-action-stage scale-in">
                     <div class="pd-demo" aria-hidden="true">
                         <div class="pd-mac">
                             <div class="pd-screen">
@@ -1728,17 +1760,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="stats-bar">
-        <div class="stats-grid">
-            <div class="stat-item"><h3>0</h3><p>Mac apps to install</p></div>
-            <div class="stat-item"><h3>11</h3><p>Gestures</p></div>
-            <div class="stat-item"><h3>3</h3><p>Orientations</p></div>
-            <div class="stat-item"><h3>2</h3><p>Themes: day &amp; night</p></div>
         </div>
     </section>
 
