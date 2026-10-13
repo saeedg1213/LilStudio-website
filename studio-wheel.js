@@ -21,7 +21,7 @@
     'use strict';
 
     // Bump when an icon in /assets/wheel/ changes, so browsers don't keep the old one cached.
-    const ICON_VERSION = '2';
+    const ICON_VERSION = '3';
 
     const PRODUCTS = [
         { id: 'studio',     name: 'LilStudio',  tag: 'All apps',                       href: '/',            color: '#FFE135', icon: null },
