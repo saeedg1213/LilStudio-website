@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats and LilPad.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilPad and LilPass.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -54,6 +54,8 @@
             --stats-alt: #FF6B3D;
             --pad: #FF7AC6;
             --pad-alt: #5BA3F5;
+            --pass: #7CC4F0;
+            --pass-alt: #FF6B35;
         }
 
         [data-theme="light"] {
@@ -458,6 +460,7 @@
         .cell.app.dock { background: var(--dock); }
         .cell.app.stats { background: var(--stats); }
         .cell.app.pad { background: var(--pad); }
+        .cell.app.pass { background: var(--pass); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -602,6 +605,7 @@
         .app-stage.vibe { background: var(--vibe-alt); }
         .app-stage.dock { background: var(--dock-alt); }
         .app-stage.stats { background: var(--stats); }
+        .app-stage.pass { background: var(--pass); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -632,6 +636,7 @@
         .app-dot.vibe { background: var(--vibe); }
         .app-dot.dock { background: var(--dock); }
         .app-dot.stats { background: var(--stats); }
+        .app-dot.pass { background: var(--pass); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -688,6 +693,7 @@
         .btn-app.vibe { background: var(--vibe); }
         .btn-app.dock { background: var(--dock); }
         .btn-app.stats { background: var(--stats); }
+        .btn-app.pass { background: var(--pass); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1402,8 +1408,38 @@
             50% { transform: scale(.7); } 55% { left: 75%; top: 32%; transform: scale(1); }
         }
 
+        /* ---- LilPass ---- */
+        .lpc { position: relative; }
+        .lpc-card {
+            position: relative; display: block; width: 170px; height: 108px; border-radius: 12px; overflow: hidden;
+            background: #FFF8E8; border: var(--border-width) solid #17150F; box-shadow: 5px 5px 0 #17150F;
+            transform: rotate(-4deg); animation: lpcTilt 3.6s ease-in-out infinite;
+        }
+        .lpc-head { display: block; height: 28px; background: var(--pass-alt); border-bottom: var(--border-width) solid #17150F; }
+        .lpc-code {
+            position: absolute; left: 14px; right: 14px; bottom: 14px; height: 46px;
+            background: repeating-linear-gradient(90deg, #17150F 0 3px, transparent 3px 5px, #17150F 5px 6px, transparent 6px 9px,
+                #17150F 9px 13px, transparent 13px 15px, #17150F 15px 16px, transparent 16px 19px);
+        }
+        .lpc-code i {
+            position: absolute; left: -6px; right: -6px; top: 0; height: 3px; background: #FF2B2B;
+            box-shadow: 0 0 6px 2px rgba(255,43,43,.6); animation: lpcLaser 3.6s ease-in-out infinite;
+        }
+        .lpc-beep {
+            position: absolute; right: -26px; top: -18px; padding: 2px 8px; font-family: 'Space Mono', monospace;
+            font-size: .68rem; font-weight: 700; text-transform: uppercase; color: #17150F; background: var(--yellow);
+            border: 2px solid #17150F; box-shadow: 2px 2px 0 #17150F; transform: rotate(6deg);
+            animation: lpcBeep 3.6s ease-in-out infinite;
+        }
+        @keyframes lpcTilt  { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(-2deg) translateY(-4px); } }
+        @keyframes lpcLaser { 0%, 15% { top: 0; opacity: 0; } 20% { opacity: 1; } 45% { top: 43px; } 65% { top: 0; opacity: 1; } 70%, 100% { top: 0; opacity: 0; } }
+        @keyframes lpcBeep  { 0%, 62% { opacity: 0; transform: rotate(6deg) scale(.6); } 68%, 92% { opacity: 1; transform: rotate(6deg) scale(1); } 100% { opacity: 0; transform: rotate(6deg) scale(1); } }
+
         @media (prefers-reduced-motion: reduce) {
             .lp-cursor, .lp-finger { animation: none; }
+            .lpc-card, .lpc-code i, .lpc-beep { animation: none; }
+            .lpc-code i { opacity: 0; }
+            .lpc-beep { opacity: 1; transform: rotate(6deg); }
             .ls-ring, .ls-bars i::after { animation: none; }
             .ld-bar i { animation: none; }
             .lh i { animation: none; }
@@ -1489,7 +1525,10 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>
                         LilMirror
                     </a>
-                    <div class="cell next">Next<span class="cursor-blink"></span></div>
+                    <a class="cell app pass" href="/lilpass/" aria-label="LilPass">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20"/><path d="M6 13v3M8.5 13v3M10 13v3M12.5 13v3M15 13v3M16.5 13v3"/></svg>
+                        LilPass
+                    </a>
                 </div>
             </div>
         </div>
@@ -1505,7 +1544,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Eight right now. Each one solves a single annoyance properly.</p>
+            <p>Nine right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1765,6 +1804,34 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-1">
+                <div class="app-stage pass" aria-hidden="true">
+                    <div class="lpc">
+                        <div class="lpc-card">
+                            <span class="lpc-head"></span>
+                            <span class="lpc-code"><i></i></span>
+                        </div>
+                        <span class="lpc-beep">Beep &check;</span>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot pass"></span>
+                        <h3>LilPass</h3>
+                    </div>
+                    <div class="app-kicker">iPhone &middot; Cards</div>
+                    <p>Every loyalty, gym, library and membership card on your iPhone, with a crisp barcode at checkout. Home Screen widgets, Siri and Face ID. Works offline, no account.</p>
+                    <div class="chips">
+                        <span class="chip">11 barcode formats</span>
+                        <span class="chip">Widgets</span>
+                        <span class="chip">Offline</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilpass/" class="btn btn-app pass">Open LilPass &rarr;</a>
+                        <span class="app-price">App Store &middot; iOS 17+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1826,7 +1893,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="/lilpass/">LilPass</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>

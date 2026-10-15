@@ -21,7 +21,7 @@ no npm: every page is a hand-written `.html` file with its CSS in a `<style>` bl
 ```
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
-`lilstats`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
+`lilstats`, `lilpad`, `lilpass`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
 so the folder name must equal the wheel id.
 
 ## Visual language (neo-brutalist)
@@ -45,7 +45,8 @@ so the folder name must equal the wheel id.
 
 Colours already used in the wheel (pick something distinct for a new app):
 studio `#FFE135` · LilDisplay `#00FF88` · LilDock `#FF6B5E` · LilUsage `#FFB020` ·
-LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A`.
+LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A` ·
+LilPad `#FF7AC6` · LilPass `#7CC4F0`.
 
 ## App page anatomy (copy `lilstats/index.html` or `lilhide/index.html` as the starting point)
 
@@ -116,17 +117,17 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`. When replacing an existing
    wheel icon, bump `ICON_VERSION` in `studio-wheel.js` so browsers drop the cached image.
 3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`) **and**
-   give it a slot in `LAYOUT`. Slots: inner ring `r: 2.2` (studio 225°, lildisplay 195°, lildock 255°);
-   outer ring `r: 3.35`, currently 5 icons 21° apart (183, 204, 225, 246, 267). Neighbours need
-   ≥ ~1.15 tile widths between centres (chord = 2·r·sin(Δa/2)), so the outer ring is full at 5.
-   A ninth app means re-spacing the rings (e.g. a third ring around r ≈ 4.5 and bumping `OUTER_R`,
+   give it a slot in `LAYOUT`. Slots: inner ring `r: 2.4`, 4 icons 28.67° apart (lildisplay 182°,
+   studio 210.67°, lildock 239.33°, lilpass 268°); outer ring `r: 3.85` (`OUTER_R`), 6 icons 17.6°
+   apart (181 … 269). Neighbours need ≥ ~1.15 tile widths between centres (chord = 2·r·sin(Δa/2)),
+   so both rings are full. The next app means a third ring (around r ≈ 5.3, then bump `OUTER_R`,
    which sizes the dial) and checking it with `?wheel=open&wheelhover=<id>`.
 4. Homepage `index.html`:
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
      `.app-dot.<short>`, `.btn-app.<short>`.
-   - Hero `.app-grid` (3×3): currently LilStats, LilDisplay, *muted* / LilDock, LilUsage, LilVibe /
-     LilHide, LilMirror, *next*. One empty `muted` cell is left; after that the grid needs a new layout.
+   - Hero `.app-grid` (3×3): LilStats, LilDisplay, LilPad / LilDock, LilUsage, LilVibe /
+     LilHide, LilMirror, LilPass. It's full; the next app needs a new grid layout (e.g. 4×3).
    - An `.app-card` in `.apps-grid` with a small pure-CSS stage animation in a `/* ---- AppName ---- */`
      CSS block (add it to the `prefers-reduced-motion` block too). An odd last card spans the full
      row, centred, at max 540px.

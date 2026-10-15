@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilPass &ndash; Every Card, One Tap Away</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilPass keeps your loyalty, gym, library, student and membership cards on your iPhone and shows a crisp barcode at checkout. Home Screen widgets, Siri, Face ID. No account, no tracking, works offline.">
+    <meta property="og:title" content="LilPass &ndash; Every Card, One Tap Away">
+    <meta property="og:description" content="Every loyalty and membership card on your iPhone. Private, offline, no account.">
+    <meta property="og:url" content="https://lilstudio.app/lilpass/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lilpass/screenshots/app-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #7CC4F0;
+            --secondary: #FF6B35;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(108, 140, 255, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        
+        .btn-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle - Brutalist Style */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-device {
+            flex: 0 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-device:hover {
+            transform: rotate(-3deg) scale(1.06);
+        }
+
+        .hero-device img {
+            width: 180px;
+            height: auto;
+        }
+
+        .hero-device.iphone img {
+            width: 200px;
+        }
+
+        .hero-device.mac img {
+            width: 600px;
+        }
+
+        .hero-device.mac:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .hero-center {
+            flex: 1;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-buttons-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-req {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Privacy Notice - Brutalist */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: var(--border-width) solid var(--border);
+            max-width: 550px;
+        }
+
+        .privacy-notice svg {
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .privacy-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .privacy-notice a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-notice a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Screenshot Carousel */
+        .hero-image {
+            margin-top: 4rem;
+        }
+
+        .screenshot-carousel {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .screenshot-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll-carousel 35s linear infinite;
+            width: max-content;
+            align-items: center;
+        }
+
+        .screenshot-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-carousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .devices-mockup {
+            height: 320px;
+            width: auto;
+            border: var(--border-width) solid var(--border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .devices-mockup:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        /* Stats Bar - Brutalist */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-item {
+            padding: 1rem;
+            text-align: center;
+            border-right: var(--border-width) solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item:hover {
+            background: var(--yellow);
+        }
+
+        .stat-item:hover h3,
+        .stat-item:hover p {
+            color: #000;
+        }
+
+        .stat-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-item {
+                border-bottom: var(--border-width) solid var(--border);
+            }
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+            .stat-item:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid - Brutalist Cards */
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .feature-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .feature-card:nth-child(2) { transform: rotate(0.5deg); }
+        .feature-card:nth-child(3) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .feature-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .feature-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #000;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Setup Section - Brutalist */
+        .setup {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .setup-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .setup-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-step:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .step-content code {
+            background: var(--primary);
+            padding: 0.2rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        .permission-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+        }
+
+        .permission-item::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .setup-image {
+            margin-top: 1rem;
+            max-width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .setup-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .setup-image-small {
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border);
+            transition: transform 0.2s;
+        }
+
+        .setup-image-small:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        /* Pricing - Brutalist */
+        .pricing {
+            text-align: center;
+        }
+
+        .pricing-card {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 3rem;
+            box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .pricing-card::before {
+            content: 'ALWAYS FREE';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border: var(--border-width) solid var(--border);
+            transform: rotate(3deg);
+            letter-spacing: 0.05em;
+        }
+
+        .price-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .price-tag sup {
+            font-size: 2rem;
+            vertical-align: top;
+        }
+
+        .price-tag .currency {
+            font-size: 2rem;
+        }
+
+        .price-period {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            background: var(--primary);
+            padding: 4px;
+            border: 2px solid var(--border);
+        }
+
+        .pricing-features li svg polyline {
+            stroke: #000;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .price-note {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trial-note {
+            margin-top: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Contact - Brutalist */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            box-shadow: 8px 8px 0 var(--border);
+            transform: rotate(0.5deg);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 var(--primary);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer - Brutalist */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* Hero Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-image { animation: fadeInUp 0.7s ease 0.3s forwards; opacity: 0; }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 900px) {
+            .hero-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-device { order: 2; }
+            .hero-device.iphone { order: 1; }
+            .hero-device.mac { order: 3; }
+            .hero-center { order: 2; max-width: 100%; }
+
+            .hero-device img,
+            .hero-device.iphone img,
+            .hero-device.mac img {
+                width: 320px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+                min-height: auto;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 160px !important;
+            }
+
+            .hero-device.mac img {
+                width: 280px !important;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-buttons-row {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .download-btn-wrapper {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .devices-mockup {
+                height: 150px;
+            }
+
+            .screenshot-track {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .setup-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .setup-step img {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .setup-images-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            .price-tag {
+                font-size: 3.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 140px !important;
+            }
+
+            .hero-device.mac img {
+                width: 240px !important;
+            }
+
+            .devices-mockup {
+                height: 160px;
+            }
+
+            .price-tag {
+                font-size: 2.75rem;
+            }
+        }
+    
+
+        /* --- FAQ --- */
+        .faq {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .faq-item {
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .faq-item h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item code {
+            background: var(--primary);
+            padding: 0.15rem 0.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        /* ---- LilPass additions ---- */
+
+        /* Barcode stripes instead of solid bars: logo underline and section titles */
+        .logo::before {
+            height: 9px;
+            background: repeating-linear-gradient(90deg,
+                var(--primary) 0 3px, transparent 3px 5px, var(--primary) 5px 6px, transparent 6px 8px,
+                var(--primary) 8px 12px, transparent 12px 14px, var(--primary) 14px 15px, transparent 15px 18px);
+        }
+        .section-header h2::after {
+            background: repeating-linear-gradient(90deg,
+                var(--yellow) 0 6px, transparent 6px 9px, var(--yellow) 9px 11px, transparent 11px 14px,
+                var(--yellow) 14px 22px, transparent 22px 25px, var(--yellow) 25px 27px, transparent 27px 31px);
+        }
+
+        /* The icon draws its own black frame, so no CSS border: just the hard shadow */
+        .hero-device img.hero-appicon { width: 140px; height: auto; aspect-ratio: 1; display: block; margin: 0 auto;
+            border-radius: 36px; filter: drop-shadow(var(--shadow-offset) var(--shadow-offset) 0 var(--border)); }
+
+        /* Hero: the real app, in a plain phone frame */
+        .hero-shot { flex: 0 0 auto; }
+        .phone {
+            width: 250px; padding: 9px; border-radius: 44px; background: #17150F;
+            box-shadow: 8px 8px 0 var(--primary); transform: rotate(2deg); transition: transform .3s ease;
+        }
+        .phone:hover { transform: rotate(0deg) scale(1.02); }
+        .phone img { display: block; width: 100%; height: auto; border-radius: 36px; }
+
+        /* Signature demo: checkout. One card at a time: slide in, brightness up, scan, beep. */
+        .checkout { padding: 5rem 2rem; position: relative; z-index: 1; }
+        .ck-stage { display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap; }
+        .ck-phone {
+            position: relative; width: 250px; height: 500px; padding: 10px; border-radius: 44px;
+            background: #17150F; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); transform: rotate(-1.5deg);
+        }
+        .ck-screen { position: relative; width: 100%; height: 100%; border-radius: 34px; overflow: hidden; background: #F7F1DE; }
+        .ck-island { position: absolute; top: 10px; left: 50%; width: 74px; height: 22px; margin-left: -37px; border-radius: 12px; background: #17150F; z-index: 4; }
+        .ck-card {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+            padding: 56px 16px 0; color: #fff; background: var(--card);
+            background-image: linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.1));
+            transform: translateY(105%); transition: transform .55s cubic-bezier(.2,.9,.25,1.05);
+        }
+        .ck-card.in { transform: none; }
+        .ck-card.out { transform: translateY(-105%); transition-duration: .45s; }
+        .ck-icon { width: 54px; height: 54px; border-radius: 15px; background: rgba(255,255,255,.22); display: grid; place-items: center; }
+        .ck-icon svg { width: 28px; height: 28px; }
+        .ck-name { font-weight: 700; font-size: 1.35rem; margin-top: 12px; line-height: 1.2; }
+        .ck-store { font-size: .85rem; opacity: .85; }
+        .ck-code {
+            position: relative; width: 100%; margin-top: 18px; padding: 14px 12px 10px; border-radius: 16px;
+            background: #fff; color: #17150F; text-align: center; overflow: hidden;
+        }
+        .ck-code svg { display: block; width: 100%; height: 92px; }
+        .ck-code.square svg { width: 120px; height: 120px; margin: 0 auto; }
+        .ck-num { font-family: 'Space Mono', monospace; font-weight: 700; font-size: .8rem; letter-spacing: .08em; margin-top: 6px; }
+        .ck-laser {
+            position: absolute; left: 6px; right: 6px; top: 12px; height: 3px; background: #FF2B2B;
+            box-shadow: 0 0 8px 2px rgba(255,43,43,.65); opacity: 0;
+        }
+        .ck-card.scan .ck-laser { animation: ckLaser .9s ease-in-out 1; }
+        @keyframes ckLaser { 0% { opacity: 0; top: 12px; } 12% { opacity: 1; } 50% { top: calc(100% - 26px); } 88% { opacity: 1; } 100% { opacity: 0; top: 12px; } }
+        .ck-dim { position: absolute; inset: 0; background: #000; opacity: .5; z-index: 3; pointer-events: none; transition: opacity .6s ease; }
+        .ck-screen.bright .ck-dim { opacity: 0; }
+        .ck-beep {
+            position: absolute; left: 50%; bottom: 64px; z-index: 5; padding: .3rem .8rem; white-space: nowrap;
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
+            background: var(--yellow); color: #17150F; border: 3px solid #17150F; box-shadow: 3px 3px 0 #17150F;
+            transform: translateX(-50%) scale(.6) rotate(-3deg); opacity: 0; transition: opacity .2s, transform .25s cubic-bezier(.2,.9,.25,1.4);
+        }
+        .ck-screen.ok .ck-beep { opacity: 1; transform: translateX(-50%) scale(1) rotate(-3deg); }
+
+        .ck-steps { list-style: none; display: flex; flex-direction: column; gap: 1rem; min-width: 250px; }
+        .ck-steps li {
+            display: flex; align-items: center; gap: .8rem; padding: .8rem 1rem;
+            background: var(--bg-elevated); border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border); font-weight: 700; transition: background .25s, transform .25s, box-shadow .25s;
+        }
+        .ck-steps li span {
+            width: 30px; height: 30px; flex-shrink: 0; display: grid; place-items: center;
+            font-family: 'Space Mono', monospace; font-size: .85rem; border: 2px solid var(--border); background: var(--bg);
+        }
+        .ck-steps li.on { background: var(--primary); color: #17150F; transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--border); }
+        .ck-steps li.on span { background: var(--yellow); border-color: #17150F; }
+
+        /* Widgets: interactive mocks of the real carousel widget */
+        .widgets { padding: 5rem 2rem; position: relative; z-index: 1; background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
+        .wg-stage { display: flex; justify-content: center; align-items: flex-end; gap: 2.5rem; flex-wrap: wrap; }
+        .wg-col { display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+        .wg {
+            position: relative; height: 180px; border-radius: 28px; color: #fff;
+            background: var(--card); background-image: linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.1));
+            border: var(--border-width) solid var(--border); box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            display: flex; align-items: center; transition: background-color .3s;
+        }
+        .wg.small { width: 180px; transform: rotate(-1deg); }
+        .wg.medium { width: 380px; transform: rotate(.8deg); }
+        .wg-btn {
+            position: relative; align-self: stretch; width: 40px; flex-shrink: 0; padding: 0; border: 0; background: none;
+            cursor: pointer; color: #fff; display: grid; place-items: center;
+        }
+        .wg-btn::before {
+            content: ""; position: absolute; left: 8px; right: 8px; top: 15%; bottom: 15%;
+            border-radius: 14px; background: rgba(255,255,255,.26); transition: background .15s, transform .15s;
+        }
+        .wg-btn:hover::before { background: rgba(255,255,255,.4); }
+        .wg-btn:active::before { transform: scale(.94); }
+        .wg-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; border-radius: 14px; }
+        .wg-btn svg { position: relative; width: 14px; height: 14px; }
+        .wg-mid { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 12px 0; }
+        .wg.small .wg-mid { align-items: center; }
+        .wg-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .wg-head .ck-icon { width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0; }
+        .wg-head .ck-icon svg { width: 17px; height: 17px; }
+        .wg-title { font-weight: 700; font-size: .95rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .wg-sub { font-size: .72rem; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .wg.small .wg-head .ck-icon, .wg.small .wg-sub { display: none; }
+        .wg-code { flex: 1; min-height: 0; background: #fff; color: #17150F; border-radius: 12px; padding: 8px; display: flex; flex-direction: column; justify-content: center; }
+        .wg-code svg { display: block; width: 100%; flex: 1; min-height: 0; }
+        .wg-code .ck-num { font-size: .62rem; margin-top: 3px; text-align: center; }
+        .wg.small .wg-code { width: 100%; }
+        .wg.small .wg-code .ck-num { display: none; }
+        .wg-caption { font-family: 'Space Mono', monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+        .wg-tip {
+            max-width: 640px; margin: 2.5rem auto 0; padding: 1rem 1.25rem; text-align: center;
+            border: var(--border-width) dashed var(--border); color: var(--text-muted); font-size: .95rem;
+        }
+        .wg-tip strong { color: var(--text); }
+
+        /* In the app: two real screenshots */
+        .in-app { padding: 5rem 2rem; position: relative; z-index: 1; }
+        .shots { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+        .shots figure { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .shots .phone { width: 240px; box-shadow: 8px 8px 0 var(--border); }
+        .shots figure:nth-child(1) .phone { transform: rotate(-1.5deg); }
+        .shots figure:nth-child(2) .phone { transform: rotate(1.5deg); box-shadow: 8px 8px 0 var(--secondary); }
+        .shots figure .phone:hover { transform: rotate(0) scale(1.02); }
+        .shots figcaption { font-family: 'Space Mono', monospace; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); text-align: center; }
+
+        /* Card types strip */
+        .uses { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; max-width: 860px; margin: -2rem auto 3rem; }
+        .uses span {
+            font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+            padding: .35rem .7rem; border: 2px solid var(--border); background: var(--bg-elevated);
+        }
+        .uses span:nth-child(3n+1) { transform: rotate(-1deg); }
+        .uses span:nth-child(3n+2) { transform: rotate(.8deg); }
+        .uses span:hover { background: var(--primary); color: #17150F; }
+
+        .feature-card:nth-child(5) { transform: rotate(-0.4deg); }
+        .feature-card:nth-child(6) { transform: rotate(0.4deg); }
+        .feature-card:nth-child(7) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(8) { transform: rotate(-0.3deg); }
+        .feature-card:nth-child(n+5):hover { transform: translate(-4px, -4px); }
+        .feature-card:nth-child(even) .feature-icon { background: var(--secondary); }
+
+        /* Pricing in one line */
+        .price-line {
+            max-width: 640px; margin: 3rem auto 0; padding: 1.25rem 1.5rem; text-align: center;
+            background: var(--yellow); color: #17150F; border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); transform: rotate(-.6deg);
+        }
+        .price-line strong { font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: .04em; }
+
+        @media (max-width: 900px) {
+            .hero-shot { order: 3; }
+            .ck-stage { flex-direction: column; gap: 2rem; }
+        }
+        @media (max-width: 600px) {
+            .phone { width: 220px; }
+            .shots { gap: 2rem; }
+            .wg.medium { width: 100%; max-width: 340px; }
+            .ck-steps { min-width: 0; width: 100%; max-width: 320px; }
+            .checkout, .widgets, .in-app { padding: 4rem 1rem; }
+            .uses { margin-top: -1.5rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ck-card, .ck-dim, .ck-beep, .ck-steps li { transition: none !important; }
+            .ck-laser { animation: none !important; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilPass</div>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#widgets">Widgets</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#features" data-appstore class="btn btn-primary">Get It</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device">
+                    <img src="screenshots/app-icon.png" alt="LilPass app icon" class="hero-appicon" width="140" height="140">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        iPhone App &middot; Private &amp; Offline
+                    </div>
+                    <h1>Every card, <span class="highlight">one tap</span> away.</h1>
+                    <p class="hero-subtitle">LilPass keeps your loyalty, gym, library and membership cards in one place, and shows a crisp barcode at checkout. No account, no tracking, works offline.</p>
+                    <div class="hero-buttons">
+                        <div class="hero-buttons-row">
+                            <div class="download-btn-wrapper">
+                                <a href="#features" data-appstore class="btn btn-primary">
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    Download on the App Store
+                                </a>
+                                <span class="system-req">iPhone &middot; iOS 17+ &middot; Free for 5 cards</span>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>Your cards stay on your iPhone. No account, no analytics, no servers of ours. Optional sync uses your own private iCloud. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-shot">
+                    <div class="phone">
+                        <picture>
+                            <source srcset="screenshots/Card.webp" type="image/webp">
+                            <img src="screenshots/Card.png" alt="LilPass showing a grocery loyalty card with its barcode, full screen" width="1206" height="2622">
+                        </picture>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item"><h3>11</h3><p>Barcode formats</p></div>
+            <div class="stat-item"><h3>0</h3><p>Accounts needed</p></div>
+            <div class="stat-item"><h3>1</h3><p>Tap at checkout</p></div>
+            <div class="stat-item"><h3>3</h3><p>Home Screen widgets</p></div>
+        </div>
+    </section>
+
+    <section class="checkout" id="demo">
+        <div class="section-header fade-in">
+            <h2>At the Checkout</h2>
+            <p>Open the card, the screen brightens by itself, the scanner beeps. That's the whole thing.</p>
+        </div>
+        <div class="ck-stage scale-in">
+            <div class="ck-phone" aria-hidden="true">
+                <div class="ck-screen" id="ckScreen">
+                    <div class="ck-island"></div>
+                    <div class="ck-dim"></div>
+                    <div class="ck-beep">Beep &check;</div>
+                </div>
+            </div>
+            <ol class="ck-steps" id="ckSteps">
+                <li><span>1</span>Tap the card</li>
+                <li><span>2</span>Brightness goes up</li>
+                <li><span>3</span>Hold it to the scanner</li>
+                <li><span>4</span>Beep. Done.</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="widgets" id="widgets">
+        <div class="section-header fade-in">
+            <h2>On Your Home Screen</h2>
+            <p>Your barcode, right on the Home Screen. Tap &lsaquo; &rsaquo; to switch cards &mdash; go on, try it.</p>
+        </div>
+        <div class="wg-stage scale-in">
+            <div class="wg-col">
+                <div class="wg small" id="wgSmall">
+                    <button class="wg-btn" data-step="-1" aria-label="Previous card"><svg fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8"/></svg></button>
+                    <div class="wg-mid"></div>
+                    <button class="wg-btn" data-step="1" aria-label="Next card"><svg fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 4l8 8-8 8"/></svg></button>
+                </div>
+                <span class="wg-caption">Small</span>
+            </div>
+            <div class="wg-col">
+                <div class="wg medium" id="wgMedium">
+                    <button class="wg-btn" data-step="-1" aria-label="Previous card"><svg fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8"/></svg></button>
+                    <div class="wg-mid"></div>
+                    <button class="wg-btn" data-step="1" aria-label="Next card"><svg fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 4l8 8-8 8"/></svg></button>
+                </div>
+                <span class="wg-caption">Medium &middot; also large</span>
+            </div>
+        </div>
+        <p class="wg-tip fade-in">Tap the card itself and it opens full screen in LilPass. <strong>Rather swipe?</strong> Stack a few LilPass widgets in a Smart Stack and swipe up and down between them. There are Lock Screen widgets too.</p>
+    </section>
+
+    <section class="in-app" id="app">
+        <div class="section-header fade-in">
+            <h2>In the App</h2>
+            <p>Your cards in their own colors. Tap one and its barcode fills the screen.</p>
+        </div>
+        <div class="shots">
+            <figure class="fade-in stagger-1">
+                <div class="phone">
+                    <picture>
+                        <source srcset="screenshots/Cards.webp" type="image/webp">
+                        <img src="screenshots/Cards.png" alt="The LilPass card list: Gym, Groceries, Library, Pharmacy and Coffee cards" width="1206" height="2622" loading="lazy">
+                    </picture>
+                </div>
+                <figcaption>All your cards, one list</figcaption>
+            </figure>
+            <figure class="fade-in stagger-2">
+                <div class="phone">
+                    <picture>
+                        <source srcset="screenshots/Card.webp" type="image/webp">
+                        <img src="screenshots/Card.png" alt="A grocery card open full screen, with its barcode and number" width="1206" height="2622" loading="lazy">
+                    </picture>
+                </div>
+                <figcaption>One tap: the barcode, full screen</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>If it has a barcode or a QR code, it fits.</p>
+        </div>
+        <div class="uses fade-in">
+            <span>Loyalty</span><span>Gym</span><span>Library</span><span>Student ID</span><span>Membership</span>
+            <span>Coffee stamps</span><span>Pharmacy</span><span>Museum pass</span>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 7V4h3M18 4h3v3M21 17v3h-3M6 20H3v-3"/><path d="M7 8v8M10 8v8M13 8v8M16 8v8"/></svg></div>
+                <div><h3>Scan it in a second</h3><p>Point the camera at the card and it's in. Or pick a photo of it, or type the number by hand.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg></div>
+                <div><h3>11 barcode formats</h3><p>QR, Aztec, PDF417, Code 128, Code 39, EAN&#8209;13, EAN&#8209;8, UPC&#8209;A, UPC&#8209;E, ITF and Codabar, redrawn sharp at any size.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+                <div><h3>Brighter at checkout</h3><p>Open a card and the screen brightens so scanners read it first time. Close it and your brightness comes back.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 00-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+                <div><h3>A nudge at the store</h3><p>Pick a store on the map and LilPass reminds you about its card when you arrive. Your location never leaves your iPhone.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+                <div><h3>Face ID, card by card</h3><p>Lock just the cards you want, like an ID or a membership. The rest stay one tap away.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 18a5 5 0 01-.6-9.96A6 6 0 0118 9a4.5 4.5 0 01-.5 9z"/></svg></div>
+                <div><h3>iCloud sync, if you want it</h3><p>Off by default. Turn it on and your cards sync through your own private iCloud. We never see them.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg></div>
+                <div><h3>Ask Siri</h3><p>&ldquo;Show my Gym card in LilPass.&rdquo; Works hands-free, and in Shortcuts too.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></div>
+                <div><h3>Favorites first</h3><p>Star the cards you use most. The ones you reach for float to the top on their own.</p></div>
+            </div>
+        </div>
+        <p class="price-line fade-in"><strong>Free for 5 cards.</strong> One small, one-time purchase unlocks unlimited cards. No subscription, ever.</p>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Will the store's scanner read my phone?</h3>
+                <p>Almost every modern checkout scanner reads phone screens, and LilPass turns the brightness up and draws the code crisp. If an old laser scanner won't, the cashier can type the number printed under the barcode.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>How is this different from Apple Wallet?</h3>
+                <p>Wallet only holds passes a store has made for it. LilPass holds any card with a barcode or QR code, including the plastic ones that never came with an app.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Does it need internet?</h3>
+                <p>No. Your cards live on your iPhone and every barcode is drawn on the device, so it works in a basement checkout with no signal.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Can I add my student or staff ID?</h3>
+                <p>If it has a barcode or QR code, yes. Library, gym, cafeteria and campus cards often do. Tap-only (NFC) cards can't be copied by any app.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Is it free?</h3>
+                <p>Free for up to 5 cards. A one-time purchase unlocks unlimited cards, and it carries over to your other devices with the same Apple Account.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>What if I lose my phone?</h3>
+                <p>With iCloud sync on, your cards come back when you sign in on a new iPhone. With it off, they exist only on that device, which is the most private option.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>A card that won't scan?</h2>
+            <p>Send a note with the card type and what happened. Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilpad/">LilPad</a> &middot; <a href="/lildisplay/">LilDisplay</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+        const APP_STORE_URL = 'https://apps.apple.com/app/id6822983607';
+        if (APP_STORE_URL) document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // ---- Sample cards for the demo and the widgets --------------------------
+        const ICONS = {
+            cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
+            gym: '<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>',
+            books: '<path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.6-1 3.4 15.4-3.6 1z"/>',
+            id: '<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2.5"/><path d="M14 10h5M14 14h4"/>',
+            cup: '<path d="M4 9h12v5a5 5 0 01-5 5H9a5 5 0 01-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 010 5H16"/><path d="M8 3c-1 1.5 1 2.5 0 4M12 3c-1 1.5 1 2.5 0 4"/>'
+        };
+        const CARDS = [
+            { name: 'Groceries',  store: 'FreshMart',      color: '#22A55A', icon: 'cart',  kind: 'bars', num: '4 006381 333931' },
+            { name: 'Gym',        store: 'City Fitness',   color: '#E5383B', icon: 'gym',   kind: 'qr',   num: 'MEMBER 0042-8817' },
+            { name: 'Library',    store: 'Public Library', color: '#8B5CF6', icon: 'books', kind: 'bars', num: '29871 004417' },
+            { name: 'Student ID', store: 'State University', color: '#4F5BD5', icon: 'id', kind: 'bars', num: 'A20261188B' },
+            { name: 'Coffee',     store: 'Bean There',     color: '#A0552B', icon: 'cup',   kind: 'qr',   num: '7 OF 10 STAMPS' }
+        ];
+
+        // Small deterministic random, so each card always draws the same code.
+        function rng(seed) {
+            let s = 0;
+            for (const ch of seed) s = (s * 31 + ch.charCodeAt(0)) >>> 0;
+            return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+        }
+        function barsSVG(seed) {
+            const r = rng(seed); let x = 0, out = '';
+            const bar = w => { out += `<rect x="${x}" y="0" width="${w}" height="60"/>`; x += w; };
+            const gap = w => { x += w; };
+            bar(1); gap(1); bar(1); gap(1);
+            for (let i = 0; i < 30; i++) { bar(1 + Math.floor(r() * 3)); gap(1 + Math.floor(r() * 2.6)); }
+            bar(1); gap(1); bar(1);
+            return `<svg viewBox="0 0 ${x} 60" preserveAspectRatio="none" fill="#17150F">${out}</svg>`;
+        }
+        function qrSVG(seed) {
+            const r = rng(seed), n = 21; let out = '';
+            const finder = (fx, fy) => {
+                out += `<rect x="${fx}" y="${fy}" width="7" height="7"/><rect x="${fx + 1}" y="${fy + 1}" width="5" height="5" fill="#fff"/><rect x="${fx + 2}" y="${fy + 2}" width="3" height="3"/>`;
+            };
+            for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+                const inFinder = (x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12);
+                if (!inFinder && r() < 0.48) out += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+            }
+            finder(0, 0); finder(14, 0); finder(0, 14);
+            return `<svg viewBox="-1 -1 23 23" fill="#17150F" shape-rendering="crispEdges">${out}</svg>`;
+        }
+        const codeSVG = c => c.kind === 'qr' ? qrSVG(c.name) : barsSVG(c.name);
+        const iconSVG = c => `<svg fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${ICONS[c.icon]}</svg>`;
+
+        // ---- Checkout demo: slide in, brighten, scan, beep, next ----------------
+        (function() {
+            const screen = document.getElementById('ckScreen');
+            const steps = [...document.querySelectorAll('#ckSteps li')];
+            if (!screen) return;
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let index = 0, onScreen = false, current = null;
+
+            function makeCard(c) {
+                const el = document.createElement('div');
+                el.className = 'ck-card';
+                el.style.setProperty('--card', c.color);
+                el.innerHTML = `<div class="ck-icon">${iconSVG(c)}</div><div class="ck-name"></div><div class="ck-store"></div>
+                    <div class="ck-code ${c.kind === 'qr' ? 'square' : ''}">${codeSVG(c)}<div class="ck-num"></div><span class="ck-laser"></span></div>`;
+                el.querySelector('.ck-name').textContent = c.name;
+                el.querySelector('.ck-store').textContent = c.store;
+                el.querySelector('.ck-num').textContent = c.num;
+                screen.insertBefore(el, screen.querySelector('.ck-dim'));
+                return el;
+            }
+            const setStep = i => steps.forEach((li, j) => li.classList.toggle('on', j === i));
+            const wait = ms => new Promise(res => setTimeout(res, ms));
+            async function whenVisible() { while (!onScreen || document.hidden) await wait(400); }
+
+            if (reduced) {
+                makeCard(CARDS[0]).classList.add('in');
+                screen.classList.add('bright', 'ok');
+                setStep(3);
+                return;
+            }
+
+            new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { threshold: 0.2 }).observe(screen);
+
+            (async function loop() {
+                for (;;) {
+                    await whenVisible();
+                    const card = makeCard(CARDS[index % CARDS.length]);
+                    screen.classList.remove('bright', 'ok');
+                    card.getBoundingClientRect();           // commit the start position before sliding in
+                    card.classList.add('in'); setStep(0);
+                    if (current) { const old = current; old.classList.add('out'); setTimeout(() => old.remove(), 500); }
+                    current = card;
+                    await wait(900);  screen.classList.add('bright'); setStep(1);
+                    await wait(1000); card.classList.add('scan'); setStep(2);
+                    await wait(1000); screen.classList.add('ok'); setStep(3);
+                    await wait(1500);
+                    index++;
+                }
+            })();
+        })();
+
+        // ---- Widget mocks: ‹ › step through the cards, like the real widget -----
+        (function() {
+            function setup(id, start) {
+                const wg = document.getElementById(id);
+                if (!wg) return;
+                const mid = wg.querySelector('.wg-mid');
+                let i = start;
+                function render() {
+                    const c = CARDS[(i % CARDS.length + CARDS.length) % CARDS.length];
+                    wg.style.setProperty('--card', c.color);
+                    mid.innerHTML = `<div class="wg-head"><div class="ck-icon">${iconSVG(c)}</div><div style="min-width:0"><div class="wg-title"></div><div class="wg-sub"></div></div></div>
+                        <div class="wg-code">${codeSVG(c)}<div class="ck-num"></div></div>`;
+                    mid.querySelector('.wg-title').textContent = c.name;
+                    mid.querySelector('.wg-sub').textContent = c.store;
+                    mid.querySelector('.ck-num').textContent = c.num;
+                }
+                wg.querySelectorAll('.wg-btn').forEach(b => b.addEventListener('click', () => { i += Number(b.dataset.step); render(); }));
+                render();
+            }
+            setup('wgSmall', 4);
+            setup('wgMedium', 0);
+        })();
+    </script>
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>

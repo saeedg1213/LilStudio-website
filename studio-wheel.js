@@ -6,7 +6,7 @@
  * (and an icon in /assets/wheel/).
  *
  * - Apple Watch-style honeycomb: round icons packed in two rings around the
- *   corner (inner ring sits in the gaps of the outer one).
+ *   corner.
  * - Idle drift: when nobody is pointing at the wheel, the icons float very
  *   slowly anywhere inside it, bumping gently off each other and the edges.
  *   As soon as the pointer comes near (or keyboard focus enters), they glide
@@ -33,15 +33,17 @@
         { id: 'lilmirror',  name: 'LilMirror',  tag: 'A mirror before your call',      href: '/lilmirror/',  color: '#F7DC3C', icon: '/assets/wheel/lilmirror.png' },
         { id: 'lilstats',   name: 'LilStats',   tag: 'CPU, GPU & RAM in the menu bar', href: '/lilstats/',   color: '#7ED48A', icon: '/assets/wheel/lilstats.png' },
         { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png' },
+        { id: 'lilpass',    name: 'LilPass',    tag: 'Every card, one tap away',       href: '/lilpass/',    color: '#7CC4F0', icon: '/assets/wheel/lilpass.png' },
     ];
 
     // Honeycomb slots around the corner: radius in tile widths, angle in degrees
-    // (180° = left of the corner, 270° = straight up). The outer ring's angles
-    // fall between the inner ring's, so neighbours are evenly spaced.
+    // (180° = left of the corner, 270° = straight up). Each ring spreads its
+    // icons evenly across the quarter circle.
     const LAYOUT = {
-        studio:     { r: 2.2,  a: 225 },   // inner ring, centre
-        lildisplay: { r: 2.2,  a: 195 },   // inner ring
-        lildock:    { r: 2.2,  a: 255 },   // inner ring
+        lildisplay: { r: 2.4,  a: 182 },   // inner ring: four slots, 28.67° apart (chord ≥ 1.19 tiles at r 2.4)
+        studio:     { r: 2.4,  a: 210.67 },
+        lildock:    { r: 2.4,  a: 239.33 },
+        lilpass:    { r: 2.4,  a: 268 },
         lilusage:   { r: 3.85, a: 181 },   // outer ring: six slots, 17.6° apart (chord ≥ 1.17 tiles at r 3.85)
         lilvibe:    { r: 3.85, a: 198.6 },
         lilhide:    { r: 3.85, a: 216.2 },
