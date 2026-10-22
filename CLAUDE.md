@@ -128,6 +128,9 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
      `.app-dot.<short>`, `.btn-app.<short>`.
    - Hero `.app-grid` (4×3): LilStats, LilDisplay, LilPad, LilBounce / LilDock, LilUsage, LilVibe, (muted) /
      (muted), LilHide, LilMirror, LilPass. Replace a muted cell with the next app (two slots left).
+     It has the wheel's Watch-style hover (script at the end of index.html): the tile under the pointer
+     swells on a spring and the others glide aside; it reads the grid as 4 columns in DOM order, so keep
+     cells (apps and muted) in grid order.
    - An `.app-card` in `.apps-grid` with a small pure-CSS stage animation in a `/* ---- AppName ---- */`
      CSS block (add it to the `prefers-reduced-motion` block too). An odd last card spans the full
      row, centred, at max 540px.
@@ -138,7 +141,7 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 
 ## Testing hooks
 
-- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over.
+- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over. Homepage grid: `?gridsweep=<a>,<b>` does the same between two tiles (by class: `stats,bounce`).
 - Headless Chrome screenshots work for the hero:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs
