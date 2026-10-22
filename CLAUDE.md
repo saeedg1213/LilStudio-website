@@ -138,7 +138,7 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 
 ## Testing hooks
 
-- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon.
+- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over.
 - Headless Chrome screenshots work for the hero:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs

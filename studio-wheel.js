@@ -7,9 +7,12 @@
  *
  * - Apple Watch-style honeycomb: round icons packed tightly on a hexagonal grid
  *   up and to the left of the corner button, LilStudio in the middle.
- * - Hover: only the icon under the pointer grows; every other icon keeps its size
- *   and slides outward just enough to make room, so the gap around the grown icon
- *   stays the same and the honeycomb stays packed. Keyboard focus works the same.
+ * - Hover: the icon under the pointer swells; every other icon keeps its size and
+ *   glides out of its way by exactly the room it needs, so the honeycomb stays
+ *   packed. Sizes follow the pointer continuously (gliding from one icon to the
+ *   next, one eases down as the other swells) and every size and offset chases its
+ *   target on a soft spring with a little overshoot, so the whole wheel moves like
+ *   one fluid surface. Keyboard focus works the same.
  * - Open by default. The corner button tucks it away; that choice is kept for
  *   the rest of the visit (sessionStorage).
  * - Styling follows the page's theme variables (--border, --bg-elevated,
@@ -38,10 +41,13 @@
     // Honeycomb (in tile widths, from the corner button's centre; screen axes, y down)
     const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
     const ANCHOR = { x: -2.05, y: -2.05 };    // the middle icon (LilStudio), up and left of the button
-    // Hover: the icon under the pointer (within PICK of its centre) grows to MAG. 1.4× keeps the 128 px
-    // wheel images sharp: a 44 px icon at 1.4× is 123 device pixels on a 2× screen.
+    // Hover. An icon swells to MAG while the pointer is within HOLD of its centre, easing back to 1×
+    // by REACH (tile widths): resting on an icon, only it is big; between two, both are part-way.
+    // 1.4× keeps the 128 px wheel images sharp (a 44 px icon at 1.4× is 123 device px at 2×).
     const MAG = 1.4;
-    const PICK = 0.62;                        // in tile widths: a little past the icon's edge
+    const HOLD = 0.24, REACH = 0.84;
+    // Springs (per second): ~7% overshoot, settles in about 0.4 s (checked at 120, 60 and 30 fps).
+    const SPRING_K = 330, SPRING_DAMP = 23;
 
     /** The first n slots of a hexagonal grid around ANCHOR, ring by ring, kept on screen and clear of the button. */
     function honeycomb(n) {
@@ -132,7 +138,7 @@
                 border-radius: 50%; color: #17150F; outline: none; padding: 0; margin: 0;
                 transform: translate(var(--dx), var(--dy)) scale(var(--m));
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
-    .lsw.magnifying .lsw-link { transition: transform .16s cubic-bezier(.2,.9,.3,1.15), box-shadow .15s; }
+    .lsw.magnifying .lsw-link { transition: box-shadow .15s; }   /* springs drive the transform */
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
     .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
     .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
@@ -276,63 +282,107 @@
         window.addEventListener('pointermove', (e) => {
             if (e.pointerType === 'touch') return;
             px = e.clientX; py = e.clientY;
-            requestMagnify();
+            kick();
         }, { passive: true });
-        document.addEventListener('pointerleave', () => { px = py = -1e4; requestMagnify(); });
+        document.addEventListener('pointerleave', () => { px = py = -1e4; kick(); });
         // Tabbing through the icons moves the lens with the focus.
         root.addEventListener('focusin', (e) => {
             const t = tiles.find(x => x.el === e.target);
             if (!t || !open) return;
             const { ox, oy } = corner(), size = tileSize();
             px = ox + t.ux * size; py = oy + t.uy * size;
-            magnify(true);
+            forced = true;
+            kick();
         });
-        root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { px = py = -1e4; resetMagnify(); } });
+        root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { px = py = -1e4; forced = false; kick(); } });
 
-        // ---- Watch-style hover: one icon grows, the rest make room ----------------------
-        let magnifying = false, magRaf = 0;
+        // ---- Watch-style hover: one icon swells, the rest glide out of its way --------------
+        // Targets follow the pointer continuously; each icon's size and offset chase their target on a
+        // spring, every frame, until everything has settled (then the loop stops).
+        let magnifying = false, raf = 0, last = 0, forced = false;
+        const n = tiles.length;
+        const cur = tiles.map(() => ({ m: 1, vm: 0, x: 0, vx: 0, y: 0, vy: 0 }));
+        const goal = tiles.map(() => ({ m: 1, x: 0, y: 0 }));
 
+        function weight(d) {
+            if (d <= HOLD) return 1;
+            if (d >= REACH) return 0;
+            const t = (d - HOLD) / (REACH - HOLD);
+            return 1 - t * t * t * (t * (t * 6 - 15) + 10);   // smootherstep down
+        }
+
+        function setGoals() {
+            const size = tileSize();
+            const { ox, oy } = corner();
+            const fx = (px - ox) / size, fy = (py - oy) / size;   // pointer in tile widths
+            const engaged = open && !reduced && (canHover || forced);
+            for (let i = 0; i < n; i++) {
+                goal[i].m = engaged ? 1 + (MAG - 1) * weight(Math.hypot(tiles[i].ux - fx, tiles[i].uy - fy)) : 1;
+            }
+            // Each icon moves straight away from every swollen one by the radius that one gained.
+            for (let i = 0; i < n; i++) {
+                let dx = 0, dy = 0;
+                for (let j = 0; j < n; j++) {
+                    const gain = (goal[j].m - 1) / 2;
+                    if (j === i || gain <= 0) continue;
+                    const vx = tiles[i].ux - tiles[j].ux, vy = tiles[i].uy - tiles[j].uy, d = Math.hypot(vx, vy) || 1;
+                    dx += vx / d * gain; dy += vy / d * gain;
+                }
+                // Keep clear of the screen edges (the corner button sits ~1 tile in from both).
+                const limit = 0.95 - goal[i].m / 2;
+                goal[i].x = Math.min(dx, limit - tiles[i].ux) * size;
+                goal[i].y = Math.min(dy, limit - tiles[i].uy) * size;
+            }
+        }
+
+        function kick() {
+            setGoals();
+            if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+        }
+
+        function frame(now) {
+            raf = 0;
+            const dt = Math.min(0.034, Math.max(0.001, (now - last) / 1000));
+            last = now;
+            setGoals();
+            let moving = false, resting = true;
+            for (let i = 0; i < n; i++) {
+                const c = cur[i], g = goal[i];
+                c.vm += (SPRING_K * (g.m - c.m) - SPRING_DAMP * c.vm) * dt; c.m += c.vm * dt;
+                c.vx += (SPRING_K * (g.x - c.x) - SPRING_DAMP * c.vx) * dt; c.x += c.vx * dt;
+                c.vy += (SPRING_K * (g.y - c.y) - SPRING_DAMP * c.vy) * dt; c.y += c.vy * dt;
+                if (Math.abs(g.m - c.m) > 5e-4 || Math.abs(c.vm) > 5e-3 || Math.abs(g.x - c.x) > 0.05 || Math.abs(g.y - c.y) > 0.05
+                    || Math.abs(c.vx) > 0.5 || Math.abs(c.vy) > 0.5) moving = true;
+                if (g.m !== 1 || g.x !== 0 || g.y !== 0) resting = false;
+            }
+            if (!moving) {
+                // Snap the last fraction so the CSS values end exact.
+                for (let i = 0; i < n; i++) { const c = cur[i], g = goal[i]; c.m = g.m; c.x = g.x; c.y = g.y; c.vm = c.vx = c.vy = 0; }
+            }
+            if (!magnifying) { magnifying = true; root.classList.add('magnifying'); }
+            for (let i = 0; i < n; i++) {
+                const c = cur[i], el = tiles[i].el;
+                el.style.setProperty('--m', c.m.toFixed(4));
+                el.style.setProperty('--dx', c.x.toFixed(2) + 'px');
+                el.style.setProperty('--dy', c.y.toFixed(2) + 'px');
+                tiles[i].li.style.zIndex = c.m > 1.01 ? String(10 + Math.round((c.m - 1) * 100)) : '';
+            }
+            if (moving) raf = requestAnimationFrame(frame);
+            else if (resting) { magnifying = false; root.classList.remove('magnifying'); }
+        }
+
+        // Instant reset (closing the wheel): no spring.
         function resetMagnify() {
-            magnifying = false;
+            cancelAnimationFrame(raf); raf = 0;
+            magnifying = false; forced = false;
             root.classList.remove('magnifying');
-            tiles.forEach(t => {
+            tiles.forEach((t, i) => {
+                Object.assign(cur[i], { m: 1, vm: 0, x: 0, vx: 0, y: 0, vy: 0 });
                 t.el.style.setProperty('--m', 1);
                 t.el.style.setProperty('--dx', '0px');
                 t.el.style.setProperty('--dy', '0px');
                 t.li.style.zIndex = '';
             });
-        }
-        function requestMagnify() { if (!magRaf) magRaf = requestAnimationFrame(() => { magRaf = 0; magnify(false); }); }
-
-        // Works from each icon's slot (never measured), so it can't feed back on itself.
-        function magnify(force) {
-            if (!open || reduced || (!canHover && !force)) return;
-            const { ox, oy } = corner();
-            const size = tileSize();
-            const fx = px - ox, fy = py - oy;
-            let hovered = null, best = PICK * size;
-            tiles.forEach(t => {
-                const d = Math.hypot(t.ux * size - fx, t.uy * size - fy);
-                if (d < best) { best = d; hovered = t; }
-            });
-            if (!hovered) { if (magnifying) resetMagnify(); return; }
-            // Everyone else moves straight away from the grown icon by the radius it gained, so gaps
-            // toward it stay as they were and nobody changes size. Kept clear of the screen edges.
-            const grow = (MAG - 1) / 2 * size;
-            const edge = 0.95 * size - size / 2;
-            tiles.forEach(t => {
-                let dx = 0, dy = 0;
-                if (t !== hovered) {
-                    const vx = t.ux - hovered.ux, vy = t.uy - hovered.uy, d = Math.hypot(vx, vy) || 1;
-                    dx = vx / d * grow; dy = vy / d * grow;
-                    dx = Math.min(dx, edge - t.ux * size); dy = Math.min(dy, edge - t.uy * size);
-                }
-                t.el.style.setProperty('--m', t === hovered ? MAG : 1);
-                t.el.style.setProperty('--dx', dx.toFixed(2) + 'px');
-                t.el.style.setProperty('--dy', dy.toFixed(2) + 'px');
-                t.li.style.zIndex = t === hovered ? '20' : '';
-            });
-            if (!magnifying) { magnifying = true; root.classList.add('magnifying'); }
         }
 
         // Open by default (after the page has settled, so the swirl is visible),
@@ -346,8 +396,25 @@
         if (hov) setTimeout(() => {
             const t = tiles.find(x => x.el.dataset.id === hov[1]); if (!t) return;
             const { ox, oy } = corner(); const size = tileSize();
-            px = ox + t.ux * size; py = oy + t.uy * size; magnify(true);
+            px = ox + t.ux * size; py = oy + t.uy * size; forced = true; kick();
             t.el.classList.add('lsw-hovered');
+        }, 1500);
+
+        // Test hook: ?wheelsweep=<a>,<b> glides a virtual pointer from icon a to icon b and back (4 s
+        // loop), to watch the hand-over between icons where real hover isn't available.
+        const sweep = location.search.match(/[?&]wheelsweep=([a-z]+),([a-z]+)/);
+        if (sweep) setTimeout(() => {
+            const a = tiles.find(x => x.el.dataset.id === sweep[1]), b = tiles.find(x => x.el.dataset.id === sweep[2]);
+            if (!a || !b) return;
+            forced = true;
+            const t0 = performance.now();
+            (function glide(now) {
+                const { ox, oy } = corner(), size = tileSize();
+                const u = (1 - Math.cos(((now - t0) / 4000) * 2 * Math.PI)) / 2;
+                px = ox + (a.ux + (b.ux - a.ux) * u) * size; py = oy + (a.uy + (b.uy - a.uy) * u) * size;
+                kick();
+                requestAnimationFrame(glide);
+            })(t0);
         }, 1500);
     }
 
