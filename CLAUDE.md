@@ -30,8 +30,11 @@ so the folder name must equal the wheel id.
   from Google Fonts with the same `<link>` on every page.
 - **Borders:** `3px solid var(--border)` everywhere (`--border-width`). Hard offset shadows only,
   no blur: `box-shadow: 6px 6px 0 var(--border)` (`--shadow-offset: 6px`).
-- **Hover:** lift by translating `(-2px,-2px)` to `(-4px,-4px)` with a bigger shadow. **Active:** press
-  `translate(2px,2px)` with a 2px shadow. Cards sometimes sit slightly rotated (±0.3–1deg).
+- **Hover (single buttons and cards):** lift by translating `(-2px,-2px)` to `(-4px,-4px)` with a bigger
+  shadow. **Active:** press `translate(2px,2px)` with a 2px shadow. Cards sometimes sit slightly rotated
+  (±0.3–1deg).
+- **Hover (collections of icons or tiles: the wheel, the homepage app grid, any future icon grid):**
+  the Apple Watch motion below, never a plain CSS `:hover` scale.
 - **Theme tokens** (define on `:root`, override under `[data-theme="light"]`):
   - Dark: `--bg #0D0D0D`, `--bg-elevated #1A1A1A`, `--text #FFF`, `--text-muted ~#888–#A8A8A8`, `--border #FFF`
   - Light: `--bg #F7F1DE`, `--bg-elevated #F7F1DE or #FFFBEF`, `--text #17150F`, `--text-muted #55503F`, `--border #17150F`
@@ -48,6 +51,44 @@ studio `#FFE135` · LilDisplay `#00FF88` · LilDock `#FF6B5E` · LilUsage `#FFB0
 LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A` ·
 LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35`.
 
+## Motion language (Apple Watch-style)
+
+Everything interactive should feel fluid, springy and connected, like the Watch's home screen. The
+reference implementations are `studio-wheel.js` (honeycomb) and the app-grid script at the end of
+`index.html` (flat tilted grid). Copy one of them rather than starting over.
+
+Rules:
+- **Follow the pointer continuously.** Targets are a smooth function of the pointer position, never a
+  discrete "hovered / not hovered" swap. An element is fully swollen while the pointer is within `HOLD`
+  of its centre, easing back to 1× by `REACH` (smootherstep, in units of the grid pitch: HOLD ≈ 0.25,
+  REACH ≈ 0.85). Resting on an element, only it is big. Gliding to the next one, one eases down while
+  the other swells.
+- **Only the focused element grows.** The others keep their size and glide straight away from each
+  swollen one by the radius it gained (`(m − 1) / 2 × size`), so the gap around it stays the same and
+  the layout stays packed. Keep everything on screen (clamp near the viewport edges).
+- **Springs, not easing curves.** Size and offset each chase their target on a damped spring:
+  `v += (K·(target − x) − DAMP·v)·dt; x += v·dt` with **K = 330, DAMP = 23** (about 7% overshoot,
+  settles in about 0.4 s, stable at 120, 60 and 30 fps; clamp `dt` to 1/30 s). Lower DAMP is bouncier.
+- **Mind image sharpness.** Raster icons may grow only until `css size × scale × 2 ≤ image pixels`. The
+  wheel's 128 px icons at 44 px stop at **1.4×**. CSS/SVG tiles can go to about 1.35–1.4× too; more
+  starts to look like a different element, not a swell. Export bigger images before going larger.
+- **Run only while moving.** One `requestAnimationFrame` loop starts on `pointermove` and stops when
+  every spring has settled (snap the last fraction). Nothing runs while still.
+- **Compute from rest positions, never from measured, animated ones**, so the effect can't feed back on
+  itself. For tilted or floating containers, map the pointer into the container's own frame (see the
+  grid script: inverse-rotate around the container's bounding-box centre).
+- **Compose, don't fight, existing CSS.** Drive the individual `scale` and `translate` properties (or
+  CSS variables on an inner element), not `transform`, when the element already has a CSS animation
+  with `forwards` fill. Remove CSS `transform` transitions while JS drives the springs.
+- **Who gets it:** only `(hover: hover) and (pointer: fine)`. Never with `prefers-reduced-motion`.
+  Keyboard focus drives the same effect (focus = pointer on that element's centre). Touch screens get
+  the plain layout.
+- **Packed layouts.** Neighbours sit nearly touching at rest (the wheel's honeycomb pitch is 1.08 icons;
+  the app grid's gap is 12 px on 96 px tiles). If you invent a new layout, check it numerically (pointer
+  on every element and between every pair, measure overlap and the largest gap) before you look at it.
+- **Test hooks**: give every new effect a `?…sweep=<a>,<b>` hook that glides a virtual pointer between
+  two elements, so the hand-over can be checked where real hover isn't available (simulator, headless).
+
 ## App page anatomy (copy `lilstats/index.html` or `lilhide/index.html` as the starting point)
 
 Sections, in order (ids are used by the nav links):
@@ -56,8 +97,14 @@ Sections, in order (ids are used by the nav links):
    "Get It" button · theme toggle (moon/sun SVGs, `onclick="toggleTheme()"`).
 2. `.hero`: `.hero-top` flex row of **app icon** | **center** (yellow `.badge` with blinking dot,
    `h1` with one `.highlight` word, `.hero-subtitle`, App Store button + `.system-req` line,
-   `.privacy-notice` box linking `privacy.html`) | **visual** (screenshot or a live mock). Stacks
-   vertically under ~900–1000px.
+   `.privacy-notice` box linking `privacy.html`) | **visual**. Stacks vertically under ~900–1000px.
+   The visual is the app's signature live element when it has one, otherwise a real screenshot:
+   - **Playable demo as the hero** (LilBounce): a `<canvas>` toy in a CSS phone frame (`.play-phone`),
+     with small buttons under it ("Drop them again", "Use tilt" on phones via `DeviceOrientationEvent`,
+     asking permission on iOS). It behaves like the real app (same touch rules). The canvas takes every
+     touch that starts on it (`touch-action: none`), so cap its height on phones (`width: min(300px, 72vw,
+     36svh)` with `aspect-ratio: 3 / 5`) to leave room to scroll past.
+   - **Live mock** (LilUsage meter, LilStats menu bar) or a **screenshot** otherwise.
 3. `.stats-bar`: 4 cells (big Space Mono number + small caps label); yellow on hover; 2×2 on mobile.
 4. Content sections (`section` → `.section-header.fade-in` with `h2` + `p`, then a grid). Usually
    Features (`.features-grid` of `.feature-card` with a coloured 48px `.feature-icon` square and an
@@ -69,6 +116,10 @@ Sections, in order (ids are used by the nav links):
 
 **Head:** title `AppName – Short Benefit`, meta description, `og:*` tags (url
 `https://lilstudio.app/<appid>/`, image is a screenshot or the icon), studio favicons, fonts.
+
+**Screenshots:** prefer the owner's real device screenshots over simulator ones (LilBounce's gallery
+and `og:image` lead with one). Simulator shots are fine for the rest. Keep the originals in the app
+repo (`AppStore/Screenshots/`); the site gets copies scaled to 1600 px tall.
 
 **App Store links:** use `https://apps.apple.com/app/id<AppleID>` (the Apple ID is in App Store
 Connect → App Information). Mark every buy button with `data-appstore` and set the URL once in
@@ -86,7 +137,9 @@ price the user hasn't given.
   adds `.visible`. Keep it.
 - Each app page has one signature live animation that shows what the app does (LilUsage: a
   filling meter; LilStats: a canvas port of the menu bar renderer, a live popover, and an
-  interactive 12-style gallery; homepage cards each have a small CSS "stage" animation).
+  interactive 12-style gallery; LilBounce: a playable demo as the hero; homepage cards each have a
+  small CSS "stage" animation).
+- Pointer-driven motion follows the **Motion language** section above.
 - Respect `prefers-reduced-motion` (kill animations/transitions; show final states).
 - Keep pages light: pause JS loops when `document.hidden`, skip drawing offscreen canvases,
   and handle HiDPI with `devicePixelRatio`.
@@ -103,15 +156,20 @@ Structure: `.sp-nav` (logo → `./`, links Studio / App / Support / Privacy, wit
 `aria-current="page"` on the current one, `sp-hide-sm` on Studio and Privacy), then `<main class="sp">`
 with `h1`, a `.updated` (privacy) or `.lede` (support) line, a `.note` callout, `h2`/`h3`/`p`/`ul`,
 and a footer "X is part of LilStudio". Privacy pages follow one template: what's collected
-(nothing), what's stored locally (settings in macOS preferences), what it does NOT do, Children,
-Changes, Contact. Only claim what the app really does: check its entitlements and code.
+(nothing), what's stored locally (settings in macOS or iOS preferences), anything that touches
+sensors, photos or the network and exactly how (e.g. LilBounce: motion used live and never stored;
+Photos add-only for a video you choose to save), what it does NOT do, Children, Changes, Contact.
+Only claim what the app really does: check its entitlements, its Info.plist usage descriptions, its
+privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
 
 ## Checklist: adding a new app
 
 1. `/<appid>/index.html`, `privacy.html`, `support.html`, `screenshots/app-icon.png`
    (`sips -Z 512 icon-1024.png --out …`).
    Big screenshots: keep the original and serve a WebP (`cwebp -q 82 -alpha_q 90 -resize 1600 0 in.png -o out.webp`,
-   which keeps transparency for device mockups) via `<picture>` with the PNG as the fallback. Give the
+   which keeps transparency for device mockups) via `<picture>` with the PNG as the fallback. Without
+   `cwebp` (not installed on every Mac; `sips` can't write WebP), use a PNG scaled with
+   `sips -Z 1600 in.png --out out.png`. Give the
    `<img>` width/height and `loading="lazy"`. LilStats' "On Your Mac" section adds pulsing callout pins
    at percentage positions over the screenshot. Reuse that pattern for showing an app in context.
 2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`. When replacing an existing
@@ -136,10 +194,11 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
      row, centred, at max 540px.
    - Update the "N right now" count, the meta description's app list, and the footer links.
 5. Preview locally: `python3 -m http.server 8765` from the repo root, then open
-   `http://localhost:8765/<appid>/`. Check light and dark, ~390px mobile width, and the wheel.
+   `http://localhost:8765/<appid>/`. Check light and dark, ~390px mobile width, and the wheel
+   (`?wheel=open&wheelhover=<appid>`). Syntax-check any new script before previewing (see Testing).
 6. Commit and push to `main` (that's the deploy).
 
-## Testing hooks
+## Testing hooks and tools
 
 - `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over. Homepage grid: `?gridsweep=<a>,<b>` does the same between two tiles (by class: `stats,bounce`).
 - Headless Chrome screenshots work for the hero:
@@ -148,3 +207,14 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
   killed early produce blank images. Hero sections are `min-height: 100vh`, so a tall window
   doesn't show the sections below it. Hash URLs (`#section`) screenshot blank, so to check a lower section,
   temporarily copy the page with `<style>.hero{display:none}</style>` injected, then delete the copy.
+- **No Chrome on this Mac?** Use Safari in the iOS Simulator: `xcrun simctl openurl <udid>
+  http://localhost:8765/<page>` then `xcrun simctl io <udid> screenshot out.png` (the simulator reaches the
+  Mac's localhost). Real hover can't be tested there, so use the `wheelhover` / `…sweep` hooks, and take
+  a few screenshots ~0.3 s apart during a sweep to see the hand-over. To see a section behind the hero
+  or the wheel, serve a temporary copy with `<style>.hero-center,.lsw{display:none!important}</style>`
+  injected, then delete it.
+- **Syntax-check scripts** without Node: extract the `<script>` block to a file and run
+  `/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc -e 'checkSyntax("file.js")'`.
+  The same `jsc` runs quick numeric simulations (spring overshoot, packing gaps) before any visual check.
+- Only stop preview servers and simulators you started yourself; other sessions may be using theirs.
+
