@@ -175,11 +175,12 @@ privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
 2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`. When replacing an existing
    wheel icon, bump `ICON_VERSION` in `studio-wheel.js` so browsers drop the cached image.
 3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`). That's all:
-   the wheel is an Apple Watch-style honeycomb whose slots are computed (`honeycomb()`: a hexagonal
-   grid around `ANCHOR`, LilStudio in the middle, ring by ring, kept on screen and clear of the corner
-   button), and the round face sizes itself to fit. Hover: only the icon under the pointer grows
-   (`MAG` 1.4×, the most the 128 px wheel images take while staying sharp on 2× screens); the others
-   keep their size and slide out of its way. Check with `?wheel=open&wheelhover=<id>`.
+   the wheel is drawn as an Apple Watch (case, Digital Crown, side button, straps in the current app's
+   `color`, a live clock top-right on the black display) whose honeycomb slots are computed
+   (`honeycomb()`: a hexagonal grid, LilStudio in the middle, ring by ring, tallest spots first), and
+   `layout()` sizes the portrait display around them and parks the case up and left of the corner
+   button. Hover: only the icon under the pointer grows (`MAG` 1.4×, the most the 128 px wheel images
+   take while staying sharp on 2× screens); the others keep their size and slide out of its way. Check with `?wheel=open&wheelhover=<id>`.
 4. Homepage `index.html`:
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,

@@ -5,8 +5,11 @@
  * To add a product: add it to PRODUCTS (and an icon in /assets/wheel/). Its slot
  * in the honeycomb is worked out automatically.
  *
- * - Apple Watch-style honeycomb: round icons packed tightly on a hexagonal grid
- *   up and to the left of the corner button, LilStudio in the middle.
+ * - An Apple Watch: a rounded case with a black display, a Digital Crown and side
+ *   button, and straps in the current app's colour (studio yellow on the homepage),
+ *   up and to the left of the corner button. A live clock sits top-right on the
+ *   display, like watchOS. The icons sit in a honeycomb on the display, packed
+ *   tightly on a hexagonal grid, LilStudio in the middle.
  * - Hover: the icon under the pointer swells; every other icon keeps its size and
  *   glides out of its way by exactly the room it needs, so the honeycomb stays
  *   packed. Sizes follow the pointer continuously (gliding from one icon to the
@@ -38,9 +41,8 @@
         { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png' },
     ];
 
-    // Honeycomb (in tile widths, from the corner button's centre; screen axes, y down)
+    // Honeycomb (in tile widths, around the middle icon; screen axes, y down)
     const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
-    const ANCHOR = { x: -2.05, y: -2.05 };    // the middle icon (LilStudio), up and left of the button
     // Hover. An icon swells to MAG while the pointer is within HOLD of its centre, easing back to 1×
     // by REACH (tile widths): resting on an icon, only it is big; between two, both are part-way.
     // 1.4× keeps the 128 px wheel images sharp (a 44 px icon at 1.4× is 123 device px at 2×).
@@ -48,25 +50,52 @@
     const HOLD = 0.24, REACH = 0.84;
     // Springs (per second): ~7% overshoot, settles in about 0.4 s (checked at 120, 60 and 30 fps).
     const SPRING_K = 330, SPRING_DAMP = 23;
+    // The watch (tile widths). The display hugs the honeycomb with room for the swell on every side
+    // (more on top, where the clock sits) and is portrait like the real one; the case is a bezel wider.
+    const PAD_X = 0.4, PAD_TOP = 0.62, PAD_BOTTOM = 0.42;
+    const SCREEN_RATIO = 0.84;                // display width / height
+    const BEZEL = 0.3;
+    const BTN_HALF = 0.6, BTN_GAP = 0.22;     // the case sits just left of the corner button…
+    const CASE_DROP = 0.2;                    // …its bottom a little below the button's centre
 
-    /** The first n slots of a hexagonal grid around ANCHOR, ring by ring, kept on screen and clear of the button. */
+    /** The first n slots of a hexagonal grid, ring by ring around the middle. */
     function honeycomb(n) {
         const pts = [];
         const rowH = GAP * Math.sqrt(3) / 2;
-        for (let j = -6; j <= 6; j++) {
-            for (let i = -6; i <= 6; i++) {
-                const x = ANCHOR.x + (i + j / 2) * GAP, y = ANCHOR.y + j * rowH;
-                if (x > 0.35 || y > 0.35 || Math.hypot(x, y) < 1.3) continue;
-                pts.push({ x, y, d: Math.hypot(x - ANCHOR.x, y - ANCHOR.y), out: Math.hypot(x, y) });
+        for (let j = -5; j <= 5; j++) {
+            for (let i = -5; i <= 5; i++) {
+                const x = (i + j / 2) * GAP, y = j * rowH;
+                pts.push({ x, y, d: Math.hypot(x, y), a: (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI) });
             }
         }
-        // Inner rings first; within a ring, grow away from the corner.
-        pts.sort((p, q) => Math.abs(p.d - q.d) > 1e-6 ? p.d - q.d : q.out - p.out);
+        // Inner rings first. Within a ring: the tallest spots first (the display is portrait), then the
+        // top-left / bottom-right pair (the clock is top-right), then clockwise from the top.
+        const by = (p, q) => Math.abs(p - q) > 1e-6 ? p - q : 0;
+        pts.sort((p, q) => by(p.d, q.d) || by(Math.abs(q.y), Math.abs(p.y))
+            || (p.x * p.y > 1e-6 ? 0 : 1) - (q.x * q.y > 1e-6 ? 0 : 1) || by(p.a, q.a));
         return pts.slice(0, n);
     }
-    const SLOTS = honeycomb(PRODUCTS.length);
-    // The round face hugs the honeycomb: centred on the middle icon, the corner button on its rim.
-    const DIAL_R = Math.max(...SLOTS.map(p => p.d)) + 1.05;     // in tile widths
+
+    /** Lay out the watch around the honeycomb; everything in tile widths from the corner button's centre. */
+    function layout(n) {
+        const cells = honeycomb(n);
+        const xs = cells.map(p => p.x), ys = cells.map(p => p.y);
+        const scr = { x0: Math.min(...xs) - 0.5 - PAD_X, x1: Math.max(...xs) + 0.5 + PAD_X,
+                      y0: Math.min(...ys) - 0.5 - PAD_TOP, y1: Math.max(...ys) + 0.5 + PAD_BOTTOM };
+        const grow = Math.max(0, (scr.x1 - scr.x0) / SCREEN_RATIO - (scr.y1 - scr.y0));
+        scr.y0 -= grow / 2; scr.y1 += grow / 2;
+        const hx = -(BTN_HALF + BTN_GAP + BEZEL + scr.x1), hy = CASE_DROP - BEZEL - scr.y1;
+        const move = (r, e) => ({ x0: r.x0 + hx - e, x1: r.x1 + hx + e, y0: r.y0 + hy - e, y1: r.y1 + hy + e });
+        return { slots: cells.map(p => ({ x: p.x + hx, y: p.y + hy })), screen: move(scr, 0), body: move(scr, BEZEL) };
+    }
+    const LAYOUT = layout(PRODUCTS.length);
+    const SLOTS = LAYOUT.slots, SCREEN = LAYOUT.screen, BODY = LAYOUT.body;
+    const BODY_W = BODY.x1 - BODY.x0, BODY_H = BODY.y1 - BODY.y0;
+    const BODY_R = BODY_W * 0.25, BAND_W = BODY_W * 0.6;
+    /** CSS length for k tile widths. */
+    const tw = (k) => `calc(var(--lsw-tile) * ${(+k).toFixed(3)})`;
+    /** CSS offset from the corner button's centre for k tile widths. */
+    const at = (k) => `calc(50% + var(--lsw-tile) * ${(+k).toFixed(3)})`;
 
     const STORAGE_KEY = 'lsw-collapsed';
 
@@ -75,25 +104,56 @@
 
     const css = `
     .lsw { --lsw-ink: var(--border, #17150F); --lsw-bg: var(--bg-elevated, #F7F1DE); --lsw-text: var(--text, #17150F);
-           --lsw-bw: var(--border-width, 3px); --lsw-tile: 44px; --lsw-trigger: 46px;
-           position: fixed; right: 20px; bottom: 20px; top: auto; left: auto; z-index: 1000;
+           --lsw-bw: var(--border-width, 3px); --lsw-tile: 44px; --lsw-trigger: 46px; --lsw-edge: 20px; --lsw-strap: 1.5; --lsw-holes: 2;
+           --lsw-glass: #050505; --lsw-glass-ink: #F7F1DE;
+           position: fixed; right: var(--lsw-edge); bottom: var(--lsw-edge); top: auto; left: auto; z-index: 1000;
            width: var(--lsw-trigger); height: var(--lsw-trigger);
            /* Pages style bare nav/ul/li/a/button — don't inherit any of it. */
            margin: 0; padding: 0; background: none; border: 0; box-shadow: none; transform: none; line-height: 1.2; text-align: left;
            font-family: 'Space Mono', ui-monospace, Menlo, monospace; }
     .lsw *, .lsw *::before, .lsw *::after { box-sizing: border-box; }
 
-    /* Round face behind the honeycomb, grown out of the corner button (decorative; never blocks clicks) */
-    .lsw-dial { --d: calc(var(--lsw-tile) * ${(DIAL_R * 2).toFixed(3)});
-                position: absolute; left: calc(50% + var(--lsw-tile) * ${ANCHOR.x}); top: calc(50% + var(--lsw-tile) * ${ANCHOR.y});
-                width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
-                transform-origin: calc(50% - var(--lsw-tile) * ${ANCHOR.x}) calc(50% - var(--lsw-tile) * ${ANCHOR.y});
-                border-radius: 50%; background: var(--lsw-bg); border: var(--lsw-bw) solid var(--lsw-ink);
-                box-shadow: -5px -5px 0 var(--lsw-ink); transform: scale(0.15) rotate(-60deg); opacity: 0;
-                transition: transform .5s cubic-bezier(.2,.9,.25,1.15), opacity .25s ease; pointer-events: none; }
-    .lsw-dial::before { content: ''; position: absolute; inset: 12px; border-radius: 50%;
-                        border: 2px dashed var(--lsw-ink); opacity: .28; animation: lsw-spin 28s linear infinite; }
-    .lsw.open .lsw-dial { transform: scale(1) rotate(0); opacity: 1; }
+    /* The watch, grown out of the corner button (decorative: no clicks fall through it to the page).
+       Its parts are placed in tile widths from the button's centre, in back-to-front order:
+       straps, crown, side button, case (with the display inside). */
+    .lsw-watch { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+                 transform: scale(0.12) rotate(-24deg); opacity: 0; visibility: hidden;
+                 transition: transform .55s cubic-bezier(.2,.9,.25,1.12), opacity .25s ease, visibility 0s .55s; }
+    .lsw.open .lsw-watch { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+    .lsw.open .lsw-watch > * { pointer-events: auto; }
+    .lsw-watch > * { position: absolute; border: var(--lsw-bw) solid var(--lsw-ink); }
+
+    /* Straps: the top one ends in a rounded tongue with holes, the bottom one runs off the screen. */
+    .lsw-strap { left: ${at(BODY.x0 + (BODY_W - BAND_W) / 2)}; width: ${tw(BAND_W)};
+                 background: var(--lsw-band, #FFE135); box-shadow: 4px 4px 0 var(--lsw-ink); }
+    .lsw-strap::before { content: ''; position: absolute; left: 0; right: 0; height: var(--lsw-bw); background: var(--lsw-ink); }
+    .lsw-strap.top { top: calc(${at(BODY.y0 + 0.6)} - var(--lsw-tile) * (var(--lsw-strap) + 0.6));
+                     height: calc(var(--lsw-tile) * (var(--lsw-strap) + 0.6)); border-radius: ${tw(BAND_W / 2)} ${tw(BAND_W / 2)} 0 0; }
+    .lsw-strap.top::before { bottom: ${tw(0.82)}; }
+    .lsw-strap.top::after { content: ''; position: absolute; left: 50%; width: ${tw(0.24)}; margin-left: ${tw(-0.12)};
+                            top: ${tw(0.3)}; height: calc(var(--lsw-tile) * 0.36 * var(--lsw-holes));
+                            background: radial-gradient(circle closest-side, var(--bg, var(--lsw-bg)) 50%, var(--lsw-ink) 54% 90%, transparent 96%)
+                                        center top / ${tw(0.24)} ${tw(0.36)} repeat-y; }
+    .lsw-strap.bottom { top: ${at(BODY.y1 - 0.6)}; bottom: calc(-1 * var(--lsw-edge) - 8px); }
+    .lsw-strap.bottom::before { top: ${tw(0.82)}; }
+
+    /* Digital Crown (ridges turn as the watch opens) and side button, tucked under the case's right edge. */
+    .lsw-crown { left: ${at(BODY.x1 - 0.15)}; width: ${tw(0.42)}; top: ${at(BODY.y0 + BODY_H * 0.2)}; height: ${tw(0.86)};
+                 border-radius: 0 7px 7px 0; box-shadow: 3px 3px 0 var(--lsw-ink);
+                 background: repeating-linear-gradient(to bottom, var(--lsw-bg) 0 3px, var(--lsw-ink) 3px 5px) 0 0 / 100% 10px;
+                 transition: background-position 1s cubic-bezier(.2,.9,.25,1); }
+    .lsw.open .lsw-crown { background-position: 0 60px; }
+    .lsw-side { left: ${at(BODY.x1 - 0.15)}; width: ${tw(0.3)}; top: ${at(BODY.y0 + BODY_H * 0.46)}; height: ${tw(1.25)};
+                border-radius: 0 5px 5px 0; background: var(--lsw-bg); box-shadow: 3px 3px 0 var(--lsw-ink); }
+
+    .lsw-case { left: ${at(BODY.x0)}; top: ${at(BODY.y0)}; width: ${tw(BODY_W)}; height: ${tw(BODY_H)};
+                border-radius: ${tw(BODY_R)}; background: var(--lsw-bg); box-shadow: 6px 6px 0 var(--lsw-ink); }
+    .lsw-screen { position: absolute; inset: calc(var(--lsw-tile) * ${BEZEL} - var(--lsw-bw)); overflow: hidden;
+                  border-radius: ${tw(BODY_R - BEZEL)}; background: var(--lsw-glass); border: var(--lsw-bw) solid var(--lsw-ink); }
+    .lsw-screen::after { content: ''; position: absolute; inset: 0; pointer-events: none;   /* a hard-edged glint on the glass */
+                         background: linear-gradient(118deg, transparent 0 58%, rgba(255,255,255,.035) 58% 68%, transparent 70%); }
+    .lsw-time { position: absolute; top: ${tw(0.2)}; right: ${tw(0.5)}; color: var(--lsw-band, #FFE135);
+                font: 700 ${tw(0.33)}/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
 
     /* Toggle (tuck away / bring back) */
     .lsw-trigger { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; cursor: pointer;
@@ -134,7 +194,7 @@
     .lsw-link { --m: 1; --dx: 0px; --dy: 0px;
                 position: absolute; left: calc(var(--lsw-tile) / -2); top: calc(var(--lsw-tile) / -2);
                 width: var(--lsw-tile); height: var(--lsw-tile); display: grid; place-items: center; text-decoration: none;
-                background: var(--c); border: var(--lsw-bw) solid var(--lsw-ink); box-shadow: 3px 3px 0 var(--lsw-ink);
+                background: var(--c); border: var(--lsw-bw) solid var(--lsw-glass-ink); box-shadow: 3px 3px 0 var(--lsw-glass-ink);
                 border-radius: 50%; color: #17150F; outline: none; padding: 0; margin: 0;
                 transform: translate(var(--dx), var(--dy)) scale(var(--m));
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
@@ -142,10 +202,10 @@
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
     .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
     .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
-    .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-ink); }
-    .lsw-link:focus-visible { outline: 3px solid var(--lsw-ink); outline-offset: 3px; }
+    .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-glass-ink); }
+    .lsw-link:focus-visible { outline: 3px solid var(--lsw-glass-ink); outline-offset: 3px; }
     .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 12px; height: 12px;
-                                            border-radius: 50%; background: var(--lsw-bg); border: 2.5px solid var(--lsw-ink); }
+                                            border-radius: 50%; background: var(--lsw-band, #FFE135); border: 2.5px solid var(--lsw-glass); }
 
     /* Label pill (left of the icon). Counter-scaled so it stays readable when the icon grows. */
     .lsw-label { position: absolute; right: calc(100% + 10px); top: 50%; white-space: nowrap; pointer-events: none;
@@ -160,14 +220,15 @@
     .lsw-label .here { font-size: 10px; margin-left: 6px; opacity: .7; text-transform: none; letter-spacing: 0; font-weight: 400; }
     .lsw-link:hover .lsw-label, .lsw-link:focus-visible .lsw-label, .lsw-link.lsw-hovered .lsw-label { opacity: 1; transform: translateY(-50%) scale(calc(1 / var(--m))); }
 
-    @keyframes lsw-spin { to { transform: rotate(360deg); } }
     @keyframes lsw-arrive { from { transform: translateY(160%) rotate(-25deg); } to { transform: none; } }
 
     @media (max-width: 600px) {
-        .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; right: 12px; bottom: 12px; }
+        .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; --lsw-edge: 12px; --lsw-strap: 1; --lsw-holes: 1; }
         .lsw-label small { display: none; }
         .lsw-letter { font-size: 16px; }
     }
+    @media (min-width: 601px) and (max-height: 620px) { .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; --lsw-strap: 1; --lsw-holes: 1; } }
+    @media (max-height: 470px) { .lsw { --lsw-tile: 30px; --lsw-trigger: 38px; --lsw-strap: 0.6; --lsw-holes: 0; } }
     @media (prefers-reduced-motion: reduce) {
         .lsw *, .lsw *::before, .lsw *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
     }
@@ -190,9 +251,16 @@
         root.setAttribute('role', 'navigation');
         root.setAttribute('aria-label', 'LilStudio apps');
 
-        const dial = document.createElement('div');
-        dial.className = 'lsw-dial';
-        dial.setAttribute('aria-hidden', 'true');
+        // The straps take the current app's colour (studio yellow elsewhere).
+        root.style.setProperty('--lsw-band', (PRODUCTS.find(p => p.id === current) || PRODUCTS[0]).color);
+
+        const watch = document.createElement('div');
+        watch.className = 'lsw-watch';
+        watch.setAttribute('aria-hidden', 'true');
+        watch.innerHTML = '<div class="lsw-strap top"></div><div class="lsw-strap bottom"></div>'
+            + '<div class="lsw-crown"></div><div class="lsw-side"></div>'
+            + '<div class="lsw-case"><div class="lsw-screen"><span class="lsw-time"></span></div></div>';
+        const clock = watch.querySelector('.lsw-time');
 
         const trigger = document.createElement('button');
         trigger.type = 'button';
@@ -246,7 +314,7 @@
             tiles.push({ el: a, li, ux, uy });
         });
 
-        root.append(dial, list, trigger);
+        root.append(watch, list, trigger);
         document.body.appendChild(root);
 
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -264,6 +332,7 @@
             trigger.setAttribute('aria-label', open ? 'Hide LilStudio apps' : 'Show LilStudio apps');
             tiles.forEach(t => { t.el.tabIndex = open ? 0 : -1; });
             resetMagnify();
+            tick();
             if (remember) storageSet(open ? '0' : '1');
         }
         trigger.addEventListener('click', () => setOpen(!open, true));
@@ -276,6 +345,23 @@
             if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); all[(idx + 1) % all.length].focus(); }
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); all[(idx - 1 + all.length) % all.length].focus(); }
         });
+
+        // ---- the clock on the display (updates on the minute, only while it can be seen) ----------
+        let clockTimer = 0;
+        function timeText() {
+            const now = new Date();
+            try {   // the watch shows the time without AM / PM
+                return new Intl.DateTimeFormat([], { hour: 'numeric', minute: '2-digit' }).formatToParts(now)
+                    .filter(p => p.type !== 'dayPeriod').map(p => p.value).join('').trim();
+            } catch (e) { return now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0'); }
+        }
+        function tick() {
+            clearTimeout(clockTimer); clockTimer = 0;
+            if (!open || document.hidden) return;
+            clock.textContent = timeText();
+            clockTimer = setTimeout(tick, 60000 - Date.now() % 60000 + 50);
+        }
+        document.addEventListener('visibilitychange', tick);
 
         // ---- pointer and keyboard focus ------------------------------------------
         let px = -1e4, py = -1e4;
@@ -328,10 +414,10 @@
                     const vx = tiles[i].ux - tiles[j].ux, vy = tiles[i].uy - tiles[j].uy, d = Math.hypot(vx, vy) || 1;
                     dx += vx / d * gain; dy += vy / d * gain;
                 }
-                // Keep clear of the screen edges (the corner button sits ~1 tile in from both).
-                const limit = 0.95 - goal[i].m / 2;
-                goal[i].x = Math.min(dx, limit - tiles[i].ux) * size;
-                goal[i].y = Math.min(dy, limit - tiles[i].uy) * size;
+                // Stay on the display.
+                const r = goal[i].m / 2 + 0.04, t = tiles[i];
+                goal[i].x = Math.max(SCREEN.x0 + r - t.ux, Math.min(dx, SCREEN.x1 - r - t.ux)) * size;
+                goal[i].y = Math.max(SCREEN.y0 + r - t.uy, Math.min(dy, SCREEN.y1 - r - t.uy)) * size;
             }
         }
 
