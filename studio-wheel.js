@@ -2,16 +2,15 @@
  * LilStudio product wheel — the switcher in the bottom-right of every page.
  *
  * Include once per page:  <script src="/studio-wheel.js" defer></script>
- * To add a product: add it to PRODUCTS and give it a slot in LAYOUT
- * (and an icon in /assets/wheel/).
+ * To add a product: add it to PRODUCTS (and an icon in /assets/wheel/). Its slot
+ * in the honeycomb is worked out automatically.
  *
- * - Apple Watch-style honeycomb: round icons packed in two rings around the
- *   corner.
- * - Idle drift: when nobody is pointing at the wheel, the icons float very
- *   slowly anywhere inside it, bumping gently off each other and the edges.
- *   As soon as the pointer comes near (or keyboard focus enters), they glide
- *   back to their honeycomb slots so they're easy to click.
- * - Hover: the icon under the pointer grows and its neighbours ease away.
+ * - Apple Watch-style honeycomb: round icons packed tightly on a hexagonal grid
+ *   up and to the left of the corner button, LilStudio in the middle.
+ * - Hover: a fisheye lens follows the pointer. The icon under it grows, the
+ *   others are pushed aside and shrink with distance, and every icon is scaled
+ *   exactly as much as its spot is stretched, so they stay packed edge to edge
+ *   (the Watch's home screen). Keyboard focus moves the lens too.
  * - Open by default. The corner button tucks it away; that choice is kept for
  *   the rest of the visit (sessionStorage).
  * - Styling follows the page's theme variables (--border, --bg-elevated,
@@ -37,37 +36,36 @@
         { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png' },
     ];
 
-    // Honeycomb slots around the corner: radius in tile widths, angle in degrees
-    // (180° = left of the corner, 270° = straight up). Each ring spreads its
-    // icons evenly across the quarter circle.
-    const LAYOUT = {
-        lildisplay: { r: 2.4,  a: 182 },   // inner ring: four slots, 28.67° apart (chord ≥ 1.19 tiles at r 2.4)
-        studio:     { r: 2.4,  a: 210.67 },
-        lildock:    { r: 2.4,  a: 239.33 },
-        lilpass:    { r: 2.4,  a: 268 },
-        lilusage:   { r: 3.85, a: 181 },   // outer ring: six slots, 17.6° apart (chord ≥ 1.17 tiles at r 3.85)
-        lilvibe:    { r: 3.85, a: 198.6 },
-        lilhide:    { r: 3.85, a: 216.2 },
-        lilmirror:  { r: 3.85, a: 233.8 },
-        lilstats:   { r: 3.85, a: 251.4 },
-        lilpad:     { r: 3.85, a: 269 },
-        lilbounce:  { r: 5.3,  a: 225 },   // third ring: starts in the middle; next apps go either side (≥ 12.5° apart at r 5.3)
-    };
-    const OUTER_R = 5.3;                   // outermost ring (the third), in tile widths
-    const DIAL_R = OUTER_R + 1.1;          // dial radius, in tile widths (room for the drift)
+    // Honeycomb (in tile widths, from the corner button's centre; screen axes, y down)
+    const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
+    const ANCHOR = { x: -2.05, y: -2.05 };    // the middle icon (LilStudio), up and left of the button
+    // Fisheye lens: within LENS of the pointer, distance d maps to LENS·h(d/LENS) with
+    // h(x) = (D+1)x / (Dx+1). Each icon is scaled by the geometric mean of how much its spot is
+    // stretched toward the pointer (h') and sideways (h/x), so size and spacing grow together: the icon
+    // under the pointer reaches 1 + D, neighbours are pushed aside, and gaps stay a few pixels (checked
+    // numerically for every icon and between icons: ~3 px around the hovered one at 44 px tiles).
+    const LENS = 6.5;
+    const LENS_D = 0.65;
+    const ENGAGE_IN = 0.9, ENGAGE_OUT = 2.2;  // full lens within 0.9 tiles of an icon, none beyond 2.2
 
-    // Hover tuning (in tile widths, so it scales with the phone layout)
-    const MAG_MAX = 1.5;      // scale of the icon right under the pointer
-    const MAG_RANGE = 1.3;    // distance where magnification fades to 1×
-    const SHOVE_MAX = 0.32;   // how far neighbours ease away
-    const SHOVE_RANGE = 2.6;  // distance where the shove fades out
-
-    // Idle drift tuning (px and seconds)
-    const DRIFT_SPEED = 7;     // top speed while drifting, px/s — very slow
-    const DRIFT_PUSH = 5;      // strength of the slow wandering, px/s²
-    const DRIFT_START = 1300;  // ms after opening before drifting starts
-    const HOME_SPRING = 55;    // pull back to the slot when the pointer is near
-    const HOME_DAMP = 13;
+    /** The first n slots of a hexagonal grid around ANCHOR, ring by ring, kept on screen and clear of the button. */
+    function honeycomb(n) {
+        const pts = [];
+        const rowH = GAP * Math.sqrt(3) / 2;
+        for (let j = -6; j <= 6; j++) {
+            for (let i = -6; i <= 6; i++) {
+                const x = ANCHOR.x + (i + j / 2) * GAP, y = ANCHOR.y + j * rowH;
+                if (x > 0.35 || y > 0.35 || Math.hypot(x, y) < 1.3) continue;
+                pts.push({ x, y, d: Math.hypot(x - ANCHOR.x, y - ANCHOR.y), out: Math.hypot(x, y) });
+            }
+        }
+        // Inner rings first; within a ring, grow away from the corner.
+        pts.sort((p, q) => Math.abs(p.d - q.d) > 1e-6 ? p.d - q.d : q.out - p.out);
+        return pts.slice(0, n);
+    }
+    const SLOTS = honeycomb(PRODUCTS.length);
+    // The round face hugs the honeycomb: centred on the middle icon, the corner button on its rim.
+    const DIAL_R = Math.max(...SLOTS.map(p => p.d)) + 1.05;     // in tile widths
 
     const STORAGE_KEY = 'lsw-collapsed';
 
@@ -84,9 +82,11 @@
            font-family: 'Space Mono', ui-monospace, Menlo, monospace; }
     .lsw *, .lsw *::before, .lsw *::after { box-sizing: border-box; }
 
-    /* Quarter dial that grows out of the corner (decorative; never blocks clicks) */
-    .lsw-dial { --d: calc(var(--lsw-tile) * ${DIAL_R * 2}); position: absolute; left: 50%; top: 50%;
+    /* Round face behind the honeycomb, grown out of the corner button (decorative; never blocks clicks) */
+    .lsw-dial { --d: calc(var(--lsw-tile) * ${(DIAL_R * 2).toFixed(3)});
+                position: absolute; left: calc(50% + var(--lsw-tile) * ${ANCHOR.x}); top: calc(50% + var(--lsw-tile) * ${ANCHOR.y});
                 width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+                transform-origin: calc(50% - var(--lsw-tile) * ${ANCHOR.x}) calc(50% - var(--lsw-tile) * ${ANCHOR.y});
                 border-radius: 50%; background: var(--lsw-bg); border: var(--lsw-bw) solid var(--lsw-ink);
                 box-shadow: -5px -5px 0 var(--lsw-ink); transform: scale(0.15) rotate(-60deg); opacity: 0;
                 transition: transform .5s cubic-bezier(.2,.9,.25,1.15), opacity .25s ease; pointer-events: none; }
@@ -116,8 +116,8 @@
     .lsw.open .lsw-x { opacity: 1; }
 
     /* Honeycomb. The grid swirls in (list rotates -40° → 0°) while each icon counter-rotates to stay
-       upright and travels from the corner to its slot. Once open, the drift loop takes over the
-       position (.live) and drives --px / --py every frame. */
+       upright and travels from the corner to its slot. The fisheye moves and scales the links
+       (--dx, --dy, --m) on top of their slots. */
     .lsw-list, .lsw-item { list-style: none; margin: 0; padding: 0; background: none; border: 0; }
     .lsw-list { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2;
                 transform: rotate(-40deg); transition: transform .6s cubic-bezier(.2,.9,.25,1.1); }
@@ -129,7 +129,6 @@
                 transition-delay: calc(var(--i) * 20ms); }
     .lsw.open .lsw-item { transform: translate(var(--x), var(--y)) rotate(0) scale(1); opacity: 1; visibility: visible;
                           transition-delay: calc(var(--i) * 45ms + 100ms); }
-    .lsw.open.live .lsw-item { transform: translate(var(--px), var(--py)); transition: opacity .2s; }
 
     .lsw-link { --m: 1; --dx: 0px; --dy: 0px;
                 position: absolute; left: calc(var(--lsw-tile) / -2); top: calc(var(--lsw-tile) / -2);
@@ -138,7 +137,7 @@
                 border-radius: 50%; color: #17150F; outline: none; padding: 0; margin: 0;
                 transform: translate(var(--dx), var(--dy)) scale(var(--m));
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
-    .lsw.magnifying .lsw-link { transition: transform .09s ease-out, box-shadow .15s; }   /* follow the pointer */
+    .lsw.magnifying .lsw-link { transition: transform .12s ease-out, box-shadow .15s; }   /* follow the pointer */
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
     .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
     .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
@@ -206,9 +205,7 @@
 
         const tiles = [];
         PRODUCTS.forEach((p, i) => {
-            const slot = LAYOUT[p.id] || { r: OUTER_R, a: 225 };
-            const rad = slot.a * Math.PI / 180;
-            const ux = slot.r * Math.cos(rad), uy = slot.r * Math.sin(rad);   // in tile widths
+            const ux = SLOTS[i].x, uy = SLOTS[i].y;   // in tile widths
 
             const li = document.createElement('li');
             li.className = 'lsw-item';
@@ -245,8 +242,7 @@
 
             li.appendChild(a);
             list.appendChild(li);
-            // x/y: live position relative to the corner (px); vx/vy: velocity; seed: wander phase
-            tiles.push({ el: a, li, ux, uy, x: 0, y: 0, vx: 0, vy: 0, seed: Math.random() * 1000 });
+            tiles.push({ el: a, li, ux, uy });
         });
 
         root.append(dial, list, trigger);
@@ -259,17 +255,14 @@
         function corner() { const b = root.getBoundingClientRect(); return { ox: b.left + b.width / 2, oy: b.top + b.height / 2 }; }
 
         // ---- open / collapse --------------------------------------------------
-        let open = false, liveTimer = 0;
+        let open = false;
         function setOpen(next, remember) {
             open = next;
             root.classList.toggle('open', open);
             trigger.setAttribute('aria-expanded', String(open));
             trigger.setAttribute('aria-label', open ? 'Hide LilStudio apps' : 'Show LilStudio apps');
             tiles.forEach(t => { t.el.tabIndex = open ? 0 : -1; });
-            clearTimeout(liveTimer);
-            stopLive();
             resetMagnify();
-            if (open && !reduced) liveTimer = setTimeout(startLive, DRIFT_START);
             if (remember) storageSet(open ? '0' : '1');
         }
         trigger.addEventListener('click', () => setOpen(!open, true));
@@ -283,28 +276,27 @@
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); all[(idx - 1 + all.length) % all.length].focus(); }
         });
 
-        // ---- pointer tracking ----------------------------------------------------
-        let px = -1e4, py = -1e4, near = false, focusInside = false, touchHold = 0;
-        function pointerNear() {
-            if (!open) return false;
-            const { ox, oy } = corner();
-            return Math.hypot(px - ox, py - oy) < (DIAL_R + 0.6) * tileSize();
-        }
+        // ---- pointer and keyboard focus ------------------------------------------
+        let px = -1e4, py = -1e4;
         window.addEventListener('pointermove', (e) => {
             if (e.pointerType === 'touch') return;
             px = e.clientX; py = e.clientY;
-            near = pointerNear();
-            if (!live) requestMagnify();
+            requestMagnify();
         }, { passive: true });
-        document.addEventListener('pointerleave', () => { px = py = -1e4; near = false; if (!live) requestMagnify(); });
-        // A finger on the wheel: settle for a few seconds so the tap lands.
-        root.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') touchHold = performance.now() + 4000; });
-        root.addEventListener('focusin', () => { focusInside = true; });
-        root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) focusInside = false; });
+        document.addEventListener('pointerleave', () => { px = py = -1e4; requestMagnify(); });
+        // Tabbing through the icons moves the lens with the focus.
+        root.addEventListener('focusin', (e) => {
+            const t = tiles.find(x => x.el === e.target);
+            if (!t || !open) return;
+            const { ox, oy } = corner(), size = tileSize();
+            px = ox + t.ux * size; py = oy + t.uy * size;
+            magnify(true);
+        });
+        root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { px = py = -1e4; resetMagnify(); } });
 
-        // ---- Watch-style hover: grow under the pointer, neighbours make room -----
+        // ---- Watch-style fisheye -----------------------------------------------------
         let magnifying = false, magRaf = 0;
-        const falloff = (d, range) => d >= range ? 0 : (Math.cos(Math.PI * d / range) + 1) / 2;
+        const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
 
         function resetMagnify() {
             magnifying = false;
@@ -316,125 +308,37 @@
                 t.li.style.zIndex = '';
             });
         }
-        function requestMagnify() { if (!magRaf) magRaf = requestAnimationFrame(() => { magRaf = 0; magnify(); }); }
+        function requestMagnify() { if (!magRaf) magRaf = requestAnimationFrame(() => { magRaf = 0; magnify(false); }); }
 
-        // Uses each icon's live position (from the drift state, or its slot), never measured.
-        function magnify() {
-            if (!open || !canHover || reduced) return;
+        // Works from each icon's slot (never measured), so it can't feed back on itself.
+        function magnify(force) {
+            if (!open || reduced || (!canHover && !force)) return;
             const { ox, oy } = corner();
             const size = tileSize();
-            let any = false;
+            const fx = px - ox, fy = py - oy;
+            let nearest = Infinity;
+            tiles.forEach(t => { nearest = Math.min(nearest, Math.hypot(t.ux * size - fx, t.uy * size - fy)); });
+            // The lens eases in as the pointer reaches the icons, so entering and leaving are smooth.
+            const k = 1 - smooth((nearest / size - ENGAGE_IN) / (ENGAGE_OUT - ENGAGE_IN));
+            if (k <= 0.001) { if (magnifying) resetMagnify(); return; }
+            const D = LENS_D * k, L = LENS * size;
             tiles.forEach(t => {
-                const cx = ox + (live ? t.x : t.ux * size), cy = oy + (live ? t.y : t.uy * size);
-                const vx = cx - px, vy = cy - py;
+                const vx = t.ux * size - fx, vy = t.uy * size - fy;
                 const d = Math.hypot(vx, vy);
-                const k = falloff(d, MAG_RANGE * size);
-                const m = 1 + (MAG_MAX - 1) * k;
-                const s = falloff(d, SHOVE_RANGE * size) * Math.min(1, d / (size * 0.6));
-                const shove = SHOVE_MAX * size * s;
+                let m = 1, shift = 0;
+                if (d < L) {
+                    const x = d / L, q = D * x + 1;
+                    m = (D + 1) / (q * Math.sqrt(q));   // √(h' · h/x) = √((D+1)/q² · (D+1)/q)
+                    shift = L * (D + 1) * x / q - d;
+                }
                 const nx = d > 0.5 ? vx / d : 0, ny = d > 0.5 ? vy / d : 0;
                 t.el.style.setProperty('--m', m.toFixed(3));
-                t.el.style.setProperty('--dx', (nx * shove).toFixed(2) + 'px');
-                t.el.style.setProperty('--dy', (ny * shove).toFixed(2) + 'px');
-                t.li.style.zIndex = k > 0.05 ? String(10 + Math.round(k * 10)) : '';
-                if (k > 0 || s > 0) any = true;
+                t.el.style.setProperty('--dx', (nx * shift).toFixed(2) + 'px');
+                t.el.style.setProperty('--dy', (ny * shift).toFixed(2) + 'px');
+                t.li.style.zIndex = String(10 + Math.round(m * 10));
             });
-            if (any && !magnifying) { magnifying = true; root.classList.add('magnifying'); }
-            if (!any && magnifying) resetMagnify();
+            if (!magnifying) { magnifying = true; root.classList.add('magnifying'); }
         }
-
-        // ---- Idle drift (tiny physics loop) --------------------------------------
-        let live = false, raf = 0, last = 0;
-        function startLive() {
-            if (!open || reduced) return;
-            const size = tileSize();
-            tiles.forEach(t => {
-                t.x = t.ux * size; t.y = t.uy * size;
-                const ang = Math.random() * Math.PI * 2;
-                t.vx = Math.cos(ang) * DRIFT_SPEED * 0.5; t.vy = Math.sin(ang) * DRIFT_SPEED * 0.5;
-                write(t);
-            });
-            live = true;
-            root.classList.add('live');
-            last = performance.now();
-            raf = requestAnimationFrame(step);
-        }
-        function stopLive() {
-            live = false;
-            root.classList.remove('live');
-            cancelAnimationFrame(raf); raf = 0;
-        }
-        function write(t) {
-            t.li.style.setProperty('--px', t.x.toFixed(2) + 'px');
-            t.li.style.setProperty('--py', t.y.toFixed(2) + 'px');
-        }
-
-        function step(now) {
-            if (!live) return;
-            const dt = Math.min(0.05, (now - last) / 1000); last = now;
-            const size = tileSize();
-            const settle = near || focusInside || now < touchHold;
-            // Allowed area: inside the dial, clear of the corner button, and on the visible
-            // (upper-left) side of the corner.
-            const rMax = (DIAL_R - 0.6) * size, rMin = 1.27 * size, edge = 0.15 * size;
-            const minGap = size * 1.12;
-
-            tiles.forEach((t, i) => {
-                let ax, ay;
-                if (settle) {
-                    // Glide home: damped spring to the honeycomb slot
-                    ax = (t.ux * size - t.x) * HOME_SPRING - t.vx * HOME_DAMP;
-                    ay = (t.uy * size - t.y) * HOME_SPRING - t.vy * HOME_DAMP;
-                } else {
-                    // Slow wander: a smoothly turning push, unique per icon
-                    const w = t.seed + now * 0.00023 * (0.7 + (i % 3) * 0.2);
-                    ax = Math.cos(w) * DRIFT_PUSH + Math.sin(w * 0.61) * DRIFT_PUSH * 0.5;
-                    ay = Math.sin(w * 1.13) * DRIFT_PUSH + Math.cos(w * 0.47) * DRIFT_PUSH * 0.5;
-                    ax -= t.vx * 0.35; ay -= t.vy * 0.35;
-                }
-                t.vx += ax * dt; t.vy += ay * dt;
-                if (!settle) {
-                    const sp = Math.hypot(t.vx, t.vy);
-                    if (sp > DRIFT_SPEED) { t.vx *= DRIFT_SPEED / sp; t.vy *= DRIFT_SPEED / sp; }
-                }
-                t.x += t.vx * dt; t.y += t.vy * dt;
-            });
-
-            // Icons bump gently off each other
-            for (let i = 0; i < tiles.length; i++) {
-                for (let j = i + 1; j < tiles.length; j++) {
-                    const a = tiles[i], b = tiles[j];
-                    let dx = b.x - a.x, dy = b.y - a.y;
-                    const d = Math.hypot(dx, dy) || 0.01;
-                    if (d < minGap) {
-                        const nx = dx / d, ny = dy / d, push = (minGap - d) / 2;
-                        a.x -= nx * push; a.y -= ny * push; b.x += nx * push; b.y += ny * push;
-                        const rel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
-                        if (rel < 0) { a.vx += rel * nx; a.vy += rel * ny; b.vx -= rel * nx; b.vy -= rel * ny; }
-                    }
-                }
-            }
-
-            // ...and off the walls
-            tiles.forEach(t => {
-                const r = Math.hypot(t.x, t.y) || 0.01;
-                const nx = t.x / r, ny = t.y / r;
-                if (r > rMax || r < rMin) {
-                    const target = r > rMax ? rMax : rMin;
-                    t.x = nx * target; t.y = ny * target;
-                    const radial = t.vx * nx + t.vy * ny;
-                    if ((r > rMax && radial > 0) || (r < rMin && radial < 0)) { t.vx -= 2 * radial * nx; t.vy -= 2 * radial * ny; }
-                }
-                if (t.x > edge) { t.x = edge; t.vx = -Math.abs(t.vx); }
-                if (t.y > edge) { t.y = edge; t.vy = -Math.abs(t.vy); }
-                write(t);
-            });
-
-            if (canHover) magnify();
-            raf = requestAnimationFrame(step);
-        }
-
-        window.addEventListener('resize', () => { if (live) { stopLive(); startLive(); } }, { passive: true });
 
         // Open by default (after the page has settled, so the swirl is visible),
         // unless the visitor tucked it away earlier in this visit.
@@ -442,25 +346,12 @@
         const startOpen = /[?&]wheel=open\b/.test(location.search) || storageGet() !== '1';
         if (startOpen) setTimeout(() => setOpen(true, false), 650);
 
-        // Test hook: ?wheelsim=<frames>[&wheelnear=1] advances the drift on a fake 60 fps clock
-        // (headless browsers don't run animation frames), optionally with the pointer near.
-        const sim = location.search.match(/[?&]wheelsim=(\d+)/);
-        if (sim) setTimeout(() => {
-            if (!live) startLive();
-            cancelAnimationFrame(raf);
-            let t = performance.now();
-            for (let f = 0; f < +sim[1]; f++) {
-                if (/[?&]wheelnear=1/.test(location.search) && f > +sim[1] / 2) { const { ox, oy } = corner(); px = ox - 60; py = oy - 60; near = true; }
-                t += 1000 / 60; step(t); cancelAnimationFrame(raf);
-            }
-        }, 2500);
-
         // Test hook for screenshots: ?wheelhover=<product id> simulates the pointer on that icon.
         const hov = location.search.match(/[?&]wheelhover=([a-z]+)/);
         if (hov) setTimeout(() => {
             const t = tiles.find(x => x.el.dataset.id === hov[1]); if (!t) return;
             const { ox, oy } = corner(); const size = tileSize();
-            px = ox + t.ux * size; py = oy + t.uy * size; near = true; magnify();
+            px = ox + t.ux * size; py = oy + t.uy * size; magnify(true);
             t.el.classList.add('lsw-hovered');
         }, 1500);
     }

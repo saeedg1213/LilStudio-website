@@ -116,13 +116,12 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
    at percentage positions over the screenshot. Reuse that pattern for showing an app in context.
 2. Wheel icon: `sips -Z 128 icon-1024.png --out assets/wheel/<appid>.png`. When replacing an existing
    wheel icon, bump `ICON_VERSION` in `studio-wheel.js` so browsers drop the cached image.
-3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`) **and**
-   give it a slot in `LAYOUT`. Slots: inner ring `r: 2.4`, 4 icons 28.67° apart (lildisplay 182°,
-   studio 210.67°, lildock 239.33°, lilpass 268°); outer ring `r: 3.85` (`OUTER_R`), 6 icons 17.6°
-   apart (181 … 269). Neighbours need ≥ ~1.15 tile widths between centres (chord = 2·r·sin(Δa/2)),
-   so both rings are full. The third ring (`r: 5.3`, `OUTER_R` = 5.3, which sizes the dial) started
-   with LilBounce at 225°; put the next apps either side of it, at least ~12.5° apart (chord ≥ 1.15 tiles),
-   and check with `?wheel=open&wheelhover=<id>`.
+3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`). That's all:
+   the wheel is an Apple Watch-style honeycomb whose slots are computed (`honeycomb()`: a hexagonal
+   grid around `ANCHOR`, LilStudio in the middle, ring by ring, kept on screen and clear of the corner
+   button), and the round face sizes itself to fit. Hover is a fisheye lens (`LENS`, `LENS_D`): the
+   icon under the pointer grows to about 1.65× and the rest move aside while staying packed. Check
+   with `?wheel=open&wheelhover=<id>`.
 4. Homepage `index.html`:
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
@@ -139,8 +138,7 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 
 ## Testing hooks
 
-- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate hovering one icon.
-  `?wheelsim=<frames>[&wheelnear=1]`: step the drift physics (headless browsers have no rAF).
+- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon (the fisheye).
 - Headless Chrome screenshots work for the hero:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs
