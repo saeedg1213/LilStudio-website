@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilPad and LilPass.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilPad, LilPass and LilBounce.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -56,6 +56,8 @@
             --pad-alt: #5BA3F5;
             --pass: #7CC4F0;
             --pass-alt: #FF6B35;
+            --bounce: #FF6B35;
+            --bounce-alt: #2F6BFF;
         }
 
         [data-theme="light"] {
@@ -390,7 +392,7 @@
 
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(3, 96px);
+            grid-template-columns: repeat(4, 96px);
             grid-template-rows: repeat(3, 96px);
             gap: 12px;
             transform: rotate(-4deg);
@@ -426,6 +428,9 @@
         .cell:nth-child(7) { animation-delay: 0.35s; }
         .cell:nth-child(8) { animation-delay: 0.40s; }
         .cell:nth-child(9) { animation-delay: 0.45s; }
+        .cell:nth-child(10) { animation-delay: 0.50s; }
+        .cell:nth-child(11) { animation-delay: 0.55s; }
+        .cell:nth-child(12) { animation-delay: 0.60s; }
 
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.6); }
@@ -461,6 +466,7 @@
         .cell.app.stats { background: var(--stats); }
         .cell.app.pad { background: var(--pad); }
         .cell.app.pass { background: var(--pass); }
+        .cell.app.bounce { background: var(--bounce); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -606,6 +612,7 @@
         .app-stage.dock { background: var(--dock-alt); }
         .app-stage.stats { background: var(--stats); }
         .app-stage.pass { background: var(--pass); }
+        .app-stage.bounce { background: var(--bounce); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -637,6 +644,7 @@
         .app-dot.dock { background: var(--dock); }
         .app-dot.stats { background: var(--stats); }
         .app-dot.pass { background: var(--pass); }
+        .app-dot.bounce { background: var(--bounce); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -694,6 +702,7 @@
         .btn-app.dock { background: var(--dock); }
         .btn-app.stats { background: var(--stats); }
         .btn-app.pass { background: var(--pass); }
+        .btn-app.bounce { background: var(--bounce); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1056,7 +1065,9 @@
             h1 { font-size: 1.9rem; }
             section { padding: 4rem 1rem; }
             .section-header h2 { font-size: 2rem; }
-            .app-grid { grid-template-columns: repeat(3, 80px); grid-template-rows: repeat(3, 80px); gap: 9px; }
+            .app-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(3, 70px); gap: 8px; }
+            .cell { font-size: 0.56rem; }
+            .cell.app svg { width: 22px; height: 22px; }
             .hero-buttons { flex-direction: column; width: 100%; }
             .btn { width: 100%; justify-content: center; }
             .app-card:nth-child(1), .app-card:nth-child(2) { transform: rotate(0); }
@@ -1435,7 +1446,47 @@
         @keyframes lpcLaser { 0%, 15% { top: 0; opacity: 0; } 20% { opacity: 1; } 45% { top: 43px; } 65% { top: 0; opacity: 1; } 70%, 100% { top: 0; opacity: 0; } }
         @keyframes lpcBeep  { 0%, 62% { opacity: 0; transform: rotate(6deg) scale(.6); } 68%, 92% { opacity: 1; transform: rotate(6deg) scale(1); } 100% { opacity: 0; transform: rotate(6deg) scale(1); } }
 
+        /* ---- LilBounce ---- */
+        .lb { position: relative; width: 170px; height: 132px; }
+        .lb-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #17150F; }
+        .lb-shadow {
+            position: absolute; left: 50%; bottom: -3px; width: 58px; height: 10px; margin-left: -29px; border-radius: 50%;
+            background: rgba(23,21,15,.35); animation: lbShadow 1.2s infinite;
+        }
+        .lb-ball {
+            position: absolute; left: 50%; bottom: 3px; width: 66px; height: 66px; margin-left: -33px; border-radius: 50%;
+            background:
+                radial-gradient(circle at 22% 30%, #FFF4DC 0 8px, #17150F 8px 10.5px, transparent 10.5px),
+                radial-gradient(circle at 80% 70%, #FFF4DC 0 7px, #17150F 7px 9.5px, transparent 9.5px),
+                radial-gradient(circle at 70% 12%, #FFF4DC 0 6px, #17150F 6px 8.5px, transparent 8.5px),
+                #FF6B35;
+            border: var(--border-width) solid #17150F; box-shadow: 4px 4px 0 #17150F;
+            transform-origin: 50% 100%; animation: lbBounce 1.2s infinite;
+        }
+        .lb-ball i {
+            position: absolute; top: 22px; width: 15px; height: 18px; border-radius: 50%; background: #fff; border: 2.5px solid #17150F;
+        }
+        .lb-ball i::after { content: ''; position: absolute; left: 3px; top: 4px; width: 7px; height: 7px; border-radius: 50%; background: #17150F; }
+        .lb-ball i:nth-child(1) { left: 14px; }
+        .lb-ball i:nth-child(2) { right: 14px; }
+        .lb-ball b {
+            position: absolute; left: 50%; top: 42px; width: 16px; height: 8px; margin-left: -8px;
+            border: 2.5px solid #17150F; border-top: 0; border-radius: 0 0 10px 10px;
+        }
+        @keyframes lbBounce {
+            0%   { transform: translateY(0) scale(1.18, .82); animation-timing-function: ease-out; }
+            12%  { transform: translateY(-8px) scale(.94, 1.06); animation-timing-function: ease-out; }
+            50%  { transform: translateY(-64px) scale(1, 1); animation-timing-function: ease-in; }
+            92%  { transform: translateY(-4px) scale(.96, 1.04); animation-timing-function: ease-in; }
+            100% { transform: translateY(0) scale(1.18, .82); }
+        }
+        @keyframes lbShadow {
+            0%, 100% { transform: scale(1.1); opacity: 1; }
+            50%      { transform: scale(.55); opacity: .4; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            .lb-ball, .lb-shadow { animation: none; }
             .lp-cursor, .lp-finger { animation: none; }
             .lpc-card, .lpc-code i, .lpc-beep { animation: none; }
             .lpc-code i { opacity: 0; }
@@ -1505,6 +1556,10 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="13" cy="12" r="2.5"/><circle cx="8" cy="14" r="1.5"/></svg>
                         LilPad
                     </a>
+                    <a class="cell app bounce" href="/lilbounce/" aria-label="LilBounce">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="9.5" cy="9" r="1" fill="currentColor"/><circle cx="14.5" cy="9" r="1" fill="currentColor"/><path d="M9.5 12.5c1.4 1.2 3.6 1.2 5 0"/><path d="M5 21h14"/></svg>
+                        LilBounce
+                    </a>
                     <a class="cell app dock" href="/lildock/" aria-label="LilDock">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><rect x="12" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/><rect x="16" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/></svg>
                         LilDock
@@ -1517,6 +1572,8 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 11h12v5a4 4 0 01-4 4H8a4 4 0 01-4-4z"/><path d="M16 12h1.5a2.5 2.5 0 010 5H16"/><path d="M8 3c-1 1.5 1 2.5 0 4M12 3c-1 1.5 1 2.5 0 4"/></svg>
                         LilVibe
                     </a>
+                    <span class="cell muted"></span>
+                    <span class="cell muted"></span>
                     <a class="cell app hide" href="/lilhide/" aria-label="LilHide">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="7" width="4" height="4"/><rect x="7" y="13" width="4" height="4"/></svg>
                         LilHide
@@ -1544,7 +1601,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Nine right now. Each one solves a single annoyance properly.</p>
+            <p>Ten right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1832,6 +1889,32 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-2">
+                <div class="app-stage bounce" aria-hidden="true">
+                    <div class="lb">
+                        <span class="lb-shadow"></span>
+                        <span class="lb-ball"><i></i><i></i><b></b></span>
+                        <span class="lb-floor"></span>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot bounce"></span>
+                        <h3>LilBounce</h3>
+                    </div>
+                    <div class="app-kicker">iPhone &amp; iPad &middot; Toy</div>
+                    <p>Squishy cartoon balls with faces, living inside your phone and moved only by real physics. Tilt, shake, tap and swipe them, and feel every bounce. Seven balls, rooms, pegs, no data collected.</p>
+                    <div class="chips">
+                        <span class="chip">Real physics</span>
+                        <span class="chip">7 balls</span>
+                        <span class="chip">Haptics</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilbounce/" class="btn btn-app bounce">Open LilBounce &rarr;</a>
+                        <span class="app-price">Coming soon &middot; iOS 18+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1893,7 +1976,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="/lilpass/">LilPass</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="/lilpass/">LilPass</a> · <a href="/lilbounce/">LilBounce</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>

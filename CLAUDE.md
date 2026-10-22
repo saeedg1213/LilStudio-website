@@ -21,7 +21,7 @@ no npm: every page is a hand-written `.html` file with its CSS in a `<style>` bl
 ```
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
-`lilstats`, `lilpad`, `lilpass`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
+`lilstats`, `lilpad`, `lilpass`, `lilbounce`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
 so the folder name must equal the wheel id.
 
 ## Visual language (neo-brutalist)
@@ -46,7 +46,7 @@ so the folder name must equal the wheel id.
 Colours already used in the wheel (pick something distinct for a new app):
 studio `#FFE135` · LilDisplay `#00FF88` · LilDock `#FF6B5E` · LilUsage `#FFB020` ·
 LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A` ·
-LilPad `#FF7AC6` · LilPass `#7CC4F0`.
+LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35`.
 
 ## App page anatomy (copy `lilstats/index.html` or `lilhide/index.html` as the starting point)
 
@@ -120,14 +120,15 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
    give it a slot in `LAYOUT`. Slots: inner ring `r: 2.4`, 4 icons 28.67° apart (lildisplay 182°,
    studio 210.67°, lildock 239.33°, lilpass 268°); outer ring `r: 3.85` (`OUTER_R`), 6 icons 17.6°
    apart (181 … 269). Neighbours need ≥ ~1.15 tile widths between centres (chord = 2·r·sin(Δa/2)),
-   so both rings are full. The next app means a third ring (around r ≈ 5.3, then bump `OUTER_R`,
-   which sizes the dial) and checking it with `?wheel=open&wheelhover=<id>`.
+   so both rings are full. The third ring (`r: 5.3`, `OUTER_R` = 5.3, which sizes the dial) started
+   with LilBounce at 225°; put the next apps either side of it, at least ~12.5° apart (chord ≥ 1.15 tiles),
+   and check with `?wheel=open&wheelhover=<id>`.
 4. Homepage `index.html`:
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
      `.app-dot.<short>`, `.btn-app.<short>`.
-   - Hero `.app-grid` (3×3): LilStats, LilDisplay, LilPad / LilDock, LilUsage, LilVibe /
-     LilHide, LilMirror, LilPass. It's full; the next app needs a new grid layout (e.g. 4×3).
+   - Hero `.app-grid` (4×3): LilStats, LilDisplay, LilPad, LilBounce / LilDock, LilUsage, LilVibe, (muted) /
+     (muted), LilHide, LilMirror, LilPass. Replace a muted cell with the next app (two slots left).
    - An `.app-card` in `.apps-grid` with a small pure-CSS stage animation in a `/* ---- AppName ---- */`
      CSS block (add it to the `prefers-reduced-motion` block too). An odd last card spans the full
      row, centred, at max 540px.

@@ -34,6 +34,7 @@
         { id: 'lilstats',   name: 'LilStats',   tag: 'CPU, GPU & RAM in the menu bar', href: '/lilstats/',   color: '#7ED48A', icon: '/assets/wheel/lilstats.png' },
         { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png' },
         { id: 'lilpass',    name: 'LilPass',    tag: 'Every card, one tap away',       href: '/lilpass/',    color: '#7CC4F0', icon: '/assets/wheel/lilpass.png' },
+        { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png' },
     ];
 
     // Honeycomb slots around the corner: radius in tile widths, angle in degrees
@@ -50,8 +51,9 @@
         lilmirror:  { r: 3.85, a: 233.8 },
         lilstats:   { r: 3.85, a: 251.4 },
         lilpad:     { r: 3.85, a: 269 },
+        lilbounce:  { r: 5.3,  a: 225 },   // third ring: starts in the middle; next apps go either side (≥ 12.5° apart at r 5.3)
     };
-    const OUTER_R = 3.85;                  // outer ring, in tile widths
+    const OUTER_R = 5.3;                   // outermost ring (the third), in tile widths
     const DIAL_R = OUTER_R + 1.1;          // dial radius, in tile widths (room for the drift)
 
     // Hover tuning (in tile widths, so it scales with the phone layout)

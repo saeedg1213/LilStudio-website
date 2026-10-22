@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilBounce &ndash; A Cartoon Ball in Your Phone</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilBounce puts squishy cartoon balls inside your iPhone and iPad, moved only by real physics. Tilt, shake, tap and swipe them. Seven balls, faces, rooms, strong haptics. No ads, no accounts, no data collected.">
+    <meta property="og:title" content="LilBounce &ndash; A Cartoon Ball in Your Phone">
+    <meta property="og:description" content="Tilt, shake, tap and swipe. Real physics, cartoon balls with faces, and a thump in your hand every time one lands.">
+    <meta property="og:url" content="https://lilstudio.app/lilbounce/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lilbounce/screenshots/Balls.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #FF6B35;
+            --secondary: #2F6BFF;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(108, 140, 255, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        
+        .btn-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle - Brutalist Style */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-device {
+            flex: 0 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-device:hover {
+            transform: rotate(-3deg) scale(1.06);
+        }
+
+        .hero-device img {
+            width: 180px;
+            height: auto;
+        }
+
+        .hero-device.iphone img {
+            width: 200px;
+        }
+
+        .hero-device.mac img {
+            width: 600px;
+        }
+
+        .hero-device.mac:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .hero-center {
+            flex: 1;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-buttons-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-req {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Privacy Notice - Brutalist */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: var(--border-width) solid var(--border);
+            max-width: 550px;
+        }
+
+        .privacy-notice svg {
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .privacy-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .privacy-notice a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-notice a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Screenshot Carousel */
+        .hero-image {
+            margin-top: 4rem;
+        }
+
+        .screenshot-carousel {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .screenshot-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll-carousel 35s linear infinite;
+            width: max-content;
+            align-items: center;
+        }
+
+        .screenshot-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-carousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .devices-mockup {
+            height: 320px;
+            width: auto;
+            border: var(--border-width) solid var(--border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .devices-mockup:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        /* Stats Bar - Brutalist */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-item {
+            padding: 1rem;
+            text-align: center;
+            border-right: var(--border-width) solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item:hover {
+            background: var(--yellow);
+        }
+
+        .stat-item:hover h3,
+        .stat-item:hover p {
+            color: #000;
+        }
+
+        .stat-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-item {
+                border-bottom: var(--border-width) solid var(--border);
+            }
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+            .stat-item:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid - Brutalist Cards */
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .feature-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .feature-card:nth-child(2) { transform: rotate(0.5deg); }
+        .feature-card:nth-child(3) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .feature-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .feature-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #000;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Setup Section - Brutalist */
+        .setup {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .setup-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .setup-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-step:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .step-content code {
+            background: var(--primary);
+            padding: 0.2rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        .permission-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+        }
+
+        .permission-item::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .setup-image {
+            margin-top: 1rem;
+            max-width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .setup-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .setup-image-small {
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border);
+            transition: transform 0.2s;
+        }
+
+        .setup-image-small:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        /* Pricing - Brutalist */
+        .pricing {
+            text-align: center;
+        }
+
+        .pricing-card {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 3rem;
+            box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .pricing-card::before {
+            content: 'ALWAYS FREE';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border: var(--border-width) solid var(--border);
+            transform: rotate(3deg);
+            letter-spacing: 0.05em;
+        }
+
+        .price-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .price-tag sup {
+            font-size: 2rem;
+            vertical-align: top;
+        }
+
+        .price-tag .currency {
+            font-size: 2rem;
+        }
+
+        .price-period {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            background: var(--primary);
+            padding: 4px;
+            border: 2px solid var(--border);
+        }
+
+        .pricing-features li svg polyline {
+            stroke: #000;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .price-note {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trial-note {
+            margin-top: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Contact - Brutalist */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            box-shadow: 8px 8px 0 var(--border);
+            transform: rotate(0.5deg);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 var(--primary);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer - Brutalist */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* Hero Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-image { animation: fadeInUp 0.7s ease 0.3s forwards; opacity: 0; }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 900px) {
+            .hero-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-device { order: 2; }
+            .hero-device.iphone { order: 1; }
+            .hero-device.mac { order: 3; }
+            .hero-center { order: 2; max-width: 100%; }
+
+            .hero-device img,
+            .hero-device.iphone img,
+            .hero-device.mac img {
+                width: 320px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+                min-height: auto;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 160px !important;
+            }
+
+            .hero-device.mac img {
+                width: 280px !important;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-buttons-row {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .download-btn-wrapper {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .devices-mockup {
+                height: 150px;
+            }
+
+            .screenshot-track {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .setup-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .setup-step img {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .setup-images-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            .price-tag {
+                font-size: 3.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 140px !important;
+            }
+
+            .hero-device.mac img {
+                width: 240px !important;
+            }
+
+            .devices-mockup {
+                height: 160px;
+            }
+
+            .price-tag {
+                font-size: 2.75rem;
+            }
+        }
+    
+        /* ============================================================
+           LilUsage additions — the "meter" motif that distinguishes
+           this page from LilDisplay. Everything above is the shared
+           neo-brutalist base.
+           ============================================================ */
+
+        /* Thin meter rule under the logo instead of a solid block */
+        .logo::before {
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--primary) 0 10px,
+                transparent 10px 14px
+            );
+        }
+
+        /* --- Hero: fake menu bar with a live meter --- */
+        .hero-device.meter:hover {
+            transform: translate(-3px, -3px);
+        }
+
+        .meter-mock {
+            width: 300px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .mock-menubar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.7rem;
+            border-bottom: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .mock-menubar .mock-spacer { flex: 1; }
+
+        .mock-meter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 5px;
+            border: 2px solid var(--border);
+            background: var(--yellow);
+            color: #000;
+        }
+
+        .mock-track {
+            position: relative;
+            width: 44px;
+            height: 11px;
+            border: 2px solid #000;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .mock-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 8%;
+            background: #000;
+        }
+
+        .mock-panel {
+            padding: 0.9rem 0.9rem 1rem;
+        }
+
+        .mock-panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .mock-row { margin-bottom: 0.75rem; }
+        .mock-row:last-child { margin-bottom: 0; }
+
+        .mock-row-top {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            margin-bottom: 0.3rem;
+            color: var(--text);
+        }
+
+        .mock-bar {
+            position: relative;
+            height: 14px;
+            border: 2px solid var(--border);
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .mock-bar span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: var(--primary);
+        }
+
+        .mock-bar.alt span { background: var(--secondary); }
+
+        .mock-reset {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-device.shot img { width: 420px; }
+
+        /* --- Hero screenshot --- */
+        .hero-shot {
+            flex: 0 0 auto;
+            max-width: 440px;
+        }
+
+        .hero-shot img {
+            width: 100%;
+            display: block;
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-shot img:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* --- Shared screenshot frame --- */
+        .shot {
+            display: block;
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .shot-narrow {
+            max-width: 420px;
+            margin: 1rem auto 0;
+        }
+
+        .shot-caption {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 0.6rem;
+        }
+
+        /* --- Meter strip under each section heading --- */
+        .section-header h2::after {
+            height: 12px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--yellow) 0 16px,
+                transparent 16px 22px
+            );
+        }
+
+        /* --- Stat items get a tiny fill bar --- */
+        .stat-item h3 { position: relative; display: inline-block; }
+
+        /* --- Pricing: hidden for now. Delete this rule to bring it back. --- */
+        .pricing { display: none; }
+
+        /* --- FAQ --- */
+        .faq {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .faq-item {
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .faq-item h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item code {
+            background: var(--primary);
+            padding: 0.15rem 0.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        /* --- Disclaimer strip --- */
+        .disclaimer {
+            max-width: 800px;
+            margin: 3rem auto 0;
+            padding: 1rem 1.25rem;
+            border: var(--border-width) dashed var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.6;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* --- Responsive tweaks for the new hero pieces --- */
+        @media (max-width: 900px) {
+            .hero-device.meter { order: 1; }
+            .hero-center { order: 2; }
+            .hero-shot { order: 3; max-width: 420px; }
+            .meter-mock { width: 320px; }
+        }
+
+        @media (max-width: 600px) {
+            .hero-shot { max-width: 100%; }
+            .meter-mock { width: 100%; max-width: 320px; transform: rotate(0); }
+            .faq-item { padding: 1.25rem; }
+        }
+
+
+    
+
+
+        /* ---- LilBounce additions ---- */
+        .hero-appicon { width: 140px; height: 140px; display: block; margin: 0 auto;
+            border: var(--border-width) solid var(--border); border-radius: 30px;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .hero-shot img.hero-phone {
+            width: 100%; max-width: 280px; height: auto; margin: 0 auto; border-radius: 34px;
+            border: var(--border-width) solid #17150F; box-shadow: 8px 8px 0 var(--primary); transform: rotate(2deg);
+        }
+        .hero-shot img.hero-phone:hover { transform: rotate(0deg) scale(1.02); }
+
+        /* Signature demo: a playable LilBounce in a phone frame */
+        .play { padding: 5rem 2rem; position: relative; z-index: 1; }
+        .play-stage { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+        .play-phone {
+            position: relative; width: min(320px, 72vw); aspect-ratio: 3 / 5; border-radius: 42px;
+            background: #17150F; padding: 12px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+            transform: rotate(-1deg);
+        }
+        .play-phone::before {
+            content: ''; position: absolute; left: 50%; top: 20px; width: 78px; height: 22px; margin-left: -39px;
+            border-radius: 12px; background: #17150F; z-index: 2;
+        }
+        .play-screen { position: relative; width: 100%; height: 100%; border-radius: 31px; overflow: hidden; background: #1B1918; }
+        .play-screen canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+        .play-screen canvas:active { cursor: grabbing; }
+        .play-hint {
+            font-family: 'Space Mono', monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
+            color: var(--text-muted); text-align: center; max-width: 340px;
+        }
+        .play-buttons { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
+        .btn-small {
+            font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; text-transform: uppercase;
+            padding: .55rem 1rem; color: #17150F; background: var(--yellow); border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border); cursor: pointer; transition: transform .15s, box-shadow .15s;
+        }
+        .btn-small:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+        .btn-small:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .btn-small[hidden] { display: none; }
+
+        /* Screenshots */
+        .gallery { padding: 5rem 2rem; position: relative; z-index: 1; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; max-width: 980px; margin: 0 auto; }
+        .gallery-item { text-align: center; }
+        .gallery-item img {
+            width: 100%; max-width: 260px; height: auto; display: block; margin: 0 auto; border-radius: 28px;
+            border: var(--border-width) solid #17150F; box-shadow: 6px 6px 0 var(--border); transition: transform .3s ease;
+        }
+        .gallery-item:nth-child(1) img { transform: rotate(-1.5deg); }
+        .gallery-item:nth-child(3) img { transform: rotate(1.5deg); }
+        .gallery-item img:hover { transform: rotate(0) translate(-3px, -3px); }
+        .gallery-item h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+        .gallery-item p { color: var(--text-muted); font-size: .95rem; }
+
+        .feature-card:nth-child(2) .feature-icon { background: var(--secondary); }
+        .feature-card:nth-child(3) .feature-icon { background: var(--yellow); }
+        .feature-card:nth-child(5) .feature-icon { background: #5DD39E; }
+
+        @media (max-width: 900px) { .gallery-grid { grid-template-columns: 1fr; gap: 3rem; } }
+        @media (max-width: 600px) { .play, .gallery { padding: 4rem 1rem; } }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-shot img.hero-phone, .gallery-item img { transform: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilBounce</div>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#play">Play</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#play" data-appstore class="btn btn-primary">Get It</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device">
+                    <img src="screenshots/app-icon.png" alt="LilBounce app icon" class="hero-appicon">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        Physics Toy for iPhone &amp; iPad
+                    </div>
+                    <h1>A little ball that lives in your <span class="highlight">phone</span>.</h1>
+                    <p class="hero-subtitle">LilBounce puts squishy cartoon balls inside your iPhone, moved only by real physics. Tilt to roll them, shake to rattle them, swipe to kick them &mdash; and feel every bounce land in your hand.</p>
+                    <div class="hero-buttons">
+                        <div class="hero-buttons-row">
+                            <div class="download-btn-wrapper">
+                                <a href="#play" data-appstore class="btn btn-primary">
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    <span data-appstore-label>Coming to the App Store</span>
+                                </a>
+                                <span class="system-req">iPhone &amp; iPad &middot; iOS 18+</span>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>Works fully offline. No ads, no accounts, no analytics, nothing collected. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-shot">
+                    <img src="screenshots/Balls.png" alt="LilBounce on iPhone: three cartoon balls with faces resting on a cream dotted field" class="hero-phone" width="736" height="1600">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item"><h3>7</h3><p>Balls to try</p></div>
+            <div class="stat-item"><h3>8</h3><p>At once</p></div>
+            <div class="stat-item"><h3>120</h3><p>Frames a second</p></div>
+            <div class="stat-item"><h3>0</h3><p>Data collected</p></div>
+        </div>
+    </section>
+
+    <section class="play" id="play">
+        <div class="section-header fade-in">
+            <h2>Have a Go</h2>
+            <p>A tiny LilBounce, right here. Flick the balls, swipe through them, or tap one to pop it up.</p>
+        </div>
+        <div class="play-stage scale-in">
+            <div class="play-phone">
+                <div class="play-screen"><canvas id="playfield" aria-label="Playable LilBounce demo: three cartoon balls you can flick and tap"></canvas></div>
+            </div>
+            <div class="play-buttons">
+                <button class="btn-small" id="play-drop" type="button">Drop them again</button>
+                <button class="btn-small" id="play-tilt" type="button" hidden>Use tilt</button>
+            </div>
+            <p class="play-hint">The real app also feels your tilts and shakes, with a tap in your hand on every bounce.</p>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="15" r="3"/><path d="M12 5v4"/></svg></div>
+                <div><h3>Real physics</h3><p>Gravity follows how you hold the phone. The balls roll, spin, skid and bounce like real ones, 120 times a second.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 17c4-1 7-4 9-9"/><path d="M9 8h3V5"/><circle cx="18" cy="16" r="3"/></svg></div>
+                <div><h3>Swipe to kick</h3><p>A ball flies the way you swipe, as hard as you swipe. Tap to pop it up, or hold to pick it up and fling it. Use every finger.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17"/></svg></div>
+                <div><h3>Seven balls</h3><p>Rubber, tennis, beach, ping-pong, basketball, superball and bowling, each with its own bounce, sound and weight.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M8.5 14.5c1.8 1.8 5.2 1.8 7 0"/></svg></div>
+                <div><h3>They have faces</h3><p>They blink, watch your finger, squint on hard hits, get dizzy from spinning, and nod off when you leave them alone.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="15" r="1.5"/><circle cx="15" cy="8" r="1.5"/></svg></div>
+                <div><h3>Rooms &amp; pegs</h3><p>Slippery ice, soft felt or a springy bouncy room. Hold a finger still to plant a peg, and make the balls ricochet.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M2 12h3l2-5 3 10 3-14 3 12 2-3h4"/></svg></div>
+                <div><h3>Feel every bounce</h3><p>Strong, proportional haptics and soft sounds made on the fly. A light tap for a nudge, a thump for a drop.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+        <div class="section-header fade-in">
+            <h2>In Your Hand</h2>
+            <p>One ball or eight, day or night.</p>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item fade-in stagger-1">
+                <img src="screenshots/Pit.png" alt="Eight cartoon balls piled up in LilBounce" width="736" height="1600" loading="lazy">
+                <h3>A ball pit</h3>
+                <p>Up to eight balls that knock into each other.</p>
+            </div>
+            <div class="gallery-item fade-in stagger-2">
+                <img src="screenshots/Felt.png" alt="Three basketballs with faces in the green felt room" width="736" height="1600" loading="lazy">
+                <h3>Basketballs on felt</h3>
+                <p>Every ball and room plays differently.</p>
+            </div>
+            <div class="gallery-item fade-in stagger-3">
+                <img src="screenshots/Night.png" alt="Four balls in the ice room with night mode on" width="736" height="1600" loading="lazy">
+                <h3>Night mode</h3>
+                <p>Dark fields, or follow your phone's setting.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Is it a game?</h3>
+                <p>It's a toy. No levels, no scores, no timers. Just balls to roll around and fidget with whenever you like.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Does it need the internet?</h3>
+                <p>No. LilBounce runs entirely on your device and never connects to anything. It works the same in airplane mode.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Will it drain my battery?</h3>
+                <p>It runs at 120 frames a second while things move, and drops to 30 when everything is still. Close it like any app when you're done.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>The taps feel too strong.</h3>
+                <p>Turn them down in settings (the coral button) under Feel &rarr; Haptic strength, or switch haptics or sound off.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Can I share a clip?</h3>
+                <p>Yes. Settings &rarr; Replay makes a short video of the last 10 seconds, with sound, to save or send.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Does it work on iPad?</h3>
+                <p>Yes, in every orientation and in Split View. The bigger the screen, the bigger the playground.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>Found a bug, or want a new ball?</h2>
+            <p>Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilpad/">LilPad</a> &middot; <a href="/lilpass/">LilPass</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+        const APP_STORE_URL = '';
+        if (APP_STORE_URL) {
+            document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+            document.querySelectorAll('[data-appstore-label]').forEach(s => { s.textContent = 'Download on the App Store'; });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // ---- Playground: a tiny LilBounce (same look: cream dotted field, ink outlines, hard shadows, faces) ----
+        (function() {
+            const canvas = document.getElementById('playfield');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const INK = '#1B1918', CREAM = '#FAF2DE', DOTS = '#EADDBB', SPOT = '#FFF4DC';
+            const SKINS = [['#FF6B35', SPOT], ['#F6D65D', '#E7584B'], ['#2F6BFF', SPOT]];
+            let W = 0, H = 0, R = 0, dpr = 1, balls = [], gravity = { x: 0, y: 1 };
+            let visible = false, running = false, last = 0, clock = 0;
+            const pointer = { down: false, x: 0, y: 0, vx: 0, vy: 0, t: 0, moved: false, startX: 0, startY: 0 };
+
+            function resize() {
+                const rect = canvas.getBoundingClientRect();
+                dpr = Math.min(window.devicePixelRatio || 1, 2);
+                W = rect.width; H = rect.height;
+                canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                R = W * 0.15;
+                balls.forEach(b => { b.r = R; });
+            }
+
+            function drop() {
+                balls = SKINS.map((s, i) => ({
+                    x: W * (0.28 + 0.22 * i), y: R * 1.4 + i * R * 0.8, vx: (i - 1) * 40, vy: 0, r: R,
+                    a: Math.random() * 6, w: (Math.random() - 0.5) * 6, base: s[0], spot: s[1],
+                    squash: 0, blink: 2 + Math.random() * 4, blinkT: 0, look: { x: 0, y: 0 }
+                }));
+            }
+
+            function step(dt) {
+                const g = 2600 * (W / 300);
+                const top = 34;   // under the island
+                for (const b of balls) {
+                    b.vx += gravity.x * g * dt; b.vy += gravity.y * g * dt;
+                    b.vx *= Math.pow(0.995, dt * 60);
+                    b.x += b.vx * dt; b.y += b.vy * dt;
+                    b.a += b.w * dt;
+                    b.squash *= Math.pow(0.0005, dt);
+                    // Walls: bounce, roll along the floor.
+                    const walls = [[b.r, null, 1, 0], [W - b.r, null, -1, 0], [null, top + b.r, 0, 1], [null, H - b.r, 0, -1]];
+                    for (const [wx, wy, nx, ny] of walls) {
+                        const pen = wx !== null ? (nx > 0 ? wx - b.x : b.x - wx) : (ny > 0 ? wy - b.y : b.y - wy);
+                        if (pen <= 0) continue;
+                        b.x += nx * pen; b.y += ny * pen;
+                        const vn = b.vx * nx + b.vy * ny;
+                        if (vn < 0) {
+                            const e = -vn > 120 ? 0.62 : 0;
+                            b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny;
+                            b.squash = Math.max(b.squash, Math.min(-vn / 2500, 0.28));
+                            const vt = b.vx * -ny + b.vy * nx;
+                            b.w = vt / b.r;
+                            b.vx -= -ny * vt * 0.02; b.vy -= nx * vt * 0.02;
+                        }
+                    }
+                }
+                // Ball against ball: equal masses.
+                for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) {
+                    const p = balls[i], q = balls[j];
+                    const dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy), min = p.r + q.r;
+                    if (d >= min || d < 1e-6) continue;
+                    const nx = dx / d, ny = dy / d, pen = (min - d) / 2;
+                    p.x -= nx * pen; p.y -= ny * pen; q.x += nx * pen; q.y += ny * pen;
+                    const vn = (q.vx - p.vx) * nx + (q.vy - p.vy) * ny;
+                    if (vn < 0) {
+                        const j2 = -(1 + 0.6) * vn / 2;
+                        p.vx -= j2 * nx; p.vy -= j2 * ny; q.vx += j2 * nx; q.vy += j2 * ny;
+                    }
+                }
+                // The finger: a moving paddle that kicks balls the way it swipes.
+                if (pointer.down) {
+                    const fr = W * 0.06;
+                    for (const b of balls) {
+                        const dx = b.x - pointer.x, dy = b.y - pointer.y, d = Math.hypot(dx, dy);
+                        if (d >= b.r + fr || d < 1e-6) continue;
+                        const nx = dx / d, ny = dy / d;
+                        b.x += nx * (b.r + fr - d); b.y += ny * (b.r + fr - d);
+                        const vn = (b.vx - pointer.vx) * nx + (b.vy - pointer.vy) * ny;
+                        if (vn < 0) { b.vx -= 1.55 * vn * nx; b.vy -= 1.55 * vn * ny; b.squash = Math.min(-vn / 2500, 0.28); }
+                    }
+                }
+                for (const b of balls) {
+                    const sp = Math.hypot(b.vx, b.vy), max = 5000 * (W / 300);
+                    if (sp > max) { b.vx *= max / sp; b.vy *= max / sp; }
+                    b.blink -= dt;
+                    if (b.blink < 0) { b.blinkT = 0.14; b.blink = 2.5 + Math.random() * 3.5; }
+                    b.blinkT = Math.max(0, b.blinkT - dt);
+                    const tx = pointer.down ? pointer.x - b.x : b.vx * 0.05, ty = pointer.down ? pointer.y - b.y : b.vy * 0.05;
+                    const tl = Math.hypot(tx, ty) || 1, k = Math.min(tl / (b.r * 2), 1);
+                    b.look.x += ((tx / tl) * k - b.look.x) * Math.min(dt * 8, 1);
+                    b.look.y += ((ty / tl) * k - b.look.y) * Math.min(dt * 8, 1);
+                }
+            }
+
+            function ellipse(x, y, rx, ry, fill, stroke, lw) {
+                ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+                if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+                if (stroke) { ctx.lineWidth = lw; ctx.strokeStyle = stroke; ctx.stroke(); }
+            }
+
+            function drawBall(b) {
+                const r = b.r, lw = Math.max(2.5, r * 0.1);
+                const sx = 1 + b.squash, sy = 1 - b.squash;
+                ctx.save();
+                ctx.translate(b.x, b.y + r * b.squash * 0.9);
+                ctx.scale(sx, sy);
+                ellipse(r * 0.13, r * 0.13, r, r, INK);                       // hard shadow
+                ellipse(0, 0, r, r, b.base);
+                ctx.save();
+                ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.clip();
+                for (let k = 0; k < 6; k++) {                                  // spots turn with the spin
+                    const t = b.a + k * Math.PI / 3, rr = k % 2 ? r * 0.92 : r * 0.62;
+                    ellipse(Math.cos(t) * rr, Math.sin(t) * rr, r * 0.27, r * 0.21, b.spot, INK, lw * 0.8);
+                }
+                ellipse(r * 0.12, r * 0.12, r * 1.02, r * 1.02, null, 'rgba(0,0,0,0.16)', r * 0.22);
+                ctx.restore();
+                ellipse(0, 0, r - lw / 2, r - lw / 2, null, INK, lw);
+                ctx.save(); ctx.rotate(-0.7);                                  // highlight pill
+                ellipse(0, -r * 0.7, r * 0.26, r * 0.09, 'rgba(255,255,255,0.9)');
+                ctx.restore();
+                // Face: upright, big eyes with catchlights, a smile.
+                const ex = r * 0.29, ey = -r * 0.12, ew = r * 0.23, eh = r * 0.29 * (b.blinkT > 0 ? 0.15 : 1);
+                for (const s of [-1, 1]) {
+                    ellipse(s * ex, ey, ew, eh, '#FFFFFF', INK, lw * 0.75);
+                    if (b.blinkT <= 0) {
+                        const px = s * ex + b.look.x * ew * 0.35, py = ey + b.look.y * eh * 0.35;
+                        ellipse(px, py, r * 0.14, r * 0.14, INK);
+                        ellipse(px + r * 0.05, py - r * 0.05, r * 0.05, r * 0.05, '#FFFFFF');
+                        ellipse(px - r * 0.04, py + r * 0.05, r * 0.022, r * 0.022, '#FFFFFF');
+                    }
+                }
+                ctx.beginPath(); ctx.arc(0, r * 0.2, r * 0.17, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.lineWidth = lw * 0.8; ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.stroke();
+                ctx.restore();
+            }
+
+            function draw() {
+                ctx.fillStyle = CREAM; ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = DOTS;
+                const step = W / 11;
+                for (let x = step / 2; x < W; x += step) for (let y = step / 2; y < H; y += step) {
+                    ctx.beginPath(); ctx.arc(x, y, Math.max(1.2, W * 0.006), 0, Math.PI * 2); ctx.fill();
+                }
+                balls.forEach(drawBall);
+            }
+
+            function frame(t) {
+                running = false;
+                if (!visible || document.hidden) return;
+                const dt = Math.min((t - (last || t)) / 1000, 1 / 30);
+                last = t;
+                const n = Math.max(1, Math.ceil(dt / (1 / 240)));
+                for (let i = 0; i < n; i++) step(dt / n);
+                pointer.vx *= 0.8; pointer.vy *= 0.8;
+                draw();
+                running = true;
+                requestAnimationFrame(frame);
+            }
+
+            function start() {
+                if (running || reduced || !visible || document.hidden) return;
+                running = true; last = 0;
+                requestAnimationFrame(frame);
+            }
+
+            function local(e) {
+                const rect = canvas.getBoundingClientRect();
+                return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            }
+            canvas.addEventListener('pointerdown', e => {
+                const p = local(e);
+                canvas.setPointerCapture(e.pointerId);
+                Object.assign(pointer, { down: true, x: p.x, y: p.y, vx: 0, vy: 0, t: e.timeStamp, moved: false, startX: p.x, startY: p.y });
+            });
+            canvas.addEventListener('pointermove', e => {
+                if (!pointer.down) return;
+                const p = local(e), dt = Math.max((e.timeStamp - pointer.t) / 1000, 1 / 240);
+                pointer.vx = 0.5 * pointer.vx + 0.5 * (p.x - pointer.x) / dt;
+                pointer.vy = 0.5 * pointer.vy + 0.5 * (p.y - pointer.y) / dt;
+                pointer.x = p.x; pointer.y = p.y; pointer.t = e.timeStamp;
+                if (Math.hypot(p.x - pointer.startX, p.y - pointer.startY) > 6) pointer.moved = true;
+            });
+            const release = () => {
+                if (pointer.down && !pointer.moved) {
+                    // A tap on a ball pops it up, away from where it was touched.
+                    for (const b of balls) {
+                        const dx = b.x - pointer.x, dy = b.y - pointer.y;
+                        if (Math.hypot(dx, dy) > b.r * 1.1) continue;
+                        b.vx += dx * 9; b.vy = Math.min(b.vy, 0) - 1300 * (W / 300); b.w += dx * 0.05;
+                    }
+                }
+                pointer.down = false;
+            };
+            canvas.addEventListener('pointerup', release);
+            canvas.addEventListener('pointercancel', release);
+
+            document.getElementById('play-drop').addEventListener('click', () => { drop(); if (reduced) draw(); });
+
+            // Phones and tablets: let gravity follow the device after a tap (iOS asks first).
+            const tiltButton = document.getElementById('play-tilt');
+            if (window.DeviceOrientationEvent && matchMedia('(pointer: coarse)').matches) {
+                tiltButton.hidden = false;
+                tiltButton.addEventListener('click', async () => {
+                    try {
+                        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                            if (await DeviceOrientationEvent.requestPermission() !== 'granted') return;
+                        }
+                    } catch (_) { return; }
+                    tiltButton.hidden = true;
+                    window.addEventListener('deviceorientation', e => {
+                        if (e.beta == null || e.gamma == null) return;
+                        const b = e.beta * Math.PI / 180, g = e.gamma * Math.PI / 180;
+                        gravity = { x: Math.sin(g) * Math.cos(b), y: Math.sin(b) };
+                    });
+                });
+            }
+
+            new IntersectionObserver(entries => {
+                visible = entries[0].isIntersecting;
+                start();
+            }, { threshold: 0.05 }).observe(canvas);
+            document.addEventListener('visibilitychange', start);
+            window.addEventListener('resize', () => { resize(); if (reduced) draw(); });
+
+            resize(); drop();
+            if (reduced) {
+                // Show the balls at rest.
+                for (let i = 0; i < 600; i++) step(1 / 120);
+                draw();
+            }
+        })();
+    </script>
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>
