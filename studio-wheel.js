@@ -45,7 +45,7 @@
     const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
     // Hover. An icon swells to MAG while the pointer is within HOLD of its centre, easing back to 1×
     // by REACH (tile widths): resting on an icon, only it is big; between two, both are part-way.
-    // 1.4× keeps the 128 px wheel images sharp (a 44 px icon at 1.4× is 123 device px at 2×).
+    // 1.4× keeps the 128 px wheel images sharp (a 35 px icon at 1.4× is 98 device px at 2×).
     const MAG = 1.4;
     const HOLD = 0.24, REACH = 0.84;
     // Springs (per second): ~7% overshoot, settles in about 0.4 s (checked at 120, 60 and 30 fps).
@@ -55,7 +55,7 @@
     const PAD_X = 0.4, PAD_TOP = 0.62, PAD_BOTTOM = 0.42;
     const SCREEN_RATIO = 0.84;                // display width / height
     const BEZEL = 0.3;
-    const BTN_HALF = 0.6, BTN_GAP = 0.22;     // the case sits just left of the corner button…
+    const BTN_HALF = 0.7, BTN_GAP = 0.25;     // the case sits just left of the corner button…
     const CASE_DROP = 0.2;                    // …its bottom a little below the button's centre
 
     /** The first n slots of a hexagonal grid, ring by ring around the middle. */
@@ -104,7 +104,7 @@
 
     const css = `
     .lsw { --lsw-ink: var(--border, #17150F); --lsw-bg: var(--bg-elevated, #F7F1DE); --lsw-text: var(--text, #17150F);
-           --lsw-bw: var(--border-width, 3px); --lsw-tile: 44px; --lsw-trigger: 46px; --lsw-edge: 20px; --lsw-strap: 1.5; --lsw-holes: 2;
+           --lsw-bw: var(--border-width, 3px); --lsw-tile: 35px; --lsw-trigger: 46px; --lsw-edge: 20px; --lsw-strap: 1.5; --lsw-holes: 2;
            --lsw-glass: #050505; --lsw-glass-ink: #F7F1DE;
            position: fixed; right: var(--lsw-edge); bottom: var(--lsw-edge); top: auto; left: auto; z-index: 1000;
            width: var(--lsw-trigger); height: var(--lsw-trigger);
@@ -200,8 +200,8 @@
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
     .lsw.magnifying .lsw-link { transition: box-shadow .15s; }   /* springs drive the transform */
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
-    .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
-    .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
+    .lsw-letter { font: 700 calc(var(--lsw-tile) * .43)/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
+    .lsw-mark { width: calc(var(--lsw-tile) * .39); height: calc(var(--lsw-tile) * .39); background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
     .lsw-link:hover, .lsw-link:focus-visible { box-shadow: 5px 5px 0 var(--lsw-glass-ink); }
     .lsw-link:focus-visible { outline: 3px solid var(--lsw-glass-ink); outline-offset: 3px; }
     .lsw-link[aria-current="page"]::after { content: ''; position: absolute; right: -3px; top: -3px; width: 12px; height: 12px;
@@ -223,12 +223,11 @@
     @keyframes lsw-arrive { from { transform: translateY(160%) rotate(-25deg); } to { transform: none; } }
 
     @media (max-width: 600px) {
-        .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; --lsw-edge: 12px; --lsw-strap: 1; --lsw-holes: 1; }
+        .lsw { --lsw-tile: 29px; --lsw-trigger: 42px; --lsw-edge: 12px; --lsw-strap: 1; --lsw-holes: 1; }
         .lsw-label small { display: none; }
-        .lsw-letter { font-size: 16px; }
     }
-    @media (min-width: 601px) and (max-height: 620px) { .lsw { --lsw-tile: 36px; --lsw-trigger: 42px; --lsw-strap: 1; --lsw-holes: 1; } }
-    @media (max-height: 470px) { .lsw { --lsw-tile: 30px; --lsw-trigger: 38px; --lsw-strap: 0.6; --lsw-holes: 0; } }
+    @media (min-width: 601px) and (max-height: 520px) { .lsw { --lsw-tile: 29px; --lsw-trigger: 42px; --lsw-strap: 1; --lsw-holes: 1; } }
+    @media (max-height: 400px) { .lsw { --lsw-tile: 24px; --lsw-trigger: 38px; --lsw-strap: 0.6; --lsw-holes: 0; } }
     @media (prefers-reduced-motion: reduce) {
         .lsw *, .lsw *::before, .lsw *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
     }

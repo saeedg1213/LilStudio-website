@@ -70,7 +70,7 @@ Rules:
   `v += (K·(target − x) − DAMP·v)·dt; x += v·dt` with **K = 330, DAMP = 23** (about 7% overshoot,
   settles in about 0.4 s, stable at 120, 60 and 30 fps; clamp `dt` to 1/30 s). Lower DAMP is bouncier.
 - **Mind image sharpness.** Raster icons may grow only until `css size × scale × 2 ≤ image pixels`. The
-  wheel's 128 px icons at 44 px stop at **1.4×**. CSS/SVG tiles can go to about 1.35–1.4× too; more
+  wheel's 128 px icons at 35 px stop at **1.4×**. CSS/SVG tiles can go to about 1.35–1.4× too; more
   starts to look like a different element, not a swell. Export bigger images before going larger.
 - **Run only while moving.** One `requestAnimationFrame` loop starts on `pointermove` and stops when
   every spring has settled (snap the last fraction). Nothing runs while still.
