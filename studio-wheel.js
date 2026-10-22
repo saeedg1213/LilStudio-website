@@ -7,10 +7,9 @@
  *
  * - Apple Watch-style honeycomb: round icons packed tightly on a hexagonal grid
  *   up and to the left of the corner button, LilStudio in the middle.
- * - Hover: a fisheye lens follows the pointer. The icon under it grows, the
- *   others are pushed aside and shrink with distance, and every icon is scaled
- *   exactly as much as its spot is stretched, so they stay packed edge to edge
- *   (the Watch's home screen). Keyboard focus moves the lens too.
+ * - Hover: only the icon under the pointer grows; every other icon keeps its size
+ *   and slides outward just enough to make room, so the gap around the grown icon
+ *   stays the same and the honeycomb stays packed. Keyboard focus works the same.
  * - Open by default. The corner button tucks it away; that choice is kept for
  *   the rest of the visit (sessionStorage).
  * - Styling follows the page's theme variables (--border, --bg-elevated,
@@ -39,14 +38,10 @@
     // Honeycomb (in tile widths, from the corner button's centre; screen axes, y down)
     const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
     const ANCHOR = { x: -2.05, y: -2.05 };    // the middle icon (LilStudio), up and left of the button
-    // Fisheye lens: within LENS of the pointer, distance d maps to LENS·h(d/LENS) with
-    // h(x) = (D+1)x / (Dx+1). Each icon is scaled by the geometric mean of how much its spot is
-    // stretched toward the pointer (h') and sideways (h/x), so size and spacing grow together: the icon
-    // under the pointer reaches 1 + D, neighbours are pushed aside, and gaps stay a few pixels (checked
-    // numerically for every icon and between icons: ~3 px around the hovered one at 44 px tiles).
-    const LENS = 6.5;
-    const LENS_D = 0.65;
-    const ENGAGE_IN = 0.9, ENGAGE_OUT = 2.2;  // full lens within 0.9 tiles of an icon, none beyond 2.2
+    // Hover: the icon under the pointer (within PICK of its centre) grows to MAG. 1.4× keeps the 128 px
+    // wheel images sharp: a 44 px icon at 1.4× is 123 device pixels on a 2× screen.
+    const MAG = 1.4;
+    const PICK = 0.62;                        // in tile widths: a little past the icon's edge
 
     /** The first n slots of a hexagonal grid around ANCHOR, ring by ring, kept on screen and clear of the button. */
     function honeycomb(n) {
@@ -137,7 +132,7 @@
                 border-radius: 50%; color: #17150F; outline: none; padding: 0; margin: 0;
                 transform: translate(var(--dx), var(--dy)) scale(var(--m));
                 transition: transform .18s cubic-bezier(.2,.9,.25,1.2), box-shadow .15s; will-change: transform; }
-    .lsw.magnifying .lsw-link { transition: transform .12s ease-out, box-shadow .15s; }   /* follow the pointer */
+    .lsw.magnifying .lsw-link { transition: transform .16s cubic-bezier(.2,.9,.3,1.15), box-shadow .15s; }
     .lsw-link img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; pointer-events: none; }
     .lsw-letter { font: 700 19px/1 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.02em; }
     .lsw-mark { width: 17px; height: 17px; background: #FFE135; border: 3px solid #17150F; box-shadow: 2px 2px 0 #17150F; }
@@ -294,9 +289,8 @@
         });
         root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { px = py = -1e4; resetMagnify(); } });
 
-        // ---- Watch-style fisheye -----------------------------------------------------
+        // ---- Watch-style hover: one icon grows, the rest make room ----------------------
         let magnifying = false, magRaf = 0;
-        const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
 
         function resetMagnify() {
             magnifying = false;
@@ -316,26 +310,27 @@
             const { ox, oy } = corner();
             const size = tileSize();
             const fx = px - ox, fy = py - oy;
-            let nearest = Infinity;
-            tiles.forEach(t => { nearest = Math.min(nearest, Math.hypot(t.ux * size - fx, t.uy * size - fy)); });
-            // The lens eases in as the pointer reaches the icons, so entering and leaving are smooth.
-            const k = 1 - smooth((nearest / size - ENGAGE_IN) / (ENGAGE_OUT - ENGAGE_IN));
-            if (k <= 0.001) { if (magnifying) resetMagnify(); return; }
-            const D = LENS_D * k, L = LENS * size;
+            let hovered = null, best = PICK * size;
             tiles.forEach(t => {
-                const vx = t.ux * size - fx, vy = t.uy * size - fy;
-                const d = Math.hypot(vx, vy);
-                let m = 1, shift = 0;
-                if (d < L) {
-                    const x = d / L, q = D * x + 1;
-                    m = (D + 1) / (q * Math.sqrt(q));   // √(h' · h/x) = √((D+1)/q² · (D+1)/q)
-                    shift = L * (D + 1) * x / q - d;
+                const d = Math.hypot(t.ux * size - fx, t.uy * size - fy);
+                if (d < best) { best = d; hovered = t; }
+            });
+            if (!hovered) { if (magnifying) resetMagnify(); return; }
+            // Everyone else moves straight away from the grown icon by the radius it gained, so gaps
+            // toward it stay as they were and nobody changes size. Kept clear of the screen edges.
+            const grow = (MAG - 1) / 2 * size;
+            const edge = 0.95 * size - size / 2;
+            tiles.forEach(t => {
+                let dx = 0, dy = 0;
+                if (t !== hovered) {
+                    const vx = t.ux - hovered.ux, vy = t.uy - hovered.uy, d = Math.hypot(vx, vy) || 1;
+                    dx = vx / d * grow; dy = vy / d * grow;
+                    dx = Math.min(dx, edge - t.ux * size); dy = Math.min(dy, edge - t.uy * size);
                 }
-                const nx = d > 0.5 ? vx / d : 0, ny = d > 0.5 ? vy / d : 0;
-                t.el.style.setProperty('--m', m.toFixed(3));
-                t.el.style.setProperty('--dx', (nx * shift).toFixed(2) + 'px');
-                t.el.style.setProperty('--dy', (ny * shift).toFixed(2) + 'px');
-                t.li.style.zIndex = String(10 + Math.round(m * 10));
+                t.el.style.setProperty('--m', t === hovered ? MAG : 1);
+                t.el.style.setProperty('--dx', dx.toFixed(2) + 'px');
+                t.el.style.setProperty('--dy', dy.toFixed(2) + 'px');
+                t.li.style.zIndex = t === hovered ? '20' : '';
             });
             if (!magnifying) { magnifying = true; root.classList.add('magnifying'); }
         }

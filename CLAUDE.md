@@ -119,9 +119,9 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 3. `studio-wheel.js`: add to `PRODUCTS` (`id, name, tag ≤ ~30 chars, href, color, icon`). That's all:
    the wheel is an Apple Watch-style honeycomb whose slots are computed (`honeycomb()`: a hexagonal
    grid around `ANCHOR`, LilStudio in the middle, ring by ring, kept on screen and clear of the corner
-   button), and the round face sizes itself to fit. Hover is a fisheye lens (`LENS`, `LENS_D`): the
-   icon under the pointer grows to about 1.65× and the rest move aside while staying packed. Check
-   with `?wheel=open&wheelhover=<id>`.
+   button), and the round face sizes itself to fit. Hover: only the icon under the pointer grows
+   (`MAG` 1.4×, the most the 128 px wheel images take while staying sharp on 2× screens); the others
+   keep their size and slide out of its way. Check with `?wheel=open&wheelhover=<id>`.
 4. Homepage `index.html`:
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
@@ -138,7 +138,7 @@ Changes, Contact. Only claim what the app really does: check its entitlements an
 
 ## Testing hooks
 
-- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon (the fisheye).
+- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon.
 - Headless Chrome screenshots work for the hero:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs
