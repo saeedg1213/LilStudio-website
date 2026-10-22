@@ -15,7 +15,7 @@
     <meta property="og:description" content="Tilt, shake, tap and swipe. Real physics, cartoon balls with faces, and a thump in your hand every time one lands.">
     <meta property="og:url" content="https://lilstudio.app/lilbounce/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://lilstudio.app/lilbounce/screenshots/Balls.png">
+    <meta property="og:image" content="https://lilstudio.app/lilbounce/screenshots/RealPit.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1478,17 +1478,11 @@
         .hero-appicon { width: 140px; height: 140px; display: block; margin: 0 auto;
             border: var(--border-width) solid var(--border); border-radius: 30px;
             box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
-        .hero-shot img.hero-phone {
-            width: 100%; max-width: 280px; height: auto; margin: 0 auto; border-radius: 34px;
-            border: var(--border-width) solid #17150F; box-shadow: 8px 8px 0 var(--primary); transform: rotate(2deg);
-        }
-        .hero-shot img.hero-phone:hover { transform: rotate(0deg) scale(1.02); }
-
-        /* Signature demo: a playable LilBounce in a phone frame */
-        .play { padding: 5rem 2rem; position: relative; z-index: 1; }
-        .play-stage { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+        /* Signature demo, as the hero: a playable LilBounce in a phone frame. Short enough on phones to
+           leave room for scrolling past it (the canvas takes every touch that starts on it). */
+        .play-stage { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
         .play-phone {
-            position: relative; width: min(320px, 72vw); aspect-ratio: 3 / 5; border-radius: 42px;
+            position: relative; width: min(300px, 72vw, 36svh); aspect-ratio: 3 / 5; border-radius: 42px;
             background: #17150F; padding: 12px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
             transform: rotate(-1deg);
         }
@@ -1532,9 +1526,9 @@
         .feature-card:nth-child(5) .feature-icon { background: #5DD39E; }
 
         @media (max-width: 900px) { .gallery-grid { grid-template-columns: 1fr; gap: 3rem; } }
-        @media (max-width: 600px) { .play, .gallery { padding: 4rem 1rem; } }
+        @media (max-width: 600px) { .gallery { padding: 4rem 1rem; } }
         @media (prefers-reduced-motion: reduce) {
-            .hero-shot img.hero-phone, .gallery-item img { transform: none !important; }
+            .play-phone, .gallery-item img { transform: none !important; }
         }
     </style>
 </head>
@@ -1546,12 +1540,12 @@
             <div class="logo">LilBounce</div>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
-                <li><a href="#play">Play</a></li>
+                <li><a href="#gallery">Gallery</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#play" data-appstore class="btn btn-primary">Get It</a>
+                <a href="#features" data-appstore class="btn btn-primary">Get It</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1577,7 +1571,7 @@
                     <div class="hero-buttons">
                         <div class="hero-buttons-row">
                             <div class="download-btn-wrapper">
-                                <a href="#play" data-appstore class="btn btn-primary">
+                                <a href="#features" data-appstore class="btn btn-primary">
                                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                                     <span data-appstore-label>Coming to the App Store</span>
                                 </a>
@@ -1592,7 +1586,16 @@
                 </div>
 
                 <div class="hero-shot">
-                    <img src="screenshots/Balls.png" alt="LilBounce on iPhone: three cartoon balls with faces resting on a cream dotted field" class="hero-phone" width="736" height="1600">
+                    <div class="play-stage">
+                        <div class="play-phone">
+                            <div class="play-screen"><canvas id="playfield" aria-label="Playable LilBounce demo: three cartoon balls you can flick, drag and tap"></canvas></div>
+                        </div>
+                        <div class="play-buttons">
+                            <button class="btn-small" id="play-drop" type="button">Drop them again</button>
+                            <button class="btn-small" id="play-tilt" type="button" hidden>Use tilt</button>
+                        </div>
+                        <p class="play-hint">Have a go: tap a ball, drag it, or swipe into one</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1604,23 +1607,6 @@
             <div class="stat-item"><h3>30</h3><p>At once</p></div>
             <div class="stat-item"><h3>120</h3><p>Frames a second</p></div>
             <div class="stat-item"><h3>0</h3><p>Data collected</p></div>
-        </div>
-    </section>
-
-    <section class="play" id="play">
-        <div class="section-header fade-in">
-            <h2>Have a Go</h2>
-            <p>A tiny LilBounce, right here. Flick the balls, swipe through them, or tap one to pop it up.</p>
-        </div>
-        <div class="play-stage scale-in">
-            <div class="play-phone">
-                <div class="play-screen"><canvas id="playfield" aria-label="Playable LilBounce demo: three cartoon balls you can flick and tap"></canvas></div>
-            </div>
-            <div class="play-buttons">
-                <button class="btn-small" id="play-drop" type="button">Drop them again</button>
-                <button class="btn-small" id="play-tilt" type="button" hidden>Use tilt</button>
-            </div>
-            <p class="play-hint">The real app also feels your tilts and shakes, with a tap in your hand on every bounce.</p>
         </div>
     </section>
 
@@ -1663,9 +1649,9 @@
         </div>
         <div class="gallery-grid">
             <div class="gallery-item fade-in stagger-1">
-                <img src="screenshots/Pit.png" alt="Eight cartoon balls piled up in LilBounce" width="736" height="1600" loading="lazy">
+                <img src="screenshots/RealPit.png" alt="Thirty cartoon balls with faces bouncing around mid-shake, on a real iPhone" width="738" height="1600" loading="lazy">
                 <h3>A ball pit</h3>
-                <p>Up to 30 balls, all one size or a mix, knocking into each other.</p>
+                <p>Thirty balls mid-shake, straight off a real iPhone.</p>
             </div>
             <div class="gallery-item fade-in stagger-2">
                 <img src="screenshots/Felt.png" alt="Three basketballs with faces in the green felt room" width="736" height="1600" loading="lazy">
@@ -1764,7 +1750,7 @@
             const SKINS = [['#FF6B35', SPOT], ['#F6D65D', '#E7584B'], ['#2F6BFF', SPOT]];
             let W = 0, H = 0, R = 0, dpr = 1, balls = [], gravity = { x: 0, y: 1 };
             let visible = false, running = false, last = 0, clock = 0;
-            const pointer = { down: false, x: 0, y: 0, vx: 0, vy: 0, t: 0, moved: false, startX: 0, startY: 0 };
+            const pointer = { down: false, x: 0, y: 0, vx: 0, vy: 0, t: 0, t0: 0, moved: false, startX: 0, startY: 0, held: null, ox: 0, oy: 0 };
 
             function resize() {
                 const rect = canvas.getBoundingClientRect();
@@ -1823,8 +1809,15 @@
                         p.vx -= j2 * nx; p.vy -= j2 * ny; q.vx += j2 * nx; q.vy += j2 * ny;
                     }
                 }
-                // The finger: a moving paddle that kicks balls the way it swipes.
-                if (pointer.down) {
+                // A held ball follows the finger on a stiff spring (as in the app), and is thrown when let go.
+                if (pointer.down && pointer.held) {
+                    const b = pointer.held, w = 2 * Math.PI * 12;
+                    const ax = w * w * (pointer.x + pointer.ox - b.x) + 2 * 0.9 * w * (pointer.vx - b.vx);
+                    const ay = w * w * (pointer.y + pointer.oy - b.y) + 2 * 0.9 * w * (pointer.vy - b.vy);
+                    b.vx += ax * dt; b.vy += ay * dt; b.w *= 0.9;
+                }
+                // Otherwise the finger is a moving paddle that kicks balls the way it swipes.
+                if (pointer.down && !pointer.held) {
                     const fr = W * 0.06;
                     for (const b of balls) {
                         const dx = b.x - pointer.x, dy = b.y - pointer.y, d = Math.hypot(dx, dy);
@@ -1926,7 +1919,11 @@
             canvas.addEventListener('pointerdown', e => {
                 const p = local(e);
                 canvas.setPointerCapture(e.pointerId);
-                Object.assign(pointer, { down: true, x: p.x, y: p.y, vx: 0, vy: 0, t: e.timeStamp, moved: false, startX: p.x, startY: p.y });
+                // Touching a ball holds it (anywhere on it); touching the field makes a paddle.
+                let held = null;
+                for (const b of balls) if (Math.hypot(b.x - p.x, b.y - p.y) <= b.r * 1.1) held = b;
+                Object.assign(pointer, { down: true, x: p.x, y: p.y, vx: 0, vy: 0, t: e.timeStamp, t0: e.timeStamp, moved: false,
+                                         startX: p.x, startY: p.y, held, ox: held ? held.x - p.x : 0, oy: held ? held.y - p.y : 0 });
             });
             canvas.addEventListener('pointermove', e => {
                 if (!pointer.down) return;
@@ -1936,16 +1933,15 @@
                 pointer.x = p.x; pointer.y = p.y; pointer.t = e.timeStamp;
                 if (Math.hypot(p.x - pointer.startX, p.y - pointer.startY) > 6) pointer.moved = true;
             });
-            const release = () => {
-                if (pointer.down && !pointer.moved) {
-                    // A tap on a ball pops it up, away from where it was touched.
-                    for (const b of balls) {
-                        const dx = b.x - pointer.x, dy = b.y - pointer.y;
-                        if (Math.hypot(dx, dy) > b.r * 1.1) continue;
-                        b.vx += dx * 9; b.vy = Math.min(b.vy, 0) - 1300 * (W / 300); b.w += dx * 0.05;
-                    }
+            const release = e => {
+                const b = pointer.held;
+                if (pointer.down && b && !pointer.moved && e.timeStamp - pointer.t0 < 180) {
+                    // A quick tap kicks the ball up, away from where it was touched.
+                    const dx = -pointer.ox;
+                    b.vx += dx * 9; b.vy = Math.min(b.vy, 0) - 1300 * (W / 300); b.w += dx * 0.05;
                 }
                 pointer.down = false;
+                pointer.held = null;
             };
             canvas.addEventListener('pointerup', release);
             canvas.addEventListener('pointercancel', release);
