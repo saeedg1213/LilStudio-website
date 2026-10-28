@@ -64,19 +64,6 @@
 
 <h2>Common questions</h2>
 
-<h3>Why is LilHide asking for access to a folder?</h3>
-<p>
-  LilHide hides your icons by covering them with a copy of your wallpaper, so the
-  desktop still looks like your desktop. macOS keeps many wallpaper files in
-  places a sandboxed app isn't allowed to read, so LilHide opens the folder your
-  wallpaper is in and asks you to click <em>Allow</em>. You don't need to find
-  anything yourself. Access is read-only and only used to show your wallpaper.
-</p>
-<p>
-  You can choose <em>Not Now</em>. LilHide will use a blurred overlay for now and
-  ask again next launch. To allow it later, right-click the menu bar icon and
-  choose <em>Show My Wallpaper…</em>.
-</p>
 <h3>Can I use a different background?</h3>
 <p>
   Yes. Right-click the menu bar icon and open <em>Background</em>. Pick one of
@@ -86,9 +73,11 @@
 </p>
 <h3>The desktop looks blurred instead of showing my wallpaper.</h3>
 <p>
-  That's the fallback. Right-click the menu bar icon and choose <em>Show My
-  Wallpaper…</em>, pick a built-in background under <em>Background</em>, or use
-  the <em>+</em> tile under <em>Background</em> to add any image of your own.
+  LilHide covers your icons with your wallpaper, but macOS keeps many wallpapers
+  (your own photos, downloaded aerials) where a sandboxed app can't read them,
+  and LilHide never asks for access. In that case it shows a blur. To get a
+  clean look, open <em>Background</em> and pick a built-in background, or click
+  <em>+</em> and choose your wallpaper image yourself.
 </p>
 <h3>My wallpaper changed but the hidden desktop didn't.</h3>
 <p>

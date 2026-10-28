@@ -58,27 +58,22 @@
 <h2>Your wallpaper and backgrounds</h2>
 <p>
   To conceal your desktop icons, LilHide covers them with a copy of your
-  wallpaper. macOS often stores wallpaper images in locations a sandboxed app
-  cannot read. When that happens, LilHide shows a standard macOS window open
-  on the folder that holds your wallpaper and asks you to click Allow.
+  wallpaper when macOS lets a sandboxed app read it (Apple's built-in
+  wallpapers). LilHide never asks for access to your files or folders.
 </p>
 <p>
-  If you do, LilHide gets read-only access to that folder and stores a secure
-  reference to it so it can show your wallpaper again next time, even after
-  you change it. It only uses that access to read your current wallpaper
-  image. If you add an image of your own under <em>Background</em> (or chose one
-  in an earlier version), LilHide reads that one file the same way.
+  You can also choose a background under <em>Background</em> in the app's menu:
+  macOS's own wallpapers and colours, read from the system's wallpaper folders,
+  or gradients LilHide draws itself. These need no access to your files.
 </p>
 <p>
-  You can instead choose a built-in background: macOS's own wallpapers and
-  colours, read from the system's wallpaper folders, or gradients LilHide
-  draws itself. These need no access to your files.
+  If you add an image of your own with the <em>+</em> tile, you pick it in a
+  standard macOS file window. LilHide stores a secure, read-only reference to
+  that one file so it can show it again next time, and reads nothing else. You
+  can remove it at any time with <em>Background → Remove My Image</em>.
 </p>
 <p>
   LilHide never copies, uploads, modifies, or transmits any of these images.
-  You can remove its access at any time from the app's menu
-  (<em>Background → Remove Wallpaper Folder Access</em> and
-  <em>Background → Remove My Image</em>).
 </p>
 
 <h2>What LilHide does not do</h2>
