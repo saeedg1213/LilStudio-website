@@ -39,7 +39,7 @@
     <main class="sp">
 
 <h1>Privacy Policy</h1>
-<p class="updated">LilHide for macOS — last updated 10 September 2026</p>
+<p class="updated">LilHide for macOS — last updated 28 October 2026</p>
 
 <div class="note">
   <strong>LilHide collects nothing.</strong> No personal data, no usage data, no
@@ -55,18 +55,30 @@
   These settings never leave your computer. Deleting the app removes them.
 </p>
 
-<h2>The wallpaper image you choose</h2>
+<h2>Your wallpaper and backgrounds</h2>
 <p>
   To conceal your desktop icons, LilHide covers them with a copy of your
   wallpaper. macOS often stores wallpaper images in locations a sandboxed app
-  cannot read, so LilHide may ask you to select the image yourself using a
-  standard macOS file picker.
+  cannot read. When that happens, LilHide shows a standard macOS window open
+  on the folder that holds your wallpaper and asks you to click Allow.
 </p>
 <p>
-  If you do, LilHide stores a secure reference to that one file so it can read it
-  again next time you launch the app. It reads that single image and nothing
-  else. It never copies, uploads, modifies, or transmits it. You can clear the
-  reference at any time from the app's menu.
+  If you do, LilHide gets read-only access to that folder and stores a secure
+  reference to it so it can show your wallpaper again next time, even after
+  you change it. It only uses that access to read your current wallpaper
+  image. Earlier versions asked you to choose the image file itself; if you did,
+  LilHide keeps reading that one file the same way.
+</p>
+<p>
+  You can instead choose a built-in background: macOS's own wallpapers and
+  colours, read from the system's wallpaper folders, or gradients LilHide
+  draws itself. These need no access to your files.
+</p>
+<p>
+  LilHide never copies, uploads, modifies, or transmits any of these images.
+  You can remove its access at any time from the app's menu
+  (<em>Background → Remove Wallpaper Folder Access</em> and
+  <em>Clear Fallback Image</em>).
 </p>
 
 <h2>What LilHide does not do</h2>
