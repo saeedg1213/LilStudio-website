@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilDim &ndash; Dim Everything But the Window You're In</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilDim dims or blurs every window except the one you're working in, on every display. Focus ring, pause rules, Shortcuts, Focus Filters, AppleScript. No permissions needed, nothing collected. $0.99 once.">
+    <meta property="og:title" content="LilDim &ndash; Everything Else Fades Away">
+    <meta property="og:description" content="Dim or blur everything but your current window. Every display, no permissions, $0.99 once.">
+    <meta property="og:url" content="https://lilstudio.app/lildim/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lildim/screenshots/popover.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #B68CFF;
+            --secondary: #FFD166;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(182, 140, 255, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        
+        .btn-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle - Brutalist Style */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-device {
+            flex: 0 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-device:hover {
+            transform: rotate(-3deg) scale(1.06);
+        }
+
+        .hero-device img {
+            width: 180px;
+            height: auto;
+        }
+
+        .hero-device.iphone img {
+            width: 200px;
+        }
+
+        .hero-device.mac img {
+            width: 600px;
+        }
+
+        .hero-device.mac:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .hero-center {
+            flex: 1;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-buttons-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-req {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Privacy Notice - Brutalist */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: var(--border-width) solid var(--border);
+            max-width: 550px;
+        }
+
+        .privacy-notice svg {
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .privacy-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .privacy-notice a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-notice a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Screenshot Carousel */
+        .hero-image {
+            margin-top: 4rem;
+        }
+
+        .screenshot-carousel {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .screenshot-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll-carousel 35s linear infinite;
+            width: max-content;
+            align-items: center;
+        }
+
+        .screenshot-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-carousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .devices-mockup {
+            height: 320px;
+            width: auto;
+            border: var(--border-width) solid var(--border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .devices-mockup:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        /* Stats Bar - Brutalist */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-item {
+            padding: 1rem;
+            text-align: center;
+            border-right: var(--border-width) solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item:hover {
+            background: var(--yellow);
+        }
+
+        .stat-item:hover h3,
+        .stat-item:hover p {
+            color: #000;
+        }
+
+        .stat-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-item {
+                border-bottom: var(--border-width) solid var(--border);
+            }
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+            .stat-item:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid - Brutalist Cards */
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .feature-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .feature-card:nth-child(2) { transform: rotate(0.5deg); }
+        .feature-card:nth-child(3) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .feature-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .feature-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #000;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Setup Section - Brutalist */
+        .setup {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .setup-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .setup-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-step:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .step-content code {
+            background: var(--primary);
+            padding: 0.2rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        .permission-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+        }
+
+        .permission-item::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .setup-image {
+            margin-top: 1rem;
+            max-width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .setup-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .setup-image-small {
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border);
+            transition: transform 0.2s;
+        }
+
+        .setup-image-small:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        /* Pricing - Brutalist */
+        .pricing {
+            text-align: center;
+        }
+
+        .pricing-card {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 3rem;
+            box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .pricing-card::before {
+            content: 'ONE PRICE';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border: var(--border-width) solid var(--border);
+            transform: rotate(3deg);
+            letter-spacing: 0.05em;
+        }
+
+        .price-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .price-tag sup {
+            font-size: 2rem;
+            vertical-align: top;
+        }
+
+        .price-tag .currency {
+            font-size: 2rem;
+        }
+
+        .price-period {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            background: var(--primary);
+            padding: 4px;
+            border: 2px solid var(--border);
+        }
+
+        .pricing-features li svg polyline {
+            stroke: #000;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .price-note {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trial-note {
+            margin-top: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Contact - Brutalist */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            box-shadow: 8px 8px 0 var(--border);
+            transform: rotate(0.5deg);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 var(--primary);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer - Brutalist */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* Hero Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-image { animation: fadeInUp 0.7s ease 0.3s forwards; opacity: 0; }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 900px) {
+            .hero-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-device { order: 2; }
+            .hero-device.iphone { order: 1; }
+            .hero-device.mac { order: 3; }
+            .hero-center { order: 2; max-width: 100%; }
+
+            .hero-device img,
+            .hero-device.iphone img,
+            .hero-device.mac img {
+                width: 320px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+                min-height: auto;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 160px !important;
+            }
+
+            .hero-device.mac img {
+                width: 280px !important;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-buttons-row {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .download-btn-wrapper {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .devices-mockup {
+                height: 150px;
+            }
+
+            .screenshot-track {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .setup-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .setup-step img {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .setup-images-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            .price-tag {
+                font-size: 3.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 140px !important;
+            }
+
+            .hero-device.mac img {
+                width: 240px !important;
+            }
+
+            .devices-mockup {
+                height: 160px;
+            }
+
+            .price-tag {
+                font-size: 2.75rem;
+            }
+        }
+        /* --- FAQ --- */
+        .faq {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .faq-item {
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .faq-item h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item code {
+            background: var(--primary);
+            padding: 0.15rem 0.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+        /* ---- LilDim additions ---- */
+
+        /* Logo bar fades from bright to dim: the whole idea in 8px */
+        .logo::before {
+            background: linear-gradient(90deg, var(--primary) 0 55%, color-mix(in srgb, var(--primary) 35%, transparent) 100%);
+        }
+
+        .hero-appicon { width: 140px; height: 140px; display: block; margin: 0 auto; }
+
+        /* ---- Hero demo: a tiny Mac desktop that dims for real ---- */
+        .hero-demo { flex: 0 0 auto; width: 460px; }
+
+        .desk {
+            --dim: 0.45;
+            --blur: 0px;
+            position: relative;
+            aspect-ratio: 16 / 10.5;
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            overflow: hidden;
+            transform: rotate(-1deg);
+            background: #2B1F4A;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .desk-wall {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(120% 90% at 15% 100%, #FF9466 0%, transparent 55%),
+                radial-gradient(90% 80% at 100% 0%, #6C8CFF 0%, transparent 60%),
+                linear-gradient(160deg, #3A2A6B, #B68CFF 70%, #FFD166);
+            transition: filter .25s ease;
+        }
+        .desk.blur .desk-wall { filter: blur(var(--blur)); }
+
+        /* Background shade sits under every window; the focused one is lifted above it. */
+        .desk-shade {
+            position: absolute; inset: 0;
+            background: #000;
+            opacity: var(--dim);
+            transition: opacity .22s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .desk-menubar {
+            position: absolute; left: 0; right: 0; top: 0; height: 18px; z-index: 20;
+            display: flex; align-items: center; gap: 9px; padding: 0 8px;
+            background: rgba(255, 255, 255, .55);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            font: 600 9px/1 -apple-system, 'Space Grotesk', sans-serif; color: #17150F;
+        }
+        .desk-menubar .mb-app { font-weight: 800; min-width: 34px; }
+        .desk-menubar .mb-item { font-weight: 500; opacity: .8; }
+        .desk-menubar .mb-spacer { flex: 1; }
+        .desk-menubar .mb-icon {
+            width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #17150F;
+            background: linear-gradient(90deg, #17150F 50%, transparent 50%);
+        }
+        .desk.off .desk-menubar .mb-icon { background: transparent; }
+
+        .win {
+            position: absolute;
+            border-radius: 8px;
+            background: #FFFBEF;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .35), 0 0 0 1px rgba(0, 0, 0, .18);
+            overflow: hidden;
+            cursor: pointer;
+            transition: box-shadow .2s ease, outline-color .2s ease;
+            outline: 0 solid transparent;
+            outline-offset: 2px;
+        }
+        .win.w1 { left: 7%;  top: 17%; width: 46%; height: 58%; z-index: 4; }
+        .win.w2 { left: 39%; top: 27%; width: 54%; height: 62%; z-index: 3; }
+        .win.w3 { left: 20%; top: 46%; width: 40%; height: 44%; z-index: 2; }
+        .win.focused { z-index: 10 !important; }
+
+        /* Each window carries its own shade: the crossfade is two opacity transitions. */
+        .win::after {
+            content: ''; position: absolute; inset: 0;
+            background: #000; opacity: var(--dim);
+            transition: opacity .22s ease;
+            pointer-events: none;
+        }
+        .win.focused::after { opacity: 0; }
+        .win-body { position: absolute; inset: 16px 0 0; transition: filter .22s ease; }
+        .desk.blur .win:not(.focused) .win-body { filter: blur(var(--blur)); }
+
+        .desk.ring .win.focused { outline: 3px solid var(--primary); }
+
+        .desk.peek .desk-shade, .desk.peek .win::after, .desk.off .desk-shade, .desk.off .win::after { opacity: 0; }
+        .desk.peek .win-body, .desk.peek .desk-wall, .desk.off .win-body, .desk.off .desk-wall { filter: none !important; }
+
+        .win-bar {
+            position: absolute; left: 0; right: 0; top: 0; height: 16px;
+            display: flex; align-items: center; gap: 4px; padding: 0 6px;
+            background: #EFE7D2; border-bottom: 1px solid rgba(0, 0, 0, .08);
+        }
+        .win-bar i { width: 6px; height: 6px; border-radius: 50%; background: #FF5F57; }
+        .win-bar i:nth-child(2) { background: #FEBC2E; }
+        .win-bar i:nth-child(3) { background: #28C840; }
+        .win-bar b { margin-left: 6px; font: 700 8px/1 -apple-system, sans-serif; color: #55503F; }
+
+        /* Skeleton content per app */
+        .sk { position: absolute; border-radius: 3px; background: #17150F; opacity: .14; }
+        .notes .sk { left: 10%; height: 6%; }
+        .safari .hero-block { left: 6%; right: 6%; top: 8%; height: 36%; border-radius: 5px; opacity: 1;
+            background: linear-gradient(135deg, #7CC4F0, #B68CFF); }
+        .mail .row { left: 5%; right: 5%; height: 15%; border-radius: 4px; opacity: .09; }
+        .mail .row::before { content: ''; position: absolute; left: 6px; top: 50%; width: 14px; height: 14px; margin-top: -7px;
+            border-radius: 50%; background: #FF9466; opacity: 1; }
+
+        .demo-controls {
+            margin-top: 1.4rem;
+            display: grid; grid-template-columns: auto 1fr; gap: .7rem 1rem; align-items: center;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: 4px 4px 0 var(--border);
+            padding: .9rem 1rem;
+            font-family: 'Space Mono', monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em;
+        }
+        .demo-controls label { color: var(--text-muted); font-weight: 700; }
+
+        .seg { display: inline-flex; justify-self: start; border: 2px solid var(--border); }
+        .seg button {
+            font: inherit; font-weight: 700; padding: .3rem .75rem; background: transparent; color: var(--text);
+            border: 0; cursor: pointer;
+        }
+        .seg button + button { border-left: 2px solid var(--border); }
+        .seg button[aria-pressed="true"] { background: var(--primary); color: #000; }
+
+        .demo-controls input[type="range"] { width: 100%; accent-color: var(--primary); }
+        .range-row { display: flex; align-items: center; gap: .6rem; }
+        .range-row output { min-width: 3ch; text-align: right; font-weight: 700; }
+
+        .demo-buttons { grid-column: 1 / -1; display: flex; gap: .6rem; flex-wrap: wrap; }
+        .chip-btn {
+            font: inherit; font-weight: 700; padding: .4rem .7rem; cursor: pointer;
+            background: var(--bg); color: var(--text); border: 2px solid var(--border);
+            box-shadow: 2px 2px 0 var(--border); transition: transform .12s, box-shadow .12s;
+        }
+        .chip-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--border); }
+        .chip-btn:active, .chip-btn.held { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--border); }
+        .chip-btn[aria-pressed="true"] { background: var(--secondary); color: #000; }
+
+        .demo-hint {
+            margin-top: .7rem; text-align: center;
+            font-family: 'Space Mono', monospace; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
+            color: var(--text-muted);
+        }
+
+        /* ---- Screenshots ---- */
+        .shots { padding: 6rem 2rem; position: relative; z-index: 1; }
+        .shot-row {
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2rem; align-items: start;
+        }
+        .shot-card {
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 1.5rem; text-align: center;
+        }
+        .shot-card:nth-child(1) { transform: rotate(-0.6deg); }
+        .shot-card:nth-child(3) { transform: rotate(0.6deg); }
+        .shot-card img { max-width: 100%; height: auto; display: block; margin: 0 auto 1rem; }
+        .shot-card h3 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+        .shot-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* ---- Automation ---- */
+        .auto-grid {
+            max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;
+        }
+        .auto-card {
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 1.5rem;
+        }
+        .auto-card h3 { font-size: 1.1rem; margin-bottom: .4rem; }
+        .auto-card p { color: var(--text-muted); font-size: .92rem; margin-bottom: .9rem; }
+        .auto-card pre {
+            font-family: 'Space Mono', monospace; font-size: .74rem; line-height: 1.55;
+            background: var(--bg); border: 2px solid var(--border); padding: .7rem .8rem;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .auto-card pre b { color: var(--text); background: color-mix(in srgb, var(--primary) 45%, transparent); font-weight: 700; }
+
+        .pricing { padding-top: 2rem; }
+
+        @media (max-width: 1000px) {
+            .shot-row, .auto-grid { grid-template-columns: 1fr; max-width: 520px; }
+        }
+        @media (max-width: 900px) {
+            .hero-demo { order: 3; width: min(460px, 100%); }
+        }
+        @media (max-width: 600px) {
+            .desk { transform: none; }
+            .demo-controls { grid-template-columns: 1fr; }
+            .faq-item { padding: 1.25rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .desk-shade, .win::after, .win-body, .desk-wall, .win { transition: none !important; }
+        }
+
+        .feature-card code { background: var(--primary); padding: 0.1rem 0.35rem; font-family: "Space Mono", monospace; font-size: 0.8rem; color: #000; border: 2px solid var(--border); }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilDim</div>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#automation">Automation</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#pricing" class="btn btn-primary" data-appstore>Get It &mdash; $0.99</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device">
+                    <img src="screenshots/app-icon.png" alt="LilDim app icon" class="hero-appicon" width="140" height="140">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        Menu Bar Utility for macOS
+                    </div>
+                    <h1>Everything else <span class="highlight">fades away.</span></h1>
+                    <p class="hero-subtitle">LilDim gently dims, or blurs, every window except the one you're working in. Switch apps and the focus follows you with a soft crossfade. Sheets, menus and popovers always stay bright.</p>
+                    <div class="hero-buttons">
+                        <div class="hero-buttons-row">
+                            <div class="download-btn-wrapper">
+                                <a href="#pricing" class="btn btn-primary" data-appstore>
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    Mac App Store
+                                </a>
+                                <span class="system-req">$0.99 once &middot; macOS 14.6+ &middot; No subscription</span>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>Works with no permission at all. No Screen Recording, no network access, nothing collected. Accessibility is optional, for instant tracking. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-demo">
+                    <div class="desk ring" id="desk" role="group" aria-label="Interactive demo: click a window to focus it">
+                        <div class="desk-wall"></div>
+                        <div class="desk-shade"></div>
+                        <div class="desk-menubar" aria-hidden="true">
+                            <span>&#63743;</span>
+                            <span class="mb-app" id="mbApp">Notes</span>
+                            <span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">View</span>
+                            <span class="mb-spacer"></span>
+                            <span class="mb-icon"></span>
+                            <span>9:41</span>
+                        </div>
+                        <div class="win w1 notes focused" data-app="Notes" tabindex="0" aria-label="Notes window">
+                            <div class="win-bar"><i></i><i></i><i></i><b>Notes</b></div>
+                            <div class="win-body">
+                                <span class="sk" style="top:10%;width:55%;opacity:.5;height:8%"></span>
+                                <span class="sk" style="top:26%;width:78%"></span>
+                                <span class="sk" style="top:38%;width:70%"></span>
+                                <span class="sk" style="top:50%;width:74%"></span>
+                                <span class="sk" style="top:62%;width:48%"></span>
+                                <span class="sk" style="top:76%;width:66%"></span>
+                            </div>
+                        </div>
+                        <div class="win w2 safari" data-app="Safari" tabindex="0" aria-label="Safari window">
+                            <div class="win-bar"><i></i><i></i><i></i><b>Safari</b></div>
+                            <div class="win-body">
+                                <span class="sk hero-block"></span>
+                                <span class="sk" style="left:6%;top:52%;width:60%;height:6%"></span>
+                                <span class="sk" style="left:6%;top:63%;width:80%;height:4%"></span>
+                                <span class="sk" style="left:6%;top:71%;width:72%;height:4%"></span>
+                                <span class="sk" style="left:6%;top:79%;width:52%;height:4%"></span>
+                            </div>
+                        </div>
+                        <div class="win w3 mail" data-app="Mail" tabindex="0" aria-label="Mail window">
+                            <div class="win-bar"><i></i><i></i><i></i><b>Mail</b></div>
+                            <div class="win-body">
+                                <span class="sk row" style="top:6%"></span>
+                                <span class="sk row" style="top:26%"></span>
+                                <span class="sk row" style="top:46%"></span>
+                                <span class="sk row" style="top:66%"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-controls">
+                        <label>Style</label>
+                        <div class="seg" role="group" aria-label="Style">
+                            <button type="button" data-style="dim" aria-pressed="true">Dim</button>
+                            <button type="button" data-style="blur" aria-pressed="false">Blur</button>
+                        </div>
+                        <label for="demoIntensity">Intensity</label>
+                        <div class="range-row">
+                            <input id="demoIntensity" type="range" min="0" max="90" value="45">
+                            <output id="demoValue" for="demoIntensity">45%</output>
+                        </div>
+                        <div class="demo-buttons">
+                            <button type="button" class="chip-btn" id="demoRing" aria-pressed="true">Focus ring</button>
+                            <button type="button" class="chip-btn" id="demoPeek">Hold to peek</button>
+                            <button type="button" class="chip-btn" id="demoPower" aria-pressed="true">LilDim on</button>
+                        </div>
+                    </div>
+                    <p class="demo-hint">Click a window. That's the whole app.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>0</h3>
+                <p>Permissions needed</p>
+            </div>
+            <div class="stat-item">
+                <h3>2</h3>
+                <p>Styles: dim &amp; blur</p>
+            </div>
+            <div class="stat-item">
+                <h3>ALL</h3>
+                <p>Your displays</p>
+            </div>
+            <div class="stat-item">
+                <h3>$0.99</h3>
+                <p>Once, forever</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>Everything a focus dimmer should do, and a few things they usually don't.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></svg></div>
+                <div>
+                    <h3>Dim or Blur</h3>
+                    <p>A solid tint in any color you like, or a soft blur. Pick the strength with a slider, from barely there to 90%.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
+                <div>
+                    <h3>Light &amp; Dark Profiles</h3>
+                    <p>Separate intensity and color for Light and Dark mode. When macOS switches, LilDim fades gently to match.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="10" rx="1"/><rect x="9" y="10" width="12" height="10" rx="1"/></svg></div>
+                <div>
+                    <h3>One Window, or the Whole App</h3>
+                    <p>Highlight just the front window, or every window of the front app. Choose per app, too.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="1" y="4" width="14" height="10" rx="1"/><rect x="9" y="11" width="14" height="9" rx="1"/></svg></div>
+                <div>
+                    <h3>Made for Big Setups</h3>
+                    <p>Every display handled: keep one focused window and dim the rest, or keep one bright window per display.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v6h10V3"/></svg></div>
+                <div>
+                    <h3>Nothing Wrongly Dimmed</h3>
+                    <p>Save sheets, dialogs, menus, popovers and tooltips stay bright, with perfect corners and shadows. Launchers and menu bar popovers never flash the screen.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><rect x="1.5" y="2.5" width="21" height="19" rx="5" stroke-dasharray="3 2"/></svg></div>
+                <div>
+                    <h3>Focus Ring</h3>
+                    <p>Add a colored border around the window you're in. Use it with the dim, or on its own at 0% intensity.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+                <div>
+                    <h3>Pause Rules</h3>
+                    <p>Pause for 15 minutes, an hour, or until tomorrow. Or pause automatically whenever an app you choose is in front, like Keynote or a game.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div>
+                <div>
+                    <h3>Hold fn to Peek</h3>
+                    <p>Hold the fn key and the dim lifts until you let go. Handy for a quick look, or when dragging a file between windows.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg></div>
+                <div>
+                    <h3>Fast Controls</h3>
+                    <p>Scroll on the menu bar icon to adjust, &#8997;-click to toggle, &#8963;&#8997;&#8984;D from anywhere. Shortcuts for intensity and highlight mode too.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div>
+                <div>
+                    <h3>Automate Everything</h3>
+                    <p>Shortcuts actions, Focus Filters, AppleScript and a <code>lildim://</code> URL scheme. Dim harder during Work focus, turn off for Gaming.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="4"/><rect x="2" y="9" width="20" height="12" stroke-dasharray="3 2"/></svg></div>
+                <div>
+                    <h3>Polite to Your Mac</h3>
+                    <p>Keeps the menu bar bright (macOS Tahoe's see-through one included), and optionally the Dock. Respects Reduce Motion, Reduce Transparency and Low Power Mode.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div>
+                    <h3>Light as a Feather</h3>
+                    <p>No network access, no tracking, nothing to sign up for. Moving windows costs nothing: the dim sits right behind your window instead of chasing it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="shots setup" id="mac">
+        <div class="section-header fade-in">
+            <h2>On Your Mac</h2>
+            <p>One click on the menu bar icon for the basics. Settings when you want more.</p>
+        </div>
+        <div class="shot-row">
+            <div class="shot-card fade-in stagger-1">
+                <picture>
+                    <source srcset="screenshots/popover.webp" type="image/webp">
+                    <img src="screenshots/popover.png" alt="The LilDim menu bar popover with an on/off switch, intensity slider, Dim or Blur, and Window or App" width="580" height="472" loading="lazy">
+                </picture>
+                <h3>The popover</h3>
+                <p>On/off, intensity, style and highlight mode, plus pause. Everything in one glance.</p>
+            </div>
+            <div class="shot-card fade-in stagger-2">
+                <picture>
+                    <source srcset="screenshots/settings-look.webp" type="image/webp">
+                    <img src="screenshots/settings-look.png" alt="LilDim Settings, Look tab: style, light and dark profiles, animation, focus ring, keep menu bar bright" width="1096" height="1492" loading="lazy">
+                </picture>
+                <h3>Make it yours</h3>
+                <p>Separate Light and Dark profiles, animation speed, focus ring, menu bar and Dock.</p>
+            </div>
+            <div class="shot-card fade-in stagger-3">
+                <picture>
+                    <source srcset="screenshots/settings-behavior.webp" type="image/webp">
+                    <img src="screenshots/settings-behavior.png" alt="LilDim Settings, Behavior tab: highlight, multiple displays, when no window is focused, hold fn" width="1096" height="790" loading="lazy">
+                </picture>
+                <h3>Behaves how you work</h3>
+                <p>Window or app, one or every display, and what happens on an empty desktop.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="automation" id="automation">
+        <div class="section-header fade-in">
+            <h2>Automation</h2>
+            <p>For people who like their Mac to do things on its own.</p>
+        </div>
+        <div class="auto-grid">
+            <div class="auto-card fade-in stagger-1">
+                <h3>Shortcuts &amp; Focus</h3>
+                <p>Actions for Toggle, Turn On/Off, Set Intensity, Pause and Resume. Add LilDim to a Focus to change it automatically.</p>
+                <pre>System Settings &rarr; Focus &rarr; Work
+&rarr; Focus Filters &rarr; <b>LilDim</b>
+Dimming: On &middot; Intensity: 60%</pre>
+            </div>
+            <div class="auto-card fade-in stagger-2">
+                <h3>URL scheme</h3>
+                <p>From Terminal, Raycast, Alfred or a Stream Deck button.</p>
+                <pre>open "<b>lildim://toggle</b>"
+open "<b>lildim://intensity?value=40</b>"
+open "<b>lildim://pause?minutes=30</b>"</pre>
+            </div>
+            <div class="auto-card fade-in stagger-3">
+                <h3>AppleScript</h3>
+                <p>Read and set LilDim from any script.</p>
+                <pre>tell application "LilDim"
+    set <b>intensity</b> to 50
+    <b>pause dimming for</b> 15
+end tell</pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="section-header fade-in">
+            <h2>Price</h2>
+            <p>Less than a coffee. Once.</p>
+        </div>
+        <div class="pricing-card scale-in">
+            <div class="price-tag"><span class="currency">$</span>0<sup>.99</sup></div>
+            <div class="price-period">Once. Yours forever.</div>
+            <ul class="pricing-features">
+                <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Every feature, no Pro tier</li>
+                <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dim, blur and focus ring</li>
+                <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No account, no telemetry</li>
+                <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Family Sharing &amp; future updates</li>
+            </ul>
+            <a href="#pricing" class="btn btn-primary pricing-cta" data-appstore>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <span data-appstore-label>Coming Soon to the Mac App Store</span>
+            </a>
+            <p class="trial-note">macOS 14.6+ &middot; Apple silicon &amp; Intel</p>
+            <p class="price-note">No subscription. No in-app purchases.</p>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Does LilDim need any permissions?</h3>
+                <p>No. It works the moment you open it, using only the public window list (positions and sizes, never titles or contents). Accessibility is optional: with it, LilDim follows focus changes instantly and knows exactly which of an app's windows is focused, and fn-to-peek turns on.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>I can't find LilDim in the Accessibility list.</h3>
+                <p>macOS doesn't let App Store apps add themselves there. In System Settings &rarr; Privacy &amp; Security &rarr; Accessibility, click <code>+</code> and choose LilDim (or drag it in from Finder), then switch it on. LilDim's Settings walks you through it and turns green the moment it's done.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Will it dim my menus, dialogs or Save sheets?</h3>
+                <p>No. The dim sits directly behind your window in the system's window order, so everything that belongs to it (sheets, menus, popovers, tooltips) stays above it and bright. Moving or resizing the window costs no CPU at all.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Is it heavy on battery?</h3>
+                <p>No. In our tests it sat at about 0.1% CPU while idle without Accessibility, around 25 MB of memory, and the app is about 2 MB. Blur switches to dim on its own in Low Power Mode.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Coming from HazeOver?</h3>
+                <p>Everything you used is here: intensity, color, fade speed, Light and Dark profiles, front window or all app windows, multi-display modes, Focus Filters, Shortcuts, AppleScript and hold fn. LilDim adds blur, a focus ring, per-app pause rules and a URL scheme, for $0.99.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>I hid the menu bar icon. How do I get back?</h3>
+                <p>Open LilDim again from Finder, Spotlight or Launchpad and Settings appears.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Why do screenshots and recordings show the dim?</h3>
+                <p>Because it's really on screen. Pause LilDim (or hold fn) while you capture if you want the full desktop.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>Found a bug, or want a feature?</h2>
+            <p>Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilhide/">LilHide</a> &middot; <a href="/lilstats/">LilStats</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+        // Set once LilDim is live: https://apps.apple.com/app/id<AppleID>
+        const APP_STORE_URL = '';
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        if (APP_STORE_URL) {
+            document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+            document.querySelectorAll('[data-appstore-label]').forEach(s => { s.textContent = 'Get It on the Mac App Store'; });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // ---- Hero demo: the same idea as the app, in CSS. ----
+        // Each window has its own shade; switching focus fades one out and one in,
+        // so the background never flickers. Auto-plays until the visitor touches it.
+        (function () {
+            const desk = document.getElementById('desk');
+            if (!desk) return;
+            const wins = Array.from(desk.querySelectorAll('.win'));
+            const mbApp = document.getElementById('mbApp');
+            const range = document.getElementById('demoIntensity');
+            const out = document.getElementById('demoValue');
+            const ringBtn = document.getElementById('demoRing');
+            const peekBtn = document.getElementById('demoPeek');
+            const powerBtn = document.getElementById('demoPower');
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let stack = wins.slice();            // front to back
+            let auto = !reduced, timer = null, visible = true;
+
+            function focus(win) {
+                stack = [win].concat(stack.filter(w => w !== win));
+                stack.forEach((w, i) => {
+                    w.classList.toggle('focused', i === 0);
+                    w.style.zIndex = String(9 - i);
+                });
+                mbApp.textContent = win.dataset.app;
+            }
+
+            function setIntensity(v) {
+                desk.style.setProperty('--dim', (v / 100).toFixed(2));
+                desk.style.setProperty('--blur', (2 + v / 18).toFixed(1) + 'px');
+                out.textContent = v + '%';
+            }
+
+            function stopAuto() { auto = false; clearInterval(timer); }
+            function startAuto() {
+                clearInterval(timer);
+                if (!auto) return;
+                timer = setInterval(() => {
+                    if (!visible || document.hidden) return;
+                    focus(stack[stack.length - 1]);
+                }, 2600);
+            }
+
+            wins.forEach(w => {
+                w.addEventListener('pointerdown', () => { stopAuto(); focus(w); });
+                w.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stopAuto(); focus(w); }
+                });
+            });
+
+            desk.parentElement.querySelectorAll('.seg button').forEach(b => {
+                b.addEventListener('click', () => {
+                    stopAuto();
+                    desk.parentElement.querySelectorAll('.seg button').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+                    desk.classList.toggle('blur', b.dataset.style === 'blur');
+                });
+            });
+
+            range.addEventListener('input', () => { stopAuto(); setIntensity(+range.value); });
+
+            ringBtn.addEventListener('click', () => {
+                const on = !desk.classList.contains('ring');
+                desk.classList.toggle('ring', on);
+                ringBtn.setAttribute('aria-pressed', String(on));
+            });
+
+            powerBtn.addEventListener('click', () => {
+                const off = !desk.classList.contains('off');
+                desk.classList.toggle('off', off);
+                powerBtn.setAttribute('aria-pressed', String(!off));
+                powerBtn.textContent = off ? 'LilDim off' : 'LilDim on';
+            });
+
+            const peek = on => { desk.classList.toggle('peek', on); peekBtn.classList.toggle('held', on); };
+            peekBtn.addEventListener('pointerdown', e => { e.preventDefault(); stopAuto(); peek(true); });
+            ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => peekBtn.addEventListener(t, () => peek(false)));
+            peekBtn.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); peek(true); } });
+            peekBtn.addEventListener('keyup', () => peek(false));
+
+            new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(desk);
+
+            // Test hook: ?demo=blur,peek,off,noring,app=<Notes|Safari|Mail>,dim=<0-90>
+            const q = new URLSearchParams(location.search).get('demo');
+            if (q) {
+                stopAuto();
+                q.split(',').forEach(p => {
+                    if (p === 'blur') desk.parentElement.querySelector('[data-style="blur"]').click();
+                    if (p === 'peek') desk.classList.add('peek');
+                    if (p === 'off') desk.classList.add('off');
+                    if (p === 'noring') desk.classList.remove('ring');
+                    if (p.startsWith('app=')) { const w = wins.find(x => x.dataset.app === p.slice(4)); if (w) focus(w); }
+                    if (p.startsWith('dim=')) { range.value = p.slice(4); setIntensity(+range.value); }
+                });
+            }
+
+            setIntensity(+range.value);
+            focus(stack[0]);
+            startAuto();
+        })();
+    </script>
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>

@@ -39,6 +39,7 @@
         { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png' },
         { id: 'lilpass',    name: 'LilPass',    tag: 'Every card, one tap away',       href: '/lilpass/',    color: '#7CC4F0', icon: '/assets/wheel/lilpass.png' },
         { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png' },
+        { id: 'lildim',     name: 'LilDim',     tag: 'Dim all but the front window',   href: '/lildim/',     color: '#B68CFF', icon: '/assets/wheel/lildim.png' },
     ];
 
     // Honeycomb (in tile widths, around the middle icon; screen axes, y down)
