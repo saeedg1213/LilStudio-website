@@ -1384,6 +1384,15 @@
         .kc:active, .kc.down { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--border); background: var(--primary); color: #000; }
         .kc.wide { grid-column: span 2; }
 
+        /* ---- Video ---- */
+        .video-wrap { max-width: 1000px; margin: 0 auto; }
+        .video-wrap video {
+            display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #17150F;
+            border: var(--border-width) solid var(--border); box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-0.4deg);
+        }
+        .video-note { margin-top: 1.4rem; text-align: center; font-family: 'Space Mono', monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+
         /* ---- Shortcuts section ---- */
         .shortcuts { background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
         .sc-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
@@ -1617,6 +1626,20 @@
                 <h3>2</h3>
                 <p>Clicks to set up</p>
             </div>
+        </div>
+    </section>
+
+    <section class="video" id="video">
+        <div class="section-header fade-in">
+            <h2>See It in Action</h2>
+            <p>Thirty seconds of real snapping, recorded on a Mac.</p>
+        </div>
+        <div class="video-wrap scale-in">
+            <video id="demoVideo" muted loop playsinline preload="metadata" poster="screenshots/demo-poster.jpg" aria-label="LilSnap snapping windows into halves, quarters and thirds with keyboard shortcuts">
+                <source src="screenshots/demo.webm" type="video/webm">
+                <source src="screenshots/demo.mp4" type="video/mp4">
+            </video>
+            <p class="video-note">The Shortcuts icon in the menu bar is macOS showing that LilSnap's shortcut ran.</p>
         </div>
     </section>
 
@@ -1927,6 +1950,14 @@
             });
         }, { root: null, rootMargin: '0px', threshold: 0.15 });
         document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // ---- Demo video: plays while on screen; with Reduce Motion it waits for a click. ----
+        (function () {
+            const v = document.getElementById('demoVideo');
+            if (!v) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.controls = true; return; }
+            new IntersectionObserver(es => { es[0].isIntersecting ? v.play().catch(() => { v.controls = true; }) : v.pause(); }, { threshold: 0.35 }).observe(v);
+        })();
 
         // ---- Hero demo: the same rules as the app, in CSS. ----
         // Layouts are fractions of the work area (x, y from the top, w, h), with a small gap.
