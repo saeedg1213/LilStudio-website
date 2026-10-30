@@ -21,7 +21,7 @@ no npm: every page is a hand-written `.html` file with its CSS in a `<style>` bl
 ```
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
-`lilstats`, `lilpad`, `lilpass`, `lilbounce`, `lildim`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
+`lilstats`, `lilpad`, `lilpass`, `lilbounce`, `lildim`, `lilsnap`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
 so the folder name must equal the wheel id.
 
 ## Visual language (neo-brutalist)
@@ -49,7 +49,7 @@ so the folder name must equal the wheel id.
 Colours already used in the wheel (pick something distinct for a new app):
 studio `#FFE135` · LilDisplay `#00FF88` · LilDock `#FF6B5E` · LilUsage `#FFB020` ·
 LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A` ·
-LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35` · LilDim `#B68CFF`.
+LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35` · LilDim `#B68CFF` · LilSnap `#3FD98A`.
 
 ## Motion language (Apple Watch-style)
 
@@ -186,7 +186,7 @@ privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
      `.app-dot.<short>`, `.btn-app.<short>`.
    - Hero `.app-grid` (4×3): LilStats, LilDisplay, LilPad, LilBounce / LilDock, LilUsage, LilVibe, LilDim /
-     (muted), LilHide, LilMirror, LilPass. Replace the muted cell with the next app (one slot left).
+     LilSnap, LilHide, LilMirror, LilPass. The grid is full: the next app needs a fourth row.
      It has the wheel's Watch-style hover (script at the end of index.html): the tile under the pointer
      swells on a spring and the others glide aside; it reads the grid as 4 columns in DOM order, so keep
      cells (apps and muted) in grid order.

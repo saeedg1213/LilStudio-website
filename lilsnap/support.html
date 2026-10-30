@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilSnap — Support</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilSnap colours (same as its main page) */
+        :root { --primary: #3FD98A; --secondary: #FDD33F; }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilSnap</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilSnap</a></li>
+                <li class="sp-hide-sm"><a href="support.html" aria-current="page">Support</a></li>
+                <li><a href="privacy.html">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>LilSnap Support</h1>
+<p class="lede">Snap every window into place, from the keyboard or by dragging.</p>
+
+<div class="note">
+  Need a hand, found a bug, or want a layout? Email
+  <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>. We read every
+  message and usually reply the same day.
+</div>
+
+<h2>Getting started</h2>
+<p>
+  The first time you open LilSnap, a short guide connects it to Apple's Shortcuts app.
+  It takes two clicks:
+</p>
+<ol>
+  <li><strong>Add Shortcut&hellip;</strong> opens Shortcuts with the LilSnap shortcut. Click <em>Add Shortcut</em> and keep its name, <code>LilSnap</code>.</li>
+  <li><strong>Allow &amp; Test</strong>: when macOS asks whether LilSnap may use Shortcuts Events, click <em>OK</em>.</li>
+</ol>
+<p>
+  That's all. LilSnap then lives in your menu bar. Click the icon for a grid of layouts
+  with each key printed on its tile, or choose <em>Keyboard Shortcuts&hellip;</em> for the
+  cheat sheet.
+</p>
+
+<h2>The shortcuts</h2>
+<p>Every default starts with <kbd>&#8963;&#8997;</kbd> (Control-Option). You can change any of them, and give any layout a second shortcut, in Settings &rarr; Keyboard.</p>
+<ul>
+  <li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> halves. Press a half again for &#8532;, then &#8531;.</li>
+  <li>Two arrows together for a quarter: <kbd>&rarr;</kbd> + <kbd>&uarr;</kbd> is the top right.</li>
+  <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> thirds (also <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd>), <kbd>4</kbd> <kbd>5</kbd> left or right two-thirds (also <kbd>E</kbd> <kbd>T</kbd>).</li>
+  <li><kbd>&#8617;</kbd> maximize (also <kbd>0</kbd>), <kbd>C</kbd> center, <kbd>&#9003;</kbd> put the window back.</li>
+  <li><kbd>&#8984;</kbd><kbd>&rarr;</kbd> / <kbd>&#8984;</kbd><kbd>&larr;</kbd> next or previous display.</li>
+  <li><kbd>&#8984;2</kbd> <kbd>&#8984;3</kbd> <kbd>&#8984;4</kbd> tile the front 2, 3 or 4 windows.</li>
+</ul>
+
+<h2>Common questions</h2>
+
+<h3>Windows stopped moving.</h3>
+<p>
+  LilSnap opens its setup page on its own when this happens. Two things to check:
+  a shortcut named <code>LilSnap</code> is in the Shortcuts app (if you renamed or deleted
+  it, click <em>Add Shortcut&hellip;</em> again), and LilSnap is switched on under System
+  Settings &rarr; Privacy &amp; Security &rarr; Automation &rarr; LilSnap &rarr; Shortcuts Events.
+</p>
+
+<h3>The first snap is slow.</h3>
+<p>
+  After a long break, macOS needs a few seconds to start Shortcuts in the background.
+  After that a snap takes about a fifth of a second.
+</p>
+
+<h3>I see two previews when I drag a window.</h3>
+<p>
+  That's macOS's own tiling. Turn off <em>Drag windows to screen edges to tile</em> in
+  System Settings &rarr; Desktop &amp; Dock. Settings &rarr; General has a button that opens it.
+</p>
+
+<h3>A shortcut doesn't work.</h3>
+<p>
+  Another app has probably claimed it. Settings &rarr; Keyboard marks it with a warning;
+  record a different one there.
+</p>
+
+<h3>An app's window doesn't fill the whole area.</h3>
+<p>
+  Some apps have a minimum size or resize in steps (Terminal, for example). LilSnap keeps
+  those windows glued to the right edges, so they line up as closely as the app allows.
+</p>
+
+<h3>I want LilSnap to leave one app alone.</h3>
+<p>
+  Open the menu, choose <em>Extra</em> &rarr; <em>Ignore</em> with that app in front, or add it
+  in Settings &rarr; Apps.
+</p>
+
+<h3>I hid the menu bar icon. How do I get back to Settings?</h3>
+<p>Open LilSnap again from Finder, Spotlight or Launchpad and Settings appears.</p>
+
+<h2>Automation</h2>
+<p><strong>Shortcuts app:</strong> Move Front Window, Tile Front Windows, Restore Front Window, Apply Custom Layout.</p>
+<p><strong>URL scheme</strong> (from Terminal, launchers, Stream Deck&hellip;):</p>
+<ul>
+  <li><code>lilsnap://action/leftHalf</code> (any layout: <code>rightHalf</code>, <code>topLeft</code>, <code>firstThird</code>, <code>maximize</code>&hellip;)</li>
+  <li><code>lilsnap://tile/3</code> (2&ndash;4)</li>
+  <li><code>lilsnap://restore</code></li>
+  <li><code>lilsnap://custom/Coding</code> (a custom layout by name)</li>
+  <li><code>lilsnap://settings</code></li>
+</ul>
+
+<h3>How do I stop LilSnap from starting automatically?</h3>
+<p>
+  Turn off <em>Launch at login</em> in Settings &rarr; General. It's off until you turn
+  it on.
+</p>
+
+<h3>How do I uninstall it?</h3>
+<p>
+  Quit LilSnap from its menu, then drag the app from your Applications folder to
+  the Trash. You can also delete the <em>LilSnap</em> shortcut in the Shortcuts app.
+</p>
+
+<h2>System requirements</h2>
+<p>macOS 14 Sonoma or later. Apple silicon and Intel.</p>
+
+<footer>
+  LilSnap is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+    </main>
+
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>

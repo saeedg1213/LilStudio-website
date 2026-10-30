@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilSnap — Privacy Policy</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilSnap colours (same as its main page) */
+        :root { --primary: #3FD98A; --secondary: #FDD33F; }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilSnap</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilSnap</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html" aria-current="page">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>Privacy Policy</h1>
+<p class="updated">LilSnap for macOS — last updated 30 October 2026</p>
+
+<div class="note">
+  <strong>LilSnap collects nothing.</strong> No personal data, no usage data, no
+  analytics, no crash reports, no identifiers. The app has no server, no account
+  system, and no network access at all: it ships without the network entitlement,
+  so macOS won't let it connect to the internet.
+</div>
+
+<h2>What LilSnap stores on your Mac</h2>
+<p>
+  LilSnap saves your settings (gaps, drag and Snap Bar options, keyboard shortcuts,
+  your custom layouts, apps you asked it to ignore, and whether you finished the
+  welcome screens) locally on your Mac using the standard macOS preferences system.
+  It also counts how many layouts you've used, only to decide when to show Apple's
+  own "rate this app" prompt. Ignored apps are stored as app identifiers such as
+  <code>com.apple.Safari</code>. None of this leaves your computer. Deleting the app
+  removes it.
+</p>
+
+<h2>How LilSnap sees your windows</h2>
+<p>
+  To know where a window is, LilSnap asks macOS for the list of on-screen windows:
+  each window's number, position, size, layer and which app it belongs to. It never
+  reads window titles or contents, and it doesn't use Screen Recording. This list is
+  read when you snap a window, drag one, switch apps (to update the menu bar icon)
+  or open the menu, and it is never stored.
+</p>
+
+<h2>How LilSnap moves windows</h2>
+<p>
+  LilSnap doesn't use Accessibility. When you snap a window, it sends one request to
+  Apple's Shortcuts app (through Shortcuts Events) to run the <em>LilSnap</em> shortcut
+  you added during setup. The request contains only numbers: where the window is now
+  and where it should go. The shortcut uses Apple's own <em>Find Windows</em>,
+  <em>Move Window</em> and <em>Resize Window</em> actions and runs entirely on your Mac.
+  macOS asks your permission once before LilSnap can do this, and you can turn it off
+  in System Settings &rarr; Privacy &amp; Security &rarr; Automation.
+</p>
+
+<h2>Keyboard shortcuts and dragging</h2>
+<p>
+  LilSnap registers only its own keyboard shortcuts with macOS, so it is told when you
+  press one of them and nothing else. It never sees other keys or what you type, and it
+  doesn't use Input Monitoring. For drag-to-snap, it is told when the mouse button goes
+  down, moves and comes back up, so it can show the snap preview. The pointer position
+  is used in the moment and never stored. You can turn drag-to-snap off in Settings.
+</p>
+
+<h2>Apps you choose from the Applications folder</h2>
+<p>
+  When you add an app to the ignore list in Settings &rarr; Apps using the app picker,
+  LilSnap reads that app's identifier from the bundle you selected. It reads nothing
+  else and keeps no access to the file afterwards.
+</p>
+
+<h2>Automation</h2>
+<p>
+  LilSnap's Shortcuts actions and <code>lilsnap://</code> links only move windows or open
+  LilSnap's settings, on your Mac.
+</p>
+
+<h2>What LilSnap does not do</h2>
+<ul>
+  <li>It does not use Accessibility, Screen Recording or Input Monitoring.</li>
+  <li>It does not record, capture, or photograph your screen.</li>
+  <li>It does not read window titles, window contents, or anything you type.</li>
+  <li>It does not control any app other than Shortcuts Events, and only to run its own shortcut.</li>
+  <li>It does not connect to the internet.</li>
+  <li>It does not include third-party SDKs, trackers, or advertising.</li>
+  <li>It does not start at login unless you turn that on.</li>
+</ul>
+
+<h2>Children</h2>
+<p>
+  LilSnap is suitable for all ages and collects no data from anyone, including
+  children under 13.
+</p>
+
+<h2>Changes to this policy</h2>
+<p>
+  If this policy ever changes, the updated version will be posted on this page
+  with a new date. Material changes will also be described in the app's release
+  notes on the Mac App Store.
+</p>
+
+<h2>Contact</h2>
+<p>
+  Questions about privacy in LilSnap: <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>
+</p>
+
+<footer>
+  LilSnap is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+    </main>
+
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>

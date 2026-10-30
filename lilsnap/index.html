@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilSnap &ndash; Snap Every Window Into Place</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilSnap snaps Mac windows into halves, quarters, thirds and your own layouts with ⌃⌥ and the arrow keys, or by dragging to an edge. Tile 2, 3 or 4 windows at once. No Accessibility access, nothing collected.">
+    <meta property="og:title" content="LilSnap &ndash; Snap Every Window Into Place">
+    <meta property="og:description" content="Hold ⌃⌥, tap an arrow, done. Halves, quarters, thirds, tiling and custom layouts for your Mac.">
+    <meta property="og:url" content="https://lilstudio.app/lilsnap/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lilsnap/screenshots/app-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode */
+            --primary: #3FD98A;
+            --secondary: #FDD33F;
+            --accent: #FF6B35;
+            --yellow: #FFE135;
+            --pink: #FF61D8;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #888888;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --shadow-color: rgba(63, 217, 138, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #F7F1DE;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            z-index: -1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Brutalist Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        
+        .btn-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+
+        /* Theme Toggle - Brutalist Style */
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--border);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-device {
+            flex: 0 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-device:hover {
+            transform: rotate(-3deg) scale(1.06);
+        }
+
+        .hero-device img {
+            width: 180px;
+            height: auto;
+        }
+
+        .hero-device.iphone img {
+            width: 200px;
+        }
+
+        .hero-device.mac img {
+            width: 600px;
+        }
+
+        .hero-device.mac:hover {
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .hero-center {
+            flex: 1;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 .highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+            height: 35%;
+            background: var(--primary);
+            z-index: -1;
+            transform: skewX(-3deg);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-buttons-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-req {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Privacy Notice - Brutalist */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: var(--border-width) solid var(--border);
+            max-width: 550px;
+        }
+
+        .privacy-notice svg {
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .privacy-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .privacy-notice a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-notice a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Screenshot Carousel */
+        .hero-image {
+            margin-top: 4rem;
+        }
+
+        .screenshot-carousel {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .screenshot-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll-carousel 35s linear infinite;
+            width: max-content;
+            align-items: center;
+        }
+
+        .screenshot-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-carousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .devices-mockup {
+            height: 320px;
+            width: auto;
+            border: var(--border-width) solid var(--border);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            box-shadow: 5px 5px 0 var(--border);
+        }
+
+        .devices-mockup:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        /* Stats Bar - Brutalist */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-item {
+            padding: 1rem;
+            text-align: center;
+            border-right: var(--border-width) solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item:hover {
+            background: var(--yellow);
+        }
+
+        .stat-item:hover h3,
+        .stat-item:hover p {
+            color: #000;
+        }
+
+        .stat-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stat-item {
+                border-bottom: var(--border-width) solid var(--border);
+            }
+            .stat-item:nth-child(2) {
+                border-right: none;
+            }
+            .stat-item:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: var(--yellow);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid - Brutalist Cards */
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border);
+        }
+
+        .feature-card:nth-child(1) { transform: rotate(-0.5deg); }
+        .feature-card:nth-child(2) { transform: rotate(0.5deg); }
+        .feature-card:nth-child(3) { transform: rotate(0.3deg); }
+        .feature-card:nth-child(4) { transform: rotate(-0.3deg); }
+
+        .feature-card:nth-child(1):hover { transform: rotate(-0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(2):hover { transform: rotate(0.5deg) translate(-4px, -4px); }
+        .feature-card:nth-child(3):hover { transform: rotate(0.3deg) translate(-4px, -4px); }
+        .feature-card:nth-child(4):hover { transform: rotate(-0.3deg) translate(-4px, -4px); }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #000;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Setup Section - Brutalist */
+        .setup {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .setup-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .setup-step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-step:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border: var(--border-width) solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .step-content code {
+            background: var(--primary);
+            padding: 0.2rem 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+
+        .permission-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+        }
+
+        .permission-item::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .setup-image {
+            margin-top: 1rem;
+            max-width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
+        }
+
+        .setup-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .setup-image-small {
+            width: 100%;
+            border: var(--border-width) solid var(--border);
+            box-shadow: 4px 4px 0 var(--border);
+            transition: transform 0.2s;
+        }
+
+        .setup-image-small:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        /* Pricing - Brutalist */
+        .pricing {
+            text-align: center;
+        }
+
+        .pricing-card {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 3rem;
+            box-shadow: 10px 10px 0 var(--border);
+            transform: rotate(-1deg);
+        }
+
+        .pricing-card::before {
+            content: 'ONE PRICE';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border: var(--border-width) solid var(--border);
+            transform: rotate(3deg);
+            letter-spacing: 0.05em;
+        }
+
+        .price-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .price-tag sup {
+            font-size: 2rem;
+            vertical-align: top;
+        }
+
+        .price-tag .currency {
+            font-size: 2rem;
+        }
+
+        .price-period {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            background: var(--primary);
+            padding: 4px;
+            border: 2px solid var(--border);
+        }
+
+        .pricing-features li svg polyline {
+            stroke: #000;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .price-note {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trial-note {
+            margin-top: 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Contact - Brutalist */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border);
+            padding: 2.5rem;
+            box-shadow: 8px 8px 0 var(--border);
+            transform: rotate(0.5deg);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 4px 4px 0 var(--primary);
+            transform: translate(-2px, -2px);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-group select option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer - Brutalist */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--primary);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        footer a:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* Hero Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-image { animation: fadeInUp 0.7s ease 0.3s forwards; opacity: 0; }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 900px) {
+            .hero-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .hero-device { order: 2; }
+            .hero-device.iphone { order: 1; }
+            .hero-device.mac { order: 3; }
+            .hero-center { order: 2; max-width: 100%; }
+
+            .hero-device img,
+            .hero-device.iphone img,
+            .hero-device.mac img {
+                width: 320px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+                min-height: auto;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 160px !important;
+            }
+
+            .hero-device.mac img {
+                width: 280px !important;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-buttons-row {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .download-btn-wrapper {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .devices-mockup {
+                height: 150px;
+            }
+
+            .screenshot-track {
+                gap: 1.5rem;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .setup-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .setup-step img {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .setup-images-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            .price-tag {
+                font-size: 3.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+                transform: rotate(0);
+            }
+
+            footer {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-device img,
+            .hero-device.iphone img {
+                width: 140px !important;
+            }
+
+            .hero-device.mac img {
+                width: 240px !important;
+            }
+
+            .devices-mockup {
+                height: 160px;
+            }
+
+            .price-tag {
+                font-size: 2.75rem;
+            }
+        }
+        /* --- FAQ --- */
+        .faq {
+            background: var(--bg-elevated);
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .faq-item {
+            background: var(--bg);
+            border: var(--border-width) solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border);
+        }
+
+        .faq-item h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item code {
+            background: var(--primary);
+            padding: 0.15rem 0.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            color: #000;
+            border: 2px solid var(--border);
+        }
+        /* ---- LilSnap additions ---- */
+
+        /* Logo bar split into two snapped halves: the whole idea in 8px */
+        .logo::before {
+            background: linear-gradient(90deg, var(--secondary) 0 48%, transparent 48% 52%, var(--primary) 52% 100%);
+        }
+
+        .hero-appicon { width: 140px; height: 140px; display: block; margin: 0 auto; }
+
+        kbd, .key {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 1.9em; padding: 0.1em 0.45em;
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85em; line-height: 1.5;
+            background: var(--bg); color: var(--text);
+            border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border);
+        }
+
+        /* ---- Hero demo: a tiny Mac desktop that snaps for real ---- */
+        .hero-demo { flex: 0 0 auto; width: 480px; max-width: 100%; min-width: 0; }
+
+        .snapdesk {
+            position: relative;
+            aspect-ratio: 16 / 10.5;
+            border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            overflow: hidden;
+            transform: rotate(-1deg);
+            background: #1F3B2E;
+            user-select: none; -webkit-user-select: none;
+            outline: none;
+        }
+        .snapdesk:focus-visible { box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--primary); }
+
+        .sd-wall {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(110% 90% at 0% 100%, #FDD33F 0%, transparent 55%),
+                radial-gradient(90% 80% at 100% 10%, #7CC4F0 0%, transparent 60%),
+                linear-gradient(160deg, #1F5C45, #3FD98A 65%, #FDD33F);
+        }
+
+        .sd-menubar {
+            position: absolute; left: 0; right: 0; top: 0; height: 7%; z-index: 20;
+            display: flex; align-items: center; gap: 9px; padding: 0 8px;
+            background: rgba(255, 255, 255, .6);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            font: 600 9px/1 -apple-system, 'Space Grotesk', sans-serif; color: #17150F;
+        }
+        .sd-menubar .mb-app { font-weight: 800; min-width: 34px; }
+        .sd-menubar .mb-item { font-weight: 500; opacity: .8; }
+        .sd-menubar .mb-spacer { flex: 1; }
+        .sd-menubar svg { width: 20px; height: 14px; display: block; }
+        .sd-menubar svg rect { transition: x .3s ease, y .3s ease, width .3s ease, height .3s ease, opacity .2s; }
+
+        /* Work area below the menu bar: windows are placed in % of it. */
+        .sd-area { position: absolute; left: 0; right: 0; bottom: 0; top: 7%; }
+
+        .sd-win, .sd-preview {
+            position: absolute;
+            left: calc(var(--x) * 1%); top: calc(var(--y) * 1%);
+            width: calc(var(--w) * 1%); height: calc(var(--h) * 1%);
+        }
+        .sd-win {
+            border-radius: 7px;
+            background: #FFFBEF;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .3), 0 0 0 1px rgba(0, 0, 0, .2);
+            overflow: hidden;
+            cursor: pointer;
+            /* A soft spring: fast start, small overshoot, like the app's own animation. */
+            transition: left .42s cubic-bezier(.2, .9, .25, 1.06), top .42s cubic-bezier(.2, .9, .25, 1.06),
+                        width .42s cubic-bezier(.2, .9, .25, 1.06), height .42s cubic-bezier(.2, .9, .25, 1.06),
+                        box-shadow .2s;
+        }
+        .sd-win.focused { z-index: 10 !important; box-shadow: 0 14px 30px rgba(0, 0, 0, .38), 0 0 0 2px #17150F; }
+
+        .sd-preview {
+            z-index: 9; border-radius: 9px; pointer-events: none;
+            background: color-mix(in srgb, var(--primary) 30%, transparent);
+            border: 2px solid var(--primary);
+            opacity: 0; transition: opacity .12s ease;
+        }
+        .sd-preview.show { opacity: 1; }
+
+        .sd-bar {
+            position: absolute; left: 0; right: 0; top: 0; height: 15px;
+            display: flex; align-items: center; gap: 4px; padding: 0 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, .1);
+        }
+        .sd-bar i { width: 6px; height: 6px; border-radius: 50%; background: #FF5F57; }
+        .sd-bar i:nth-child(2) { background: #FEBC2E; }
+        .sd-bar i:nth-child(3) { background: #28C840; }
+        .sd-bar b { margin-left: 6px; font: 700 8px/1 -apple-system, sans-serif; color: #17150F; opacity: .75; white-space: nowrap; }
+        .sd-win.safari .sd-bar { background: #CFEBFF; }
+        .sd-win.notes .sd-bar { background: #FDE79A; }
+        .sd-win.mail .sd-bar { background: #BFF2D6; }
+        .sd-body { position: absolute; inset: 15px 0 0; }
+        .sk { position: absolute; border-radius: 3px; background: #17150F; opacity: .13; }
+
+        .sd-caption {
+            margin-top: 1.1rem; min-height: 2.2rem;
+            display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap;
+            font-family: 'Space Mono', monospace; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em;
+            color: var(--text-muted);
+        }
+        .sd-caption b { color: var(--text); }
+
+        .keypad {
+            margin-top: .6rem;
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: 4px 4px 0 var(--border);
+            padding: .8rem .9rem;
+        }
+        .keypad-head {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem;
+            font-family: 'Space Mono', monospace; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+            color: var(--text-muted);
+        }
+        .keypad-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .45rem; }
+        .kc {
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.05rem;
+            padding: .35rem 0; cursor: pointer;
+            background: var(--bg); color: var(--text);
+            border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border);
+            transition: transform .12s, box-shadow .12s, background .12s;
+        }
+        .kc:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--border); }
+        .kc:active, .kc.down { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--border); background: var(--primary); color: #000; }
+        .kc.wide { grid-column: span 2; }
+
+        /* ---- Shortcuts section ---- */
+        .shortcuts { background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
+        .sc-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
+        .sc-card {
+            background: var(--bg); border: var(--border-width) solid var(--border);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 1.4rem;
+        }
+        .sc-card:nth-child(odd) { transform: rotate(-0.4deg); }
+        .sc-card:nth-child(even) { transform: rotate(0.4deg); }
+        .sc-card h3 { font-size: 1.1rem; margin-bottom: .9rem; }
+        .sc-screen {
+            aspect-ratio: 16 / 10; border: var(--border-width) solid var(--border); border-radius: 8px;
+            position: relative; margin-bottom: 1rem; background: var(--bg-elevated);
+        }
+        .sc-screen span {
+            position: absolute; border: 2px solid var(--border); border-radius: 4px;
+            left: calc(var(--x) * 1% + 4px); top: calc(var(--y) * 1% + 4px);
+            width: calc(var(--w) * 1% - 8px); height: calc(var(--h) * 1% - 8px);
+        }
+        .sc-screen span:nth-child(1) { background: var(--secondary); }
+        .sc-screen span:nth-child(2) { background: var(--primary); }
+        .sc-screen span:nth-child(3) { background: #7CC4F0; }
+        .sc-screen span:nth-child(4) { background: #FF9466; }
+        .sc-list { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+        .sc-list li { display: flex; justify-content: space-between; align-items: center; gap: .6rem; font-size: .9rem; color: var(--text-muted); }
+        .sc-list li span:last-child { display: inline-flex; gap: .25rem; flex-wrap: wrap; justify-content: flex-end; }
+        .sc-mac {
+            max-width: 1100px; margin: 2rem auto 0;
+            display: flex; flex-wrap: wrap; gap: .8rem 2rem; justify-content: center; align-items: center;
+            font-size: .92rem; color: var(--text-muted);
+        }
+        .sc-mac strong { font-family: 'Space Mono', monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text); }
+        .sc-mac span { display: inline-flex; align-items: center; gap: .45rem; }
+
+        /* ---- Screenshots ---- */
+        .shots { padding: 6rem 2rem; position: relative; z-index: 1; }
+        .shot-row {
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2rem; align-items: start;
+        }
+        .shot-card {
+            border: var(--border-width) solid var(--border);
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 1.5rem; text-align: center;
+        }
+        .shot-card:nth-child(1) { transform: rotate(-0.6deg); }
+        .shot-card:nth-child(3) { transform: rotate(0.6deg); }
+        .shot-card img { max-width: 100%; height: auto; display: block; margin: 0 auto 1rem; }
+        .shot-card h3 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+        .shot-card p { color: var(--text-muted); font-size: 0.95rem; }
+        .menu-shot { border-radius: 12px; border: 1px solid rgba(0, 0, 0, .15); max-width: 260px !important; }
+        .menu-dark { display: none !important; }
+        [data-theme="dark"] .menu-dark, :root:not([data-theme="light"]) .menu-dark { display: block !important; }
+        [data-theme="dark"] .menu-light, :root:not([data-theme="light"]) .menu-light { display: none !important; }
+
+        /* ---- Setup ---- */
+        .setup-wrap { max-width: 1050px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+        .setup-shot img { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); transform: rotate(0.8deg); }
+        .setup-why {
+            margin-top: 1.25rem; padding: 1rem 1.2rem;
+            border: 2px dashed var(--border); font-size: .9rem; color: var(--text-muted);
+        }
+        .setup-why strong { color: var(--text); }
+
+        @media (max-width: 1000px) {
+            .shot-row { grid-template-columns: 1fr; max-width: 520px; }
+            .sc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .setup-wrap { grid-template-columns: 1fr; max-width: 560px; }
+        }
+        @media (max-width: 900px) {
+            .hero-demo { order: 3; width: min(480px, 100%); }
+        }
+        @media (max-width: 600px) {
+            .snapdesk { transform: none; }
+            .sc-grid { grid-template-columns: 1fr; }
+            .faq-item { padding: 1.25rem; }
+            .keypad-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .keypad-head span:last-child { display: none; }
+            .hero-center { min-width: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sd-win, .sd-preview, .sd-menubar svg rect { transition: none !important; }
+        }
+
+        .feature-card code, .faq-item code { background: var(--primary); padding: 0.1rem 0.35rem; font-family: "Space Mono", monospace; font-size: 0.8rem; color: #000; border: 2px solid var(--border); }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">LilSnap</div>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#shortcuts">Shortcuts</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#setup" class="btn btn-primary" data-appstore>Get It</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <div class="hero-device">
+                    <img src="screenshots/app-icon.png" alt="LilSnap app icon" class="hero-appicon" width="140" height="140">
+                </div>
+
+                <div class="hero-center">
+                    <div class="badge">
+                        <div class="badge-dot"></div>
+                        Window Manager for macOS
+                    </div>
+                    <h1>Snap every window <span class="highlight">into place.</span></h1>
+                    <p class="hero-subtitle">Hold <kbd>&#8963;&#8997;</kbd> and tap an arrow. LilSnap puts the window exactly where you want it: halves, quarters, thirds or your own layouts. Or just drag it to an edge.</p>
+                    <div class="hero-buttons">
+                        <div class="hero-buttons-row">
+                            <div class="download-btn-wrapper">
+                                <a href="#setup" class="btn btn-primary" data-appstore>
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                                    <span data-appstore-label>Coming Soon to the Mac App Store</span>
+                                </a>
+                                <span class="system-req">macOS 14 Sonoma or later &middot; Apple silicon &amp; Intel</span>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <p>No Accessibility access, no network, nothing collected. LilSnap only moves the windows you ask it to. <a href="privacy.html">Privacy Policy</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-demo">
+                    <div class="snapdesk" id="snapdesk" tabindex="0" role="group" aria-label="Interactive demo: click a window, then press a key below or use the arrow keys">
+                        <div class="sd-wall"></div>
+                        <div class="sd-menubar" aria-hidden="true">
+                            <span>&#63743;</span>
+                            <span class="mb-app" id="sdApp">Notes</span>
+                            <span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">Window</span>
+                            <span class="mb-spacer"></span>
+                            <svg viewBox="0 0 20 14" id="sdIcon"><rect x="0.75" y="0.75" width="18.5" height="12.5" rx="3" fill="none" stroke="#17150F" stroke-width="1.4"/><rect id="sdIconFill" x="3" y="3" width="7" height="8" rx="1" fill="#17150F"/></svg>
+                            <span>9:41</span>
+                        </div>
+                        <div class="sd-area" id="sdArea">
+                            <div class="sd-preview" id="sdPreview"></div>
+                            <div class="sd-win notes focused" data-app="Notes" style="--x:6;--y:9;--w:44;--h:56;z-index:3">
+                                <div class="sd-bar"><i></i><i></i><i></i><b>Notes</b></div>
+                                <div class="sd-body">
+                                    <span class="sk" style="left:10%;top:10%;width:50%;height:8%;opacity:.5"></span>
+                                    <span class="sk" style="left:10%;top:28%;width:78%;height:6%"></span>
+                                    <span class="sk" style="left:10%;top:42%;width:70%;height:6%"></span>
+                                    <span class="sk" style="left:10%;top:56%;width:74%;height:6%"></span>
+                                    <span class="sk" style="left:10%;top:70%;width:48%;height:6%"></span>
+                                </div>
+                            </div>
+                            <div class="sd-win safari" data-app="Safari" style="--x:38;--y:18;--w:52;--h:60;z-index:2">
+                                <div class="sd-bar"><i></i><i></i><i></i><b>Safari</b></div>
+                                <div class="sd-body">
+                                    <span class="sk" style="left:6%;right:6%;top:8%;height:36%;border-radius:5px;opacity:1;background:linear-gradient(135deg,#7CC4F0,#3FD98A)"></span>
+                                    <span class="sk" style="left:6%;top:52%;width:60%;height:6%"></span>
+                                    <span class="sk" style="left:6%;top:64%;width:80%;height:4%"></span>
+                                    <span class="sk" style="left:6%;top:73%;width:70%;height:4%"></span>
+                                </div>
+                            </div>
+                            <div class="sd-win mail" data-app="Mail" style="--x:20;--y:44;--w:42;--h:48;z-index:1">
+                                <div class="sd-bar"><i></i><i></i><i></i><b>Mail</b></div>
+                                <div class="sd-body">
+                                    <span class="sk" style="left:5%;right:5%;top:8%;height:16%"></span>
+                                    <span class="sk" style="left:5%;right:5%;top:30%;height:16%"></span>
+                                    <span class="sk" style="left:5%;right:5%;top:52%;height:16%"></span>
+                                    <span class="sk" style="left:5%;right:5%;top:74%;height:16%"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="sd-caption" id="sdCaption" aria-live="polite">Click a window, then press a key</p>
+
+                    <div class="keypad" role="group" aria-label="Shortcut keys">
+                        <div class="keypad-head"><span>Hold <kbd>&#8963;&#8997;</kbd> and press</span><span>or use your arrow keys</span></div>
+                        <div class="keypad-grid">
+                            <button type="button" class="kc" data-act="left" aria-label="Left half">&larr;</button>
+                            <button type="button" class="kc" data-act="right" aria-label="Right half">&rarr;</button>
+                            <button type="button" class="kc" data-act="top" aria-label="Top half">&uarr;</button>
+                            <button type="button" class="kc" data-act="bottom" aria-label="Bottom half">&darr;</button>
+                            <button type="button" class="kc wide" data-act="max" aria-label="Maximize">&#8617;</button>
+                            <button type="button" class="kc" data-act="tl" aria-label="Top left quarter">&larr;&uarr;</button>
+                            <button type="button" class="kc" data-act="tr" aria-label="Top right quarter">&rarr;&uarr;</button>
+                            <button type="button" class="kc" data-act="bl" aria-label="Bottom left quarter">&larr;&darr;</button>
+                            <button type="button" class="kc" data-act="br" aria-label="Bottom right quarter">&rarr;&darr;</button>
+                            <button type="button" class="kc wide" data-act="tile3" aria-label="Tile three windows">&#8984;3</button>
+                            <button type="button" class="kc" data-act="t1" aria-label="Left third">1</button>
+                            <button type="button" class="kc" data-act="t2" aria-label="Middle third">2</button>
+                            <button type="button" class="kc" data-act="t3" aria-label="Right third">3</button>
+                            <button type="button" class="kc" data-act="center" aria-label="Center">C</button>
+                            <button type="button" class="kc wide" data-act="restore" aria-label="Restore">&#9003;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>43</h3>
+                <p>Layouts &amp; actions</p>
+            </div>
+            <div class="stat-item">
+                <h3>&#8963;&#8997;</h3>
+                <p>One shortcut family</p>
+            </div>
+            <div class="stat-item">
+                <h3>0%</h3>
+                <p>CPU while idle</p>
+            </div>
+            <div class="stat-item">
+                <h3>2</h3>
+                <p>Clicks to set up</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>Everything you reach for every day, and nothing you have to think about.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 4v16"/><rect x="2" y="4" width="10" height="16" rx="2" fill="currentColor"/></svg></div>
+                <div>
+                    <h3>Snap From the Keyboard</h3>
+                    <p>Halves, quarters, thirds, two-thirds, fourths, sixths, center and maximize. Press a half again and it steps to &#8532;, then &#8531;.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/><path d="M12 19V5M6 11l6-6 6 6" opacity=".55"/></svg></div>
+                <div>
+                    <h3>Two Arrows, One Quarter</h3>
+                    <p>Hold <kbd>&#8963;&#8997;</kbd> and press <kbd>&rarr;</kbd> and <kbd>&uarr;</kbd> together for the top-right quarter. No letters to memorise.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18" stroke-dasharray="2 2"/><path d="M14 10l-4 2 4 2"/></svg></div>
+                <div>
+                    <h3>Drag to Snap</h3>
+                    <p>Drag a window to an edge or corner and a preview appears right behind it. Drop it at the top center for the Snap Bar with six ready layouts.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="4" width="10" height="16" rx="1"/><rect x="14" y="4" width="8" height="7" rx="1"/><rect x="14" y="13" width="8" height="7" rx="1"/></svg></div>
+                <div>
+                    <h3>Tile 2, 3 or 4 Windows</h3>
+                    <p>One shortcut arranges the windows in front. Three windows get one big and two stacked, so no corner of your screen goes to waste.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18" opacity=".4"/><rect x="9" y="3" width="12" height="12" fill="currentColor"/></svg></div>
+                <div>
+                    <h3>Your Own Layouts</h3>
+                    <p>Draw a layout on a 12&times;12 grid, give it a shortcut, and it shows up in the menu next to the built-in ones.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="4" width="8.5" height="16" rx="1"/><rect x="13.5" y="4" width="8.5" height="16" rx="1"/></svg></div>
+                <div>
+                    <h3>Gaps Your Way</h3>
+                    <p>Add space between windows and around the edges. Thirds stay exactly equal, gaps or not.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="1" y="5" width="13" height="10" rx="1"/><rect x="16" y="3" width="7" height="18" rx="1"/><path d="M8 19h-3"/></svg></div>
+                <div>
+                    <h3>Every Display</h3>
+                    <p>Send a window to the next display in one press. Portrait monitors stack layouts top to bottom. Restore puts any window back where it was.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="4"/><rect x="15" y="4" width="5" height="2" fill="currentColor"/><rect x="5" y="10" width="14" height="10" rx="1" stroke-dasharray="3 2"/></svg></div>
+                <div>
+                    <h3>A Menu Bar Icon That Knows</h3>
+                    <p>The icon draws the front window's layout. Open it for a tile grid with every shortcut printed right on its tile.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div>
+                <div>
+                    <h3>Automation</h3>
+                    <p>Actions for the Shortcuts app, plus a <code>lilsnap://</code> URL scheme for Raycast, Alfred or a Stream Deck.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div>
+                    <h3>Light and Private</h3>
+                    <p>About 16 MB of memory and 0% CPU while idle. No network access, no account, no tracking. In English and French.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="shortcuts" id="shortcuts">
+        <div class="section-header fade-in">
+            <h2>Learn It in a Minute</h2>
+            <p>Every shortcut starts with <kbd>&#8963;&#8997;</kbd>. Change any of them in Settings.</p>
+        </div>
+        <div class="sc-grid">
+            <div class="sc-card fade-in stagger-1">
+                <h3>One window</h3>
+                <div class="sc-screen" aria-hidden="true"><span style="--x:0;--y:0;--w:50;--h:100"></span></div>
+                <ul class="sc-list">
+                    <li><span>Left / right half</span><span><kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
+                    <li><span>Top / bottom half</span><span><kbd>&uarr;</kbd><kbd>&darr;</kbd></span></li>
+                    <li><span>Maximize</span><span><kbd>&#8617;</kbd></span></li>
+                    <li><span>Center</span><span><kbd>C</kbd></span></li>
+                    <li><span>Undo a snap</span><span><kbd>&#9003;</kbd></span></li>
+                </ul>
+            </div>
+            <div class="sc-card fade-in stagger-2">
+                <h3>Two windows</h3>
+                <div class="sc-screen" aria-hidden="true"><span style="--x:0;--y:0;--w:50;--h:100"></span><span style="--x:50;--y:0;--w:50;--h:100"></span></div>
+                <ul class="sc-list">
+                    <li><span>One left, one right</span><span><kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
+                    <li><span>Tile the front two</span><span><kbd>&#8984;2</kbd></span></li>
+                    <li><span>Bigger side: &#8532;</span><span><kbd>4</kbd><kbd>5</kbd></span></li>
+                </ul>
+            </div>
+            <div class="sc-card fade-in stagger-3">
+                <h3>Three windows</h3>
+                <div class="sc-screen" aria-hidden="true"><span style="--x:0;--y:0;--w:50;--h:100"></span><span style="--x:50;--y:0;--w:50;--h:50"></span><span style="--x:50;--y:50;--w:50;--h:50"></span></div>
+                <ul class="sc-list">
+                    <li><span>One big, two stacked</span><span><kbd>&#8984;3</kbd></span></li>
+                    <li><span>Thirds</span><span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd></span></li>
+                </ul>
+            </div>
+            <div class="sc-card fade-in stagger-4">
+                <h3>Four windows</h3>
+                <div class="sc-screen" aria-hidden="true"><span style="--x:0;--y:0;--w:50;--h:50"></span><span style="--x:50;--y:0;--w:50;--h:50"></span><span style="--x:0;--y:50;--w:50;--h:50"></span><span style="--x:50;--y:50;--w:50;--h:50"></span></div>
+                <ul class="sc-list">
+                    <li><span>Quarters</span><span><kbd>&larr;&uarr;</kbd><kbd>&rarr;&uarr;</kbd></span></li>
+                    <li><span></span><span><kbd>&larr;&darr;</kbd><kbd>&rarr;&darr;</kbd></span></li>
+                    <li><span>Tile the front four</span><span><kbd>&#8984;4</kbd></span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc-mac fade-in">
+            <strong>Built into your Mac</strong>
+            <span><kbd>&#8984;Tab</kbd> switch apps</span>
+            <span><kbd>&#8984;`</kbd> switch windows</span>
+            <span><kbd>&#8963;Tab</kbd> next tab</span>
+        </div>
+    </section>
+
+    <section class="shots" id="mac">
+        <div class="section-header fade-in">
+            <h2>On Your Mac</h2>
+            <p>A small menu, a cheat sheet when you need it, and every shortcut yours to change.</p>
+        </div>
+        <div class="shot-row">
+            <div class="shot-card fade-in stagger-1">
+                <picture>
+                    <source srcset="screenshots/menu-light.webp" type="image/webp">
+                    <img src="screenshots/menu-light.png" class="menu-shot menu-light" alt="The LilSnap menu: a grid of layout tiles, each with its key, and a row to tile 2, 3 or 4 windows" width="230" height="260" loading="lazy">
+                </picture>
+                <picture>
+                    <source srcset="screenshots/menu-dark.webp" type="image/webp">
+                    <img src="screenshots/menu-dark.png" class="menu-shot menu-dark" alt="The LilSnap menu in dark mode" width="230" height="260" loading="lazy">
+                </picture>
+                <h3>The menu</h3>
+                <p>Every layout as a tile, with its key printed on it. The current one is marked.</p>
+            </div>
+            <div class="shot-card fade-in stagger-2">
+                <picture>
+                    <source srcset="screenshots/cheatsheet.webp" type="image/webp">
+                    <img src="screenshots/cheatsheet.png" alt="LilSnap's Keyboard Shortcuts window, organised by one, two, three and four windows" width="460" height="674" loading="lazy">
+                </picture>
+                <h3>The cheat sheet</h3>
+                <p>One click from the menu: what to press for one, two, three or four windows.</p>
+            </div>
+            <div class="shot-card fade-in stagger-3">
+                <picture>
+                    <source srcset="screenshots/settings-keyboard.webp" type="image/webp">
+                    <img src="screenshots/settings-keyboard.png" alt="LilSnap Settings, Keyboard tab, with a shortcut and an optional second shortcut for each layout" width="560" height="688" loading="lazy">
+                </picture>
+                <h3>Your keys</h3>
+                <p>Change any shortcut, or give a layout a second one.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="setup" id="setup">
+        <div class="section-header fade-in">
+            <h2>Ready in Two Clicks</h2>
+            <p>The first time you open LilSnap, it walks you through it.</p>
+        </div>
+        <div class="setup-wrap">
+            <div class="setup-steps">
+                <div class="setup-step fade-in stagger-1">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Add the LilSnap shortcut</h3>
+                        <p>LilSnap opens Apple's Shortcuts app with its shortcut. Click <code>Add Shortcut</code>.</p>
+                    </div>
+                </div>
+                <div class="setup-step fade-in stagger-2">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Allow LilSnap to run it</h3>
+                        <p>macOS asks once whether LilSnap may use Shortcuts Events. Click <code>OK</code>. That's it.</p>
+                    </div>
+                </div>
+                <div class="setup-why fade-in stagger-3">
+                    <strong>Why Shortcuts?</strong> Mac App Store apps can't move other apps' windows on their own. Apple's Shortcuts app can, so LilSnap works out the exact spot and asks its shortcut to put the window there. No Accessibility access needed.
+                </div>
+            </div>
+            <div class="setup-shot fade-in stagger-2">
+                <picture>
+                    <source srcset="screenshots/onboarding-shortcuts.webp" type="image/webp">
+                    <img src="screenshots/onboarding-shortcuts.png" alt="LilSnap's setup screen: Connect to Shortcuts, with Add Shortcut and Allow &amp; Test steps" width="620" height="552" loading="lazy">
+                </picture>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Does LilSnap need Accessibility access?</h3>
+                <p>No. It reads only window positions and sizes, never titles or contents, and moves windows through its shortcut in Apple's Shortcuts app. The only question macOS asks is whether LilSnap may use Shortcuts Events.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>How fast is a snap?</h3>
+                <p>About a fifth of a second. The first snap after a long break can take a few seconds while macOS starts Shortcuts in the background. Press keys as fast as you like: LilSnap queues them up.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Coming from Rectangle or Magnet?</h3>
+                <p>Your hands already know it: <kbd>&#8963;&#8997;</kbd> plus the arrows, <kbd>&#8617;</kbd> to maximize, <kbd>C</kbd> to center. Thirds are on <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> and still on <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd>. Every shortcut can be changed.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>I see two previews when I drag a window.</h3>
+                <p>macOS has its own drag tiling. Turn off <code>Drag windows to screen edges to tile</code> in System Settings &rarr; Desktop &amp; Dock. LilSnap's Settings has a button that takes you there.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Windows stopped moving.</h3>
+                <p>LilSnap opens its setup page by itself when this happens. Check that a shortcut named <code>LilSnap</code> is in the Shortcuts app, and that LilSnap is on under System Settings &rarr; Privacy &amp; Security &rarr; Automation.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>I hid the menu bar icon. How do I get back?</h3>
+                <p>Open LilSnap again from Finder, Spotlight or Launchpad and Settings appears.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Is it heavy on battery?</h3>
+                <p>No. In our tests it used about 16 MB of memory, 0% CPU and no wakeups while idle. It does nothing until you press a key or drag a window.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>Found a bug, or want a layout?</h2>
+            <p>Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lildim/">LilDim</a> &middot; <a href="/lilstats/">LilStats</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+        // Set once LilSnap is live: https://apps.apple.com/app/id<AppleID>
+        const APP_STORE_URL = '';
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        if (APP_STORE_URL) {
+            document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+            document.querySelectorAll('[data-appstore-label]').forEach(s => { s.textContent = 'Get It on the Mac App Store'; });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.15 });
+        document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
+
+        // ---- Hero demo: the same rules as the app, in CSS. ----
+        // Layouts are fractions of the work area (x, y from the top, w, h), with a small gap.
+        // A half pressed again steps to 2/3 then 1/3; two arrows held together make a quarter.
+        (function () {
+            const desk = document.getElementById('snapdesk');
+            if (!desk) return;
+            const wins = Array.from(desk.querySelectorAll('.sd-win'));
+            const preview = document.getElementById('sdPreview');
+            const caption = document.getElementById('sdCaption');
+            const appLabel = document.getElementById('sdApp');
+            const iconFill = document.getElementById('sdIconFill');
+            const keys = Array.from(document.querySelectorAll('.kc'));
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const GAP = 1.4;
+
+            const LAYOUTS = {
+                left:   { f: [[0, 0, .5, 1], [0, 0, 2 / 3, 1], [0, 0, 1 / 3, 1]], name: 'Left Half', key: '←' },
+                right:  { f: [[.5, 0, .5, 1], [1 / 3, 0, 2 / 3, 1], [2 / 3, 0, 1 / 3, 1]], name: 'Right Half', key: '→' },
+                top:    { f: [[0, 0, 1, .5], [0, 0, 1, 2 / 3], [0, 0, 1, 1 / 3]], name: 'Top Half', key: '↑' },
+                bottom: { f: [[0, .5, 1, .5], [0, 1 / 3, 1, 2 / 3], [0, 2 / 3, 1, 1 / 3]], name: 'Bottom Half', key: '↓' },
+                tl: { f: [[0, 0, .5, .5]], name: 'Top Left', key: '← + ↑' },
+                tr: { f: [[.5, 0, .5, .5]], name: 'Top Right', key: '→ + ↑' },
+                bl: { f: [[0, .5, .5, .5]], name: 'Bottom Left', key: '← + ↓' },
+                br: { f: [[.5, .5, .5, .5]], name: 'Bottom Right', key: '→ + ↓' },
+                t1: { f: [[0, 0, 1 / 3, 1]], name: 'Left Third', key: '1' },
+                t2: { f: [[1 / 3, 0, 1 / 3, 1]], name: 'Middle Third', key: '2' },
+                t3: { f: [[2 / 3, 0, 1 / 3, 1]], name: 'Right Third', key: '3' },
+                max: { f: [[0, 0, 1, 1]], name: 'Maximize', key: '↩' },
+                center: { f: [[.2, .14, .6, .72]], name: 'Center', key: 'C' },
+            };
+            const CHORDS = { 'left+top': 'tl', 'right+top': 'tr', 'left+bottom': 'bl', 'right+bottom': 'br' };
+
+            let front = wins[0];
+            let stack = wins.slice();                 // front to back
+            const memory = new Map();                 // window → { act, step, before }
+            wins.forEach(w => memory.set(w, { act: null, step: 0, before: rectOf(w) }));
+            let auto = !reduced, timer = null, visible = true, previewTimer = null;
+
+            function rectOf(w) {
+                const s = w.style;
+                return ['--x', '--y', '--w', '--h'].map(k => parseFloat(s.getPropertyValue(k)));
+            }
+            function place(el, r) {
+                ['--x', '--y', '--w', '--h'].forEach((k, i) => el.style.setProperty(k, r[i].toFixed(2)));
+            }
+            function toRect(f) {
+                const g = GAP;
+                const x = f[0] * (100 - g) + g, y = f[1] * (100 - g) + g;
+                return [x, y, f[2] * (100 - g) - g, f[3] * (100 - g) - g];
+            }
+            function setIcon(f) {
+                if (!f) { iconFill.setAttribute('opacity', '0'); return; }
+                iconFill.setAttribute('opacity', '1');
+                iconFill.setAttribute('x', (2.6 + f[0] * 14.8).toFixed(2));
+                iconFill.setAttribute('y', (2.6 + f[1] * 8.8).toFixed(2));
+                iconFill.setAttribute('width', Math.max(f[2] * 14.8, 1.5).toFixed(2));
+                iconFill.setAttribute('height', Math.max(f[3] * 8.8, 1.5).toFixed(2));
+            }
+            function say(key, name) {
+                caption.innerHTML = key ? '<kbd>⌃⌥</kbd> <kbd>' + key + '</kbd> <b>' + name + '</b>' : name;
+            }
+
+            function focus(w) {
+                front = w;
+                stack = [w].concat(stack.filter(o => o !== w));
+                stack.forEach((o, i) => { o.classList.toggle('focused', i === 0); o.style.zIndex = String(9 - i); });
+                appLabel.textContent = w.dataset.app;
+                const m = memory.get(w);
+                setIcon(m.act ? LAYOUTS[m.act].f[m.step] : null);
+            }
+
+            function snap(w, f, act, step) {
+                const m = memory.get(w);
+                if (!m.act) m.before = rectOf(w);
+                m.act = act; m.step = step;
+                const r = toRect(f);
+                place(preview, r);
+                preview.classList.add('show');
+                clearTimeout(previewTimer);
+                previewTimer = setTimeout(() => preview.classList.remove('show'), reduced ? 0 : 260);
+                place(w, r);
+                if (w === front) setIcon(f);
+            }
+
+            function perform(act) {
+                if (act === 'tile3') {
+                    const [a, b, c] = stack;
+                    snap(a, [0, 0, .5, 1], 'left', 0);
+                    snap(b, [.5, 0, .5, .5], 'tr', 0);
+                    snap(c, [.5, .5, .5, .5], 'br', 0);
+                    say('⌘3', 'One big, two stacked');
+                    return;
+                }
+                if (act === 'restore') {
+                    const m = memory.get(front);
+                    if (m.act) { place(front, m.before); m.act = null; setIcon(null); }
+                    say('⌫', 'Back to how it was');
+                    return;
+                }
+                const L = LAYOUTS[act];
+                const m = memory.get(front);
+                const step = m.act === act && L.f.length > 1 ? (m.step + 1) % L.f.length : 0;
+                snap(front, L.f[step], act, step);
+                const names = ['', ' · ⅔', ' · ⅓'];
+                say(L.key, L.name + (L.f.length > 1 ? names[step] : ''));
+            }
+
+            function flash(act) {
+                const k = keys.find(b => b.dataset.act === act);
+                if (!k) return;
+                k.classList.add('down');
+                setTimeout(() => k.classList.remove('down'), 160);
+            }
+
+            function stopAuto() { auto = false; clearTimeout(timer); }
+            const SCRIPT = [
+                () => { focus(wins[0]); perform('left'); flash('left'); },
+                () => { focus(wins[1]); perform('tr'); flash('tr'); },
+                () => { focus(wins[2]); perform('br'); flash('br'); },
+                () => { perform('tile3'); flash('tile3'); },
+                () => { focus(wins[0]); perform('left'); flash('left'); },
+                () => { perform('left'); flash('left'); },
+                () => { focus(wins[1]); perform('max'); flash('max'); },
+                () => { perform('restore'); flash('restore'); },
+            ];
+            let scriptIndex = 0;
+            function startAuto() {
+                if (!auto) return;
+                timer = setTimeout(function tick() {
+                    if (!auto) return;
+                    if (visible && !document.hidden) { SCRIPT[scriptIndex](); scriptIndex = (scriptIndex + 1) % SCRIPT.length; }
+                    timer = setTimeout(tick, 1700);
+                }, 1200);
+            }
+
+            wins.forEach(w => w.addEventListener('pointerdown', () => { stopAuto(); focus(w); say('', w.dataset.app + ' selected. Press a key.'); }));
+            keys.forEach(k => k.addEventListener('click', () => { stopAuto(); perform(k.dataset.act); }));
+
+            // Arrow keys, 1-3, Enter, C and Backspace while the demo has focus. Two arrows held = quarter.
+            const held = new Set();
+            const ARROWS = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'top', ArrowDown: 'bottom' };
+            const OTHER = { '1': 't1', '2': 't2', '3': 't3', Enter: 'max', c: 'center', C: 'center', Backspace: 'restore' };
+            desk.addEventListener('keydown', e => {
+                if (e.metaKey || e.repeat) return;
+                const dir = ARROWS[e.key];
+                const act = dir || OTHER[e.key];
+                if (!act) return;
+                e.preventDefault();
+                stopAuto();
+                if (dir) {
+                    const other = Array.from(held).find(h => CHORDS[h + '+' + dir] || CHORDS[dir + '+' + h]);
+                    held.add(dir);
+                    const chord = other && (CHORDS[other + '+' + dir] || CHORDS[dir + '+' + other]);
+                    perform(chord || dir); flash(chord || dir);
+                } else { perform(act); flash(act); }
+            });
+            desk.addEventListener('keyup', e => { const dir = ARROWS[e.key]; if (dir) held.delete(dir); });
+            desk.addEventListener('blur', () => held.clear());
+
+            new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(desk);
+
+            // Test hook: ?demo=<act>[,<act>…] runs actions in order (e.g. demo=tile3 or demo=left,left).
+            const q = new URLSearchParams(location.search).get('demo');
+            focus(wins[0]);
+            if (q) {
+                stopAuto();
+                q.split(',').forEach(a => {
+                    if (a.startsWith('win=')) { const w = wins.find(x => x.dataset.app === a.slice(4)); if (w) focus(w); }
+                    else perform(a);
+                });
+            } else {
+                startAuto();
+            }
+        })();
+    </script>
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>
