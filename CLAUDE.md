@@ -125,7 +125,9 @@ repo (`AppStore/Screenshots/`); the site gets copies scaled to 1600 px tall.
 Connect → App Information). Mark every buy button with `data-appstore` and set the URL once in
 `const APP_STORE_URL = '…'` at the top of the page script (see lildock / lilstats). Before an app
 is live, leave `APP_STORE_URL = ''` and point the buttons at `#pricing` or similar. Free direct
-downloads instead link a `.dmg` in the app folder with `download` (see lilusage).
+downloads instead link a `.dmg` in the app folder with `download` (see lilusage). To ship a new
+LilUsage DMG, follow the release steps in `~/dev/LilUsage/CLAUDE.md`. The DMG must contain the
+notarized Developer ID build, not an Xcode debug or Apple Development build.
 
 **Pricing section:** some pages keep one but hide it (`.pricing { display: none; }`). Don't state a
 price the user hasn't given.
