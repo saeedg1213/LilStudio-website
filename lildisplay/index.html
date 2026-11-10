@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LilDisplay – Turn Your iPhone or iPad Into a Touchscreen Display</title>
+    <title>LilDisplay – Use Your iPhone or iPad as a Second Monitor for Mac, with Touch</title>
 
     <!-- Favicon -->
     <link rel="icon" href="favicon/favicon.ico" sizes="any">
@@ -11,7 +11,7 @@
 
     <link rel="canonical" href="https://lilstudio.app/lildisplay/">
     <meta name="apple-itunes-app" content="app-id=6757023864">
-    <meta name="description" content="Transform any iPhone or iPad into an external monitor for your Mac — over USB or WiFi, with the touch input that macOS is missing. Try it free, then unlock for a one-time $2.99. No subscription.">
+    <meta name="description" content="Turn your iPhone or iPad into a second monitor for your Mac — with touch, trackpad gestures and a keyboard. USB or peer-to-peer WiFi. Try free, then a one-time $2.99. No subscription.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://lilstudio.app/lildisplay/">
     <meta property="og:title" content="LilDisplay &ndash; a second display for your Mac that you can touch">
@@ -362,6 +362,11 @@
             line-height: 1.1;
             letter-spacing: -0.03em;
             margin-bottom: 1.5rem;
+        }
+
+        /* The display-first headline is longer; keep it to ~3 lines beside the devices */
+        @media (min-width: 901px) {
+            .hero-center h1 { font-size: clamp(2.25rem, 3.4vw, 3.25rem); }
         }
 
         h1 .highlight {
@@ -1249,8 +1254,8 @@
                         <div class="badge-dot"></div>
                         Touch Input for Mac
                     </div>
-                    <h1>iPhone &amp; iPad, <span class="highlight">Touchscreen</span> Mac Display</h1>
-                    <p class="hero-subtitle">Transform any iPhone or iPad into an external monitor for your Mac — over USB or WiFi, with the touch input that macOS is missing.</p>
+                    <h1>A second display for your Mac. That you can <span class="highlight">touch</span>.</h1>
+                    <p class="hero-subtitle">LilDisplay turns your iPhone or iPad into a real extra monitor for your Mac — with touch, trackpad gestures and a keyboard. Over USB or WiFi, with no router and no account.</p>
                     <div class="hero-buttons">
                         <div class="hero-buttons-row">
                             <div class="download-btn-wrapper">
@@ -1258,7 +1263,7 @@
                                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                                     Download for iOS
                                 </a>
-                                <span class="system-req">iOS 15+ · 3 free sessions, then $2.99</span>
+                                <span class="system-req">iOS 15.6+ · 3 free sessions, then $2.99</span>
                             </div>
                             <div class="download-btn-wrapper">
                                 <a href="LilDisplay-macos.dmg" class="btn btn-secondary" download>
@@ -1308,12 +1313,12 @@
                 <p>Connection</p>
             </div>
             <div class="stat-item">
-                <h3>Touch</h3>
-                <p>For Mac</p>
+                <h3>10+</h3>
+                <p>Trackpad gestures</p>
             </div>
             <div class="stat-item">
-                <h3>$2.99</h3>
-                <p>One-Time</p>
+                <h3>Once</h3>
+                <p>No subscription</p>
             </div>
         </div>
     </section>
@@ -1325,44 +1330,16 @@
         </div>
         <div class="features-grid">
             <div class="feature-card fade-in stagger-1">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-                <div>
-                    <h3>Ultra-Low Latency</h3>
-                    <p>Under 10ms latency with USB connection. Feels instant and responsive.</p>
-                </div>
-            </div>
-            <div class="feature-card fade-in stagger-2">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v6m-3 6v6a2 2 0 002 2h2a2 2 0 002-2v-6M9 8h6M7 8a2 2 0 012-2h6a2 2 0 012 2v6H7V8z"/></svg></div>
-                <div>
-                    <h3>USB Connection</h3>
-                    <p>Plug in via USB for the best performance with ultra-low latency.</p>
-                </div>
-            </div>
-            <div class="feature-card fade-in stagger-3">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 8V6a2 2 0 00-4 0v2m0 0V4a2 2 0 00-4 0v4m0 0V3a2 2 0 00-4 0v9l-1.5-1.5a2 2 0 00-2.83 2.83L7 18.5a6 6 0 006 3.5h2a6 6 0 006-6v-6a2 2 0 00-4 0v2"/></svg></div>                <div>
-                    <h3>Touch for Mac</h3>
-                    <p>Finally, touch input on macOS. Tap, scroll, and interact directly with your Mac.</p>
-                </div>
-            </div>
-            <div class="feature-card fade-in stagger-4">
                 <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
                 <div>
                     <h3>True Display</h3>
                     <p>Works as a real monitor — extend your desktop and move windows freely.</p>
                 </div>
             </div>
-            <div class="feature-card fade-in stagger-1">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg></div>
-                <div>
-                    <h3>Wireless Mode</h3>
-                    <p>No cable? Connect over peer-to-peer WiFi using the pairing code shown in the Mac menu bar — no shared network required.</p>
-                </div>
-            </div>
             <div class="feature-card fade-in stagger-2">
-                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></div>
-                <div>
-                    <h3>Streaming Quality Presets</h3>
-                    <p>Pick your balance: Auto, Low (fastest), Medium, High, or Ultra (best image) — right from the menu bar.</p>
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 8V6a2 2 0 00-4 0v2m0 0V4a2 2 0 00-4 0v4m0 0V3a2 2 0 00-4 0v9l-1.5-1.5a2 2 0 00-2.83 2.83L7 18.5a6 6 0 006 3.5h2a6 6 0 006-6v-6a2 2 0 00-4 0v2"/></svg></div>                <div>
+                    <h3>Touch for Mac</h3>
+                    <p>Finally, touch input on macOS. Tap, scroll, and interact directly with your Mac.</p>
                 </div>
             </div>
             <div class="feature-card fade-in stagger-3">
@@ -1377,6 +1354,48 @@
                 <div>
                     <h3>Type on Your Mac</h3>
                     <p>Use your iPhone's keyboard to type on the Mac — with ⌘, ⌥, ⌃, ⇧, Esc, Tab and arrow keys for shortcuts like ⌘C and ⌘V.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M1 19h22"/><path d="M9 9.5h6"/></svg></div>
+                <div>
+                    <h3>Lid Closed? Still Works</h3>
+                    <p>Turn on <strong>Keep Awake When Lid Is Closed</strong> in the Mac menu and your iPhone or iPad becomes the screen for a closed MacBook.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg></div>
+                <div>
+                    <h3>Wireless Mode</h3>
+                    <p>No cable? Connect over peer-to-peer WiFi using the pairing code shown in the Mac menu bar — no shared network required.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 3l4 4L8 20H4v-4L17 3z"/><path d="M14 6l4 4"/></svg></div>
+                <div>
+                    <h3>Apple Pencil</h3>
+                    <p>A precise pointer on your Mac: tap to click, press and drag to select or draw, and hover to move the cursor on supported iPads.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="18" rx="1.5"/><rect x="13" y="3" width="8" height="18" rx="1.5"/></svg></div>
+                <div>
+                    <h3>iPhone Duo</h3>
+                    <p>Fold or unfold and the Mac display follows: the outer and the inner screen each get the right size, without reconnecting.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div>
+                    <h3>Ultra-Low Latency</h3>
+                    <p>Plug in with a USB cable for under 10ms latency. Feels instant and responsive.</p>
+                </div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></div>
+                <div>
+                    <h3>Display Quality</h3>
+                    <p>Smooth, Balanced, Sharp or Full Resolution — one choice in the Mac menu bar sets image quality and display size.</p>
                 </div>
             </div>
         </div>
@@ -1445,7 +1464,7 @@
                     <p style="margin-top: 1rem;">Once launched, the Mac app lives in your <strong>menu bar</strong> at the top of the screen, showing the live pairing code and the app's CPU and memory usage:</p>
                     <img src="setup/menu-overview.png" alt="LilDisplay menu bar with pairing code and options" class="setup-image" style="max-width: 450px; display: block; margin: 1rem auto;">
                     <div class="permission-list" style="margin-top: 1rem;">
-                        <div class="permission-item"><strong>Streaming Quality</strong> — choose Auto (recommended), Low for the fastest response, Medium, High, or Ultra for the best image</div>
+                        <div class="permission-item"><strong>Display Quality</strong> — choose Smooth, Balanced (recommended), Sharp, or Full Resolution for a 1:1 pixel display</div>
                         <div class="permission-item"><strong>Reconnect</strong> (⌘R) — manually retry the connection</div>
                         <div class="permission-item"><strong>Permissions</strong> — shows whether Screen Recording and Accessibility are enabled; click to open the right System Settings page. <strong>Fix Permissions After Update…</strong> resets them if they stop working after an update</div>
                         <div class="permission-item"><strong>Advanced → Keep Awake When Lid Is Closed</strong> — keep streaming even with your MacBook's lid shut</div>
