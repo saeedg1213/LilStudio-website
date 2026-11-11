@@ -1,0 +1,5 @@
+# GitHub Pages (Jekyll) skips dot-folders unless they are included.
+# .well-known/apple-app-site-association lets the LilDisplay QR code
+# (lilstudio.app/lildisplay/pair/?code=NN) open the iPhone app.
+include:
+  - .well-known

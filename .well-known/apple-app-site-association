@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["PGZH89R37J.com.lildisplay.ios"],
+        "components": [
+          { "/": "/lildisplay/pair*", "comment": "WiFi pairing QR code from LilDisplay for Mac 3.3+" }
+        ]
+      }
+    ]
+  }
+}
