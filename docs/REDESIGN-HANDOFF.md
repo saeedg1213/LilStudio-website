@@ -431,3 +431,31 @@ window has no room, the iPhone keeps its size) and turning it upright brings the
 desktop is tiled with 8-point gutters: Notes over Terminal in a left column (35%), the browser fills the rest.
 - "⠿ Drag to move" grips (`.grip`): under the Mac (`.mac-grip`), and above the iPhone next to Rotate
   (`.ph-tools`) because the cable leaves the iPhone's bottom. Any pointerdown on them starts the device drag.
+
+## 12. "Big Mac" heroes for LilStats, LilDock, LilHide, LilVibe, LilSnap, LilDim (2026-11-14, local, not pushed)
+
+Saeed: same simple idea as LilDisplay for these six — keep each page's design and content, but make the
+hero a MacBook that fills almost the whole first screen, with the details below for scrolling, and make it
+obvious what to do (highlight/glow where to click or look).
+
+Applied by **`docs/tools/bigmac/bigmac.py <appid>…`** (re-running replaces a previous conversion). It adds,
+to each page, without touching the page's own model code:
+- CSS (`/* ===== Big Mac hero` block at the end of the head style) and `class="hero big"` on the hero.
+- Two layouts, chosen by the window's shape only (never flips while fonts load): **side** (window ≥ 1000 px
+  and width/height ≥ 1.42) = the Mac takes the full height on the left, a 300 px column on the right with
+  icon, headline, subtitle (clamped), download button, the guide and the page's chips; **stacked** = a
+  compact header row (icon · headline/subtitle · guide · button) above the Mac, chips under it. The Mac is
+  sized to the space left (`--mac-w`, JS `fit()`), measured: 67–75% of the width on 1280–2560 px laptops and
+  desktops, ~96% in tall windows. Privacy notice and the "LIVE" line are hidden in the hero (the guide
+  replaces them). The "N things to try" cards, stats and every section stay below.
+- **Guide** (`#guide`): "Step n / N · title · description · ▶ Show me · Skip". It reads the page's own
+  `#quests` list (MutationObserver), so it advances when a quest is done; Show me clicks that quest's own
+  Show me button; Skip is per visit.
+- **Glow** (`#mkGlow`, fixed, pulsing in the page's `--primary`, label like "Click here"): on the element to
+  use next, from `TARGETS[appid][questId] = (label, [candidates])` in the script — the first visible
+  candidate wins, so it starts on the menu-bar item and moves to Settings rows, menu items, the keys under
+  the Mac, a window's green button, etc. It follows the element every 140 ms and on scroll/resize, and hides
+  while a "Show me" ghost pointer runs.
+- The base scales with the Mac (3% of its width, 18–46 px).
+- Test: `docs/tools/tests/t_bigmac.js` (run for all six at 1440×900 and 820×1180 by `run_tests.sh`).
+- Changing a page's quests means updating its entry in `TARGETS` and re-running the script.

@@ -9,6 +9,12 @@ for a in $APPS; do
   M=""; [ "$a" = lildisplay ] && M="--motion"   # its test throws the iPhone, which needs real velocity
   echo "$a: $(python3 shot.py $a/index.html /dev/null --jsfile /tmp/_lilstudio_run.js --dom --budget 30000 $M 2>&1 | tail -1 | cut -c1-110)"
 done
+cat tests/t_common.js tests/t_bigmac.js > /tmp/_lilstudio_big.js
+for a in lilstats lildock lilhide lilvibe lilsnap lildim; do
+  for s in 1440,900 820,1180; do
+    echo "$a big hero ${s/,/x}: $(python3 shot.py $a/index.html /dev/null --w ${s%,*} --h ${s#*,} --jsfile /tmp/_lilstudio_big.js --dom --budget 8000 2>&1 | tail -1 | cut -c1-90)"
+  done
+done
 for p in index.html lildisplay/index.html; do
   echo "$p errors: $(python3 shot.py $p /dev/null --js 'setTimeout(()=>document.title="E:"+__errs.length+" "+__errs.join("|"),2500)' --dom 2>&1 | tail -1)"
 done
