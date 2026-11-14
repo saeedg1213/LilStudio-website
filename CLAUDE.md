@@ -112,7 +112,7 @@ Sections, in order (ids are used by the nav links):
 5. `.faq` (`#faq`, titled "Good to Know"): `.faq-item` cards.
 6. `.contact`: card with `mailto:support@lilstudio.app` (the only support address; there is no hello@).
 7. `<footer>`: `© 2026 LilStudio · Studio · a couple of sibling apps · Privacy · Support`.
-8. `<script src="/studio-wheel.js" defer></script>` as the last thing in `<body>`.
+8. `<script src="/studio-wheel.js?v=N" defer></script>` as the last thing (bump `v` on every page when the wheel script changes, so browsers drop the cached copy) in `<body>`.
 
 **Head:** title `AppName – Short Benefit`, meta description, `og:*` tags (url
 `https://lilstudio.app/<appid>/`, image is a screenshot or the icon), studio favicons, fonts.

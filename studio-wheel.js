@@ -369,29 +369,24 @@
             if (peek) { px = py = -1e4; forced = false; }
             if (typeof kick === 'function' && tiles.length) kick();
         }
-        function zones() {
-            const { ox, oy } = corner(), size = tileSize(), W = window.innerWidth, H = window.innerHeight;
-            const left = ox + (BODY.x0 - 0.2) * size;
-            return {
-                peek: { x0: left - 8, y0: H - BODY_H * PEEK_FRACTION * size - 10, x1: W, y1: H },
-                full: { x0: left - 28, y0: oy + (BODY.y0 - 1.6) * size - 28, x1: W, y1: H },
-                btn: root.getBoundingClientRect()
-            };
-        }
-        const inside = (r, x, y) => x >= (r.x0 ?? r.left) && x <= (r.x1 ?? r.right) && y >= (r.y0 ?? r.top) && y <= (r.y1 ?? r.bottom);
         function scheduleHide() {
             if (hideTimer || peek || !open) return;
-            hideTimer = setTimeout(() => { hideTimer = 0; if (open && !root.contains(document.activeElement)) setPeek(true); }, 380);
+            hideTimer = setTimeout(() => { hideTimer = 0; if (open && !root.contains(document.activeElement)) setPeek(true); }, 400);
         }
+        // Mouse: any visible part of the watch (strap, case, icons, button) pulls it up, and so does
+        // touching the bottom edge of the window below it, like the Dock. Leaving it lets it sink again.
+        root.addEventListener('pointerover', (e) => {
+            if (!open || e.pointerType === 'touch') return;
+            clearTimeout(hideTimer); hideTimer = 0;
+            if (peek) setPeek(false);
+        });
+        root.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch' && !forced) scheduleHide(); });
         if (canHover) {
             window.addEventListener('pointermove', (e) => {
-                if (!open || e.pointerType === 'touch' || forced) return;
-                const z = zones(), x = e.clientX, y = e.clientY;
-                if (peek) { if (inside(z.peek, x, y) || inside(z.btn, x, y)) setPeek(false); }
-                else if (inside(z.full, x, y)) { clearTimeout(hideTimer); hideTimer = 0; }
-                else scheduleHide();
+                if (!open || !peek || e.pointerType === 'touch') return;
+                const left = corner().ox + (BODY.x0 - 0.3) * tileSize();
+                if (e.clientY >= window.innerHeight - 6 && e.clientX >= left) setPeek(false);
             }, { passive: true });
-            document.documentElement.addEventListener('pointerleave', scheduleHide);
         }
         root.addEventListener('click', (e) => {
             if (!open || !peek || trigger.contains(e.target)) return;
