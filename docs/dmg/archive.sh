@@ -1,7 +1,9 @@
 #!/bin/bash
 # archive.sh <repo> <project> <scheme>
 set -uo pipefail
-S=$(dirname "$0"); R=$1; P=$2; SC=$3; B=$S/$R
+S=$(cd "$(dirname "$0")" && pwd); R=$1; P=$2; SC=$3
+# Builds go outside the repo: $BUILD_DIR/<Repo>/{<Repo>.xcarchive,upload,notarized}
+B=${BUILD_DIR:-$HOME/Library/Caches/lilstudio-dmg}/$R
 mkdir -p $B
 cd ~/dev/$R
 xcodebuild -project "$P" -scheme "$SC" -configuration Release -destination 'generic/platform=macOS' -archivePath $B/$R.xcarchive -allowProvisioningUpdates archive > $B/archive.log 2>&1 || { echo "$R ARCHIVE FAILED"; tail -30 $B/archive.log; exit 1; }

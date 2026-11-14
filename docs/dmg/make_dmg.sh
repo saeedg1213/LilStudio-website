@@ -5,7 +5,8 @@ S=$(cd "$(dirname "$0")" && pwd)
 NAME=$1 APP=$2 ICON=$3 TAG=$4 HEX=$5 OUT=$6
 CS=$(codesign -dv --verbose=2 "$APP" 2>&1 || true); [[ "$CS" == *"Authority=Developer ID Application"* ]] || { echo "not Developer ID"; exit 1; }
 SP=$(spctl -a -vv "$APP" 2>&1 || true); [[ "$SP" == *"Notarized Developer ID"* ]] || { echo "not notarized"; exit 1; }
-BG=$S/bg/$NAME; mkdir -p $BG
+[ -x $S/make_bg ] || swiftc -O $S/make_bg.swift -o $S/make_bg
+BG=${BUILD_DIR:-$HOME/Library/Caches/lilstudio-dmg}/bg/$NAME; mkdir -p $BG
 $S/make_bg "$ICON" "$NAME" "$TAG" "$HEX" $BG
 tiffutil -cathidpicheck $BG/background.png $BG/background@2x.png -out $BG/background.tiff >/dev/null
 STAGE=$(mktemp -d -t $NAME-dmg); ditto "$APP" "$STAGE/$NAME.app"

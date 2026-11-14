@@ -1,0 +1,21 @@
+(async () => { try {
+  await sl(600);
+  const L = window.__lv;
+  $q('#lvSound').click(); await sl(50);
+  ok(L.audio.src.includes('sound-forest.m4a'), 'sound src');
+  pe($q('#lvItem'), 'pointerdown'); await sl(30);
+  [...document.querySelectorAll('.mk-ui > .mk-menu .mk-mi')].find(m => m.textContent.includes('Café')).click(); await sl(600);
+  ok(L.P.scene === 'cafe' && L.vid.src.includes('scene-cafe.mp4') && L.audio.src.includes('sound-cafe'), 'scene switched');
+  pe($q('#lvItem'), 'pointerdown'); await sl(30);
+  const r = $q('.lv-vol input'); r.value = 0.3; r.dispatchEvent(new Event('input'));
+  ok(L.P.volume === 0.3, 'volume');
+  [...document.querySelectorAll('.mk-ui > .mk-menu .mk-mi')].find(m => m.textContent.replace('✓', '').trim() === 'Video').click();
+  ok(!L.P.video && L.vid.classList.contains('gone'), 'video off');
+  pe($q('#lvItem'), 'pointerdown'); await sl(30);
+  [...document.querySelectorAll('.mk-ui > .mk-menu .mk-mi')].find(m => m.textContent.includes('Match')).click();
+  ok(L.P.match, 'match');
+  $q('[data-do="cover"]').click(); await sl(30);
+  ok(L.covered() && L.vid.paused, 'covered pauses');
+  ok($q('#qCount').textContent === '6 / 6', 'quests ' + $q('#qCount').textContent);
+  ok(document.documentElement.scrollWidth <= innerWidth, 'no h-scroll');
+} catch (e) { ok(false, 'EXC ' + e.message); } finish(); })();

@@ -205,9 +205,9 @@ lilpass, lilbounce, lildim, lilsnap`):
   (see `~/dev/LilDisplay/CLAUDE.md` handoff). Mac 3.3 DMG is already live.
 - After 3.3 ships: roadmap G0 (retire `lilstudio.app/lilpad/` → point to LilDisplay).
 - `lildisplay.app` mirror repo (`~/dev/lildisplay-website`) only needs DMGs; it redirects.
-- The automated test scripts lived in a session scratchpad (gone); recreate from §4.
+- The automated test scripts are now saved in `docs/tools/` (see §10).
 
-## 8. Second pass: every other app page (2026-11-14, not pushed yet)
+## 8. Second pass: every other app page (2026-11-14, live since commit `60ebc84`)
 Each page now opens with a live model of the app plus "things to try" quests (▶ Show me
 autopilot with a ghost pointer). Mac apps share a **MacKit** block (CSS `.mk-*`, JS
 `MacKit()` + `Quests()`), copied into each page (no build step). It gives a scaled macOS
@@ -248,13 +248,14 @@ popovers, a Dock, HUD, and `M.press(el)` for demos.
 - Also: theme.js in `<head>` everywhere (was missing on several pages and the homepage),
   logo links, `data-appstore` buttons, image sizes, system requirements from the repos
   (LilHide 13.5+, LilUsage 14.6+, LilPad 17.6+), footers unified, link check clean.
-- **No repo found** for LilDock, LilVibe, LilMirror, LilPass, LilDim: modelled from the
-  page copy and its real screenshots. Check menus/strings against the apps.
-- Tests: each page has `?sim=` hooks and `window.__xx` handles; the automated scripts
-  (PointerEvents → PASS/FAIL in the title) lived in the session scratchpad and passed on all
-  11 pages, plus zero JS errors and no horizontal scroll at 500 and 1440 px.
+- **Built without reading the app repo** (they weren't cloned at the time): LilDock, LilVibe,
+  LilMirror, LilPass, LilDim were modelled from the page copy and real screenshots. All are now on
+  GitHub (`saeedg1213/<App>`) and, except LilPass, cloned in `~/dev`: a worthwhile follow-up is to
+  check those models' menus, strings and settings against the source.
+- Tests: each page has `?sim=` hooks and `window.__xx` handles; the scripts are in
+  `docs/tools/tests/` and all pass (§10).
 
-## 9. Mac DMGs, free pricing, hidden iOS pages (2026-11-14, not pushed)
+## 9. Mac DMGs, free pricing, hidden iOS pages (2026-11-14, live since commit `60ebc84`)
 
 - **DMGs** on the site: `lildock/LilDock.dmg` (1.0 (1)), `lildim/LilDim.dmg` (1.0.0 (1)), `lilsnap/LilSnap.dmg`
   (1.0.0 (1)), and `lilusage/LilUsage.dmg` (same notarized 1.1 (2) app, new background). Each was archived
@@ -271,6 +272,36 @@ popovers, a Dock, HUD, and `M.press(el)` for demos.
 - **Hidden iOS apps** (LilBounce, LilPad, LilPass): pages kept but `noindex`, removed from the sitemap,
   the homepage (hero grid is now 3×3, `COLS` read from CSS; cards commented out in index.html), the footer,
   LilDisplay's Launchpad, and the wheel (`hidden: true` in `ALL_PRODUCTS`, still shown on its own page).
-- **LilUsage icon:** new 1024 icon in the studio style (`icons/LilUsage.png`, wheel, app-icon.png,
-  `ICON_VERSION` 5). Also copied into `~/dev/LilUsage` (uncommitted); the shipped 1.1 app still has the old
-  icon until a new build is released.
+- **LilUsage icon:** new 1024 icon in the studio style (`icons/LilUsage.png`, wheel, app-icon.png).
+  Shipped in LilUsage 1.1 (3) (repo pushed, DMG live, installed in `/Applications`). The LilDisplay wheel
+  icon was also refreshed from the app's real icon; `ICON_VERSION` is 6. Every site icon was checked
+  against its repo's 1024 icon and matches.
+- **Wheel auto-hide** (commit `7d56809`): Dock-style peek, see `CLAUDE.md` › Checklist step 3.
+  The first version only reacted in a thin zone over the case, so hovering the visible strap did
+  nothing; it now listens for `pointerover` on the watch itself. Pages load `studio-wheel.js?v=2`.
+
+## 10. Where everything stands (end of 2026-11-14 session)
+
+**Live on lilstudio.app** (`main` = `origin/main`): all of §8 and §9.
+
+**Tooling saved in the repo** (all under `docs/`, which is not published):
+- `docs/tools/` — `run_tests.sh` (runs everything), `shot.py`, `links.py`, `jscheck.py`,
+  `tests/t_common.js` + `tests/t_<appid>.js`, `tests/t_peek.js`, `t_wide.js`, `t_sw.js`, and
+  `mackit/` (MacKit + Quests source). Usage is in `CLAUDE.md` › Testing hooks and tools.
+- `docs/dmg/` — archive/notarize/DMG scripts and the icon generator (`CLAUDE.md` › Releasing a
+  Mac app as a DMG). Builds land in `~/Library/Caches/lilstudio-dmg/`.
+
+**Local state outside the repo:**
+- Archives: `~/Library/Developer/Xcode/Archives/2026-11-14/` (LilDock, LilDim, LilSnap, LilUsage).
+- `~/dev/LilSnap/Config/Local.xcconfig` holds the team ID (git-ignored, needed to build).
+- Saeed's two `lildisplay/Screenshot 2026-11-13 …png` files and the `.DS_Store` files are
+  deliberately uncommitted.
+
+**Open items / ideas (none started):**
+1. Check the LilDock, LilDim, LilVibe, LilMirror and LilPass page models against their source (§8).
+2. LilDisplay iOS 3.3 release, then retire `/lilpad/` in favour of LilDisplay (§7).
+3. When an iOS app ships: un-hide it (`CLAUDE.md` › Current state › Hidden iOS apps).
+4. The LilDock, LilDim and LilSnap support pages still describe how the apps behave under the App Store
+   sandbox (they are still sandboxed builds, so the wording is accurate); revisit if a direct-download
+   build drops the sandbox.
+

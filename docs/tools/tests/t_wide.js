@@ -1,0 +1,1 @@
+setTimeout(() => { const out = []; document.querySelectorAll('body *').forEach(e => { const r = e.getBoundingClientRect(); if (r.right > innerWidth + 2 && !e.closest('.mk-screen')) out.push(e.tagName + '.' + (e.className.baseVal ?? e.className) + ' ' + Math.round(r.right)); }); document.title = out.slice(0, 12).join(' | ') || 'none'; }, 800);

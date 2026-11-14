@@ -1,0 +1,1 @@
+setTimeout(() => { const errs = window.__errs || []; document.title = 'sw=' + document.documentElement.scrollWidth + '/' + innerWidth + ' body=' + document.body.scrollWidth + (errs.length ? ' ERR ' + errs.join(';') : ''); }, 1500);
