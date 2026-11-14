@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/theme.js"></script>
     <title>LilUsage – Your Claude Usage, Right in the Menu Bar</title>
 
     <!-- Favicon -->
@@ -1466,6 +1467,295 @@
         }
 
 
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilUsage, running inside the model ========== */
+        /* Menu bar meter (MenuBarIcon.swift: 60 × 12.5 pt track, 2 pt inset fill, template ink) */
+        .lu-item { gap: 3px; }
+        .lu-item[hidden] { display: none; }
+        .lu-meter { position: relative; width: 60px; height: 12.5px; border-radius: 6.25px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mb-ink) 45%, transparent); }
+        .lu-meter i { position: absolute; left: 2px; top: 2px; bottom: 2px; width: max(8.5px, calc(56px * var(--f, 0))); border-radius: 4.25px; background: var(--mb-ink); transition: width 0.4s ease-out; }
+        .lu-meter.empty i, .lu-meter.unknown i, .lu-meter.login i { display: none; }
+        .lu-meter b { position: absolute; left: 50%; top: 50%; width: 2px; height: 2px; margin: -1px; border-radius: 50%; background: color-mix(in srgb, var(--mb-ink) 50%, transparent); display: none; }
+        .lu-meter.unknown b { display: block; }
+        .lu-lbl { font: 600 12px -apple-system, BlinkMacSystemFont, sans-serif; font-variant-numeric: tabular-nums; min-width: 0; }
+        .lu-lbl:empty { display: none; }
+        .lu-lbl.login { font-size: 11px; }
+
+        /* Panel (UsagePanel.swift: 320 pt wide, 18 pt padding) */
+        .lu-pop { width: 320px; padding: 18px; }
+        .lu-head { display: flex; align-items: center; gap: 8px; }
+        .lu-head b { font-size: 15px; font-weight: 600; }
+        .lu-head small { font-size: 12px; font-weight: 500; opacity: 0.4; }
+        .lu-sp { flex: 1; }
+        .lu-dots { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 7px; letter-spacing: -1px; opacity: 0.6; border-radius: 4px; }
+        .lu-dots:hover, .lu-dots.open { opacity: 1; background: rgba(0,0,0,0.08); }
+        .lu-rows { display: flex; flex-direction: column; gap: 10px; padding-top: 18px; }
+        .lu-row-top { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+        .lu-row-top b { font-size: 12px; font-weight: 600; }
+        .lu-row-top small { font-size: 10px; opacity: 0.4; }
+        .lu-pct { margin-left: auto; font: 600 18px/1 ui-rounded, -apple-system, sans-serif; font-variant-numeric: tabular-nums; }
+        .lu-pct em { font-style: normal; font-size: 11px; font-weight: 500; opacity: 0.6; }
+        .lu-bar { height: 10px; border-radius: 5px; background: color-mix(in srgb, currentColor 10%, transparent); position: relative; }
+        .lu-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: linear-gradient(90deg, color-mix(in srgb, currentColor 55%, transparent), color-mix(in srgb, currentColor 92%, transparent)); transition: width 0.4s ease-out; }
+        .lu-bar i::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 2px; border-radius: 1px; background: currentColor; opacity: 0.9; }
+        .lu-reset { font-size: 10px; opacity: 0.4; margin-top: 8px; font-variant-numeric: tabular-nums; }
+        .lu-foot { display: flex; justify-content: flex-end; padding-top: 14px; }
+        .lu-quit { font-size: 11px; opacity: 0.55; }
+        .lu-quit:hover { opacity: 0.9; }
+        .lu-note { font-size: 11px; opacity: 0.6; padding-top: 14px; }
+        /* First run + sign in */
+        .lu-intro { padding-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+        .lu-intro h4 { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .lu-intro p { font-size: 11px; opacity: 0.65; line-height: 1.4; }
+        .lu-hr { height: 1px; background: color-mix(in srgb, currentColor 14%, transparent); }
+        .lu-pt { display: flex; gap: 9px; align-items: flex-start; }
+        .lu-pt > span { width: 15px; text-align: center; font-size: 11px; opacity: 0.6; flex-shrink: 0; padding-top: 1px; }
+        .lu-pt b { display: block; font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+        .lu-pt p { font-size: 10.5px; }
+        .lu-fine { font-size: 10px !important; opacity: 0.4 !important; }
+        .lu-intro .mk-btn { height: 28px; width: 100%; font-size: 13px; }
+        .lu-step { display: flex; gap: 8px; align-items: baseline; font-size: 11px; }
+        .lu-step i { font-style: normal; width: 16px; height: 16px; border-radius: 50%; background: color-mix(in srgb, currentColor 12%, transparent); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .lu-step code { font: 600 11px 'Space Mono', ui-monospace, monospace; padding: 0 4px; border-radius: 4px; background: color-mix(in srgb, currentColor 10%, transparent); }
+        .lu-wait { font-size: 11px; opacity: 0.55; display: flex; align-items: center; gap: 6px; }
+        .lu-wait::before { content: ''; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; border-right-color: transparent; animation: luSpin 0.8s linear infinite; }
+        @keyframes luSpin { to { transform: rotate(360deg); } }
+
+        /* Keychain prompt (SecurityAgent) */
+        .lu-kc { position: absolute; left: 50%; top: 92px; transform: translateX(-50%); width: 430px; display: flex; gap: 14px; padding: 18px; border-radius: 14px; background: rgba(240, 238, 234, 0.98); color: #1D1D1F; box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 26px 60px rgba(0,0,0,0.45); z-index: 55; animation: mkMenuIn 0.2s ease-out; }
+        [data-theme="dark"] .lu-kc { background: rgba(44, 44, 47, 0.98); color: #F2F2F2; }
+        .lu-kc[hidden] { display: none; }
+        .lu-kc-tx b { display: block; font-size: 13px; line-height: 1.35; margin-bottom: 6px; }
+        .lu-kc-tx p { font-size: 11.5px; opacity: 0.75; margin-bottom: 10px; }
+        .lu-kc-tx label { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 14px; }
+        .lu-pw { flex: 1; height: 22px; border-radius: 5px; background: #fff; color: #000; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2), 0 0 0 3px rgba(47,124,246,0.4); padding: 0 6px; letter-spacing: 1px; display: flex; align-items: center; }
+        .lu-kc-btns { display: flex; gap: 8px; }
+        .lu-kc-btns .mk-btn { height: 24px; }
+
+        /* Terminal with Claude Code */
+        .mk-win.dark .mk-bar { background: #2B2B2E; border-bottom-color: #000; }
+        .mk-win.dark .mk-bar span { color: #A9A9AE; }
+        .lu-term { position: absolute; inset: 0; background: #1C1C1E; color: #D7D7DB; font: 11px/1.5 'Space Mono', ui-monospace, Menlo, monospace; display: flex; flex-direction: column; }
+        .lu-out { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 12px 4px; }
+        .lu-out pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: inherit; }
+        .lu-out .o { color: #E8875B; } .lu-out .d { color: #7D7D84; } .lu-out .g { color: #5AD16A; } .lu-out .y { color: #FFD43B; } .lu-out .r { color: #FF6B5E; }
+        .lu-box { margin: 0 10px 6px; border: 1px solid #55555B; border-radius: 6px; padding: 5px 9px; display: flex; gap: 6px; align-items: center; min-height: 28px; }
+        .lu-box > span { color: #8E8E93; }
+        .lu-box input { flex: 1; min-width: 0; background: none; border: 0; outline: none; color: #F2F2F2; font: inherit; caret-color: #E8875B; }
+        .lu-sugg { display: flex; gap: 6px; padding: 0 10px 9px; flex-wrap: wrap; }
+        .lu-sugg button { font: 600 10.5px 'Space Mono', monospace; color: #E8E8EC; background: #2E2E32; border: 1px solid #47474D; border-radius: 10px; padding: 2px 8px; cursor: default; }
+        .lu-sugg button:hover { background: #3A3A40; }
+        .lu-sugg button:disabled { opacity: 0.35; }
+        .lu-sugg.hint button:first-child { animation: mkHint 1.1s ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -1474,9 +1764,10 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilUsage</div>
+            <a class="logo" href="./">LilUsage</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#setup">Setup</a></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -1491,70 +1782,95 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-                <!-- Animated mock: fills 8% -> 74% on a loop. No image, pure CSS + JS. -->
-                <div class="hero-device meter">
-                    <div class="meter-mock">
-                        <div class="mock-menubar">
-                            <span>&#63743;</span>
-                            <span class="mock-spacer"></span>
-                            <span class="mock-meter">
-                                <span class="mock-track"><span class="mock-fill" id="mockFill"></span></span>
-                                <span id="mockPercent">8</span>
-                            </span>
-                            <span>9:41</span>
+    <!-- ===================== HERO: copy · a Mac running LilUsage ===================== -->
+    <section class="hero" id="try" aria-label="LilUsage, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilUsage app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Menu Bar Meter for Claude</div>
+                </div>
+                <h1>Your Claude <span class="highlight">usage</span>, at a glance</h1>
+                <p class="hero-subtitle">A bar in your menu bar that fills as you use Claude. Click it for your session and weekly windows, and how long until each resets.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="LilUsage.dmg" class="btn btn-primary" download><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Download for Mac</a>
+                            <span class="system-req">Free &middot; v1.1 &middot; macOS 14.6+ &middot; No account</span>
                         </div>
-                        <div class="mock-panel">
-                            <div class="mock-panel-head">
-                                <span>Claude</span>
-                                <span>LilUsage</span>
-                            </div>
-                            <div class="mock-row">
-                                <div class="mock-row-top"><span>Session</span><span id="mockSessionPct">8%</span></div>
-                                <div class="mock-bar"><span id="mockSessionBar" style="width:8%"></span></div>
-                                <div class="mock-reset">Resets in 3h 12m</div>
-                            </div>
-                            <div class="mock-row">
-                                <div class="mock-row-top"><span>Weekly</span><span>41%</span></div>
-                                <div class="mock-bar alt"><span style="width:41%"></span></div>
-                                <div class="mock-reset">Resets Sunday</div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>Nothing leaves your Mac except one request to Anthropic for your own numbers. <a href="privacy.html">Privacy Policy</a></p>
                     </div>
                 </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>This Mac just installed LilUsage. <b>Click the meter in its menu bar</b> to set it up, then ask Claude something in Terminal and watch it fill.</p>
+            </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac running LilUsage, with Claude Code open in Terminal">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
 
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        Menu Bar Meter for Claude
-                    </div>
-                    <h1>Your Claude <span class="highlight">usage</span>, at a glance</h1>
-                    <p class="hero-subtitle">A bar in your menu bar that fills as you use Claude. Click it for your session and weekly windows, and how long until each resets.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="LilUsage.dmg" class="btn btn-primary" download>
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    Download for Mac
-                                </a>
-                                <span class="system-req">Free &middot; macOS 14+ &middot; No account</span>
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi lu-item" id="luItem" role="button" aria-label="LilUsage"><span class="lu-meter" id="luMeter"><i id="luFill"></i><b id="luDot"></b></span><span class="lu-lbl" id="luLbl"></span></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="mk-pop lu-pop" id="luPop" hidden>
+                                        <div class="lu-head"><b id="luTitle">Claude</b><span class="lu-sp"></span><small>LilUsage</small><span class="lu-dots" id="luDots" role="button" aria-label="Settings">•••</span></div>
+                                        <div id="luBody"></div>
+                                        <div class="lu-foot"><span class="lu-quit" id="luQuit" role="button">Quit LilUsage</span></div>
+                                    </div>
+                                    <div class="lu-kc" id="kc" hidden>
+                                        <div class="lu-kc-ic" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48"><rect x="10" y="20" width="28" height="22" rx="4" fill="#C9A227"/><path d="M16 20v-6a8 8 0 0116 0v6" fill="none" stroke="#9A9AA0" stroke-width="4"/><circle cx="24" cy="30" r="3" fill="#6B5410"/></svg></div>
+                                        <div class="lu-kc-tx"><b>LilUsage wants to use your confidential information stored in “Claude Code-credentials” in your keychain.</b><p>To allow this, enter the “login” keychain password.</p>
+                                        <label>Password: <span class="lu-pw">••••••••••</span></label>
+                                        <div class="lu-kc-btns"><button class="mk-btn" type="button" data-kc="always">Always Allow</button><span class="lu-sp"></span><button class="mk-btn" type="button" data-kc="deny">Deny</button><button class="mk-btn blue" type="button" data-kc="allow">Allow</button></div></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Nothing leaves your Mac except one request to Anthropic for your own numbers. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
                     </div>
+                    <div class="mk-base"></div>
                 </div>
-
-                <div class="hero-shot">
-                    <img src="screenshots/menu-panel.png" alt="LilUsage meter in the macOS menu bar, with the panel open showing session and weekly usage">
+                <div class="desk-bar">
+                    <span class="bar-label">Claude Code:</span>
+                    <button class="chip g" type="button" data-do="ask">▶ Ask Claude</button>
+                    <button class="chip g" type="button" data-do="big">▶ Big refactor</button>
+                    <button class="chip" type="button" data-do="skip">⏩ 1 hour later</button>
+                    <button class="chip" type="button" data-do="expire">Log out of Claude Code</button>
+                    <button class="chip on" type="button" data-do="relaunch" hidden>Open LilUsage again</button>
                 </div>
             </div>
         </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Seven things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 7</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilUsage. Free, and two minutes to set up.</b><br>Needs Claude Code installed and signed in.</div>
+                <a href="LilUsage.dmg" class="btn btn-primary" download>Download for Mac</a>
+            </div>
+        </div>
     </section>
+
 
     <section class="stats-bar">
         <div class="stats-grid">
@@ -1623,9 +1939,9 @@
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <h3>Install and Allow Access</h3>
-                    <p>Drag LilUsage to Applications and open it. </p>
+                    <p>Drag LilUsage to Applications and open it. Click the meter in the menu bar and read the short intro first: it tells you about the Keychain prompt before macOS shows it.</p>
                     <div class="setup-images-grid">
-                        <img src="screenshots/installation.png" alt="LilUsage first-run explainer" class="setup-image-small">
+                        <img src="screenshots/installation.png" alt="Dragging LilUsage into the Applications folder" class="setup-image-small" width="1356" height="878" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -1636,8 +1952,8 @@
                     <p>Run <code>claude</code> in a terminal, then <code>/login</code>. If you already use it, you're done here.</p>
                     <p>If macOS asks for your Claude Code credentials, choose <strong>Always Allow</strong>. It won&rsquo;t ask again.</p>
 
-                    <img src="screenshots/sign-in.png" alt="Claude Code login prompt in the terminal" class="shot shot-narrow">
-                    <img src="screenshots/keychain-prompt.png" alt="Claude Code login prompt in the terminal" class="shot shot-narrow">
+                    <img src="screenshots/sign-in.png" alt="LilUsage asking you to sign in to Claude Code in the terminal" class="shot shot-narrow" width="954" height="728" loading="lazy">
+                    <img src="screenshots/keychain-prompt.png" alt="The macOS Keychain prompt asking to let LilUsage read Claude Code-credentials, with Always Allow" class="shot shot-narrow" width="942" height="424" loading="lazy">
                 </div>
             </div>
 
@@ -1646,7 +1962,7 @@
                 <div class="step-content">
                     <h3>Read the Meter</h3>
                     <p>The bar fills within seconds. If it ever says <strong>Sign in</strong>, your Claude Code session expired &mdash; the app walks you through it.</p>
-                    <img src="screenshots/menu-panel.png" alt="LilUsage sign-in instructions when the Claude Code session expires" class="shot shot-narrow">
+                    <img src="screenshots/menu-panel.png" alt="The LilUsage panel with session and weekly usage bars" class="shot shot-narrow" width="898" height="472" loading="lazy">
                 </div>
             </div>
         </div>
@@ -1682,7 +1998,7 @@
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 Download for Mac
             </a>
-            <p class="trial-note">macOS 14+ &middot; Apple silicon &amp; Intel</p>
+            <p class="trial-note">macOS 14.6+ &middot; Apple silicon &amp; Intel</p>
             <p class="price-note">Requires Claude Code installed and signed in.</p>
         </div>
     </section>
@@ -1732,7 +2048,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 <a href="/">LilStudio</a> &middot; LilUsage | <a href="privacy.html">Privacy Policy</a> | <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilstats/">LilStats</a> &middot; <a href="/lildisplay/">LilDisplay</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
     </footer>
 
     <script>
@@ -1794,6 +2110,710 @@
                 if (running) { start = null; requestAnimationFrame(frame); }
             });
         })();
+    </script>
+    <script>
+    (function () {
+        'use strict';
+
+        // Free direct download (no App Store build).
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - M.DOCK - 4 }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilUsage, live (UsagePanel.swift, MenuBarIcon.swift, UsageStore.swift) ----------
+        const M = MacKit($('#mac'));
+        const item = $('#luItem'), pop = $('#luPop'), body = $('#luBody');
+        const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+        const rnd = (a, b) => a + Math.random() * (b - a);
+        const H1 = 3600e3;
+
+        // Usage windows and the model's own clock (⏩ moves it forward)
+        const fresh = () => ({ intro: true, access: 'none', loggedIn: true, showPercent: false, login: true, offset: 0,
+            session: 23, week: 41, sonnet: 18, opus: 9, sessionReset: Date.now() + 3 * H1 + 12 * 60e3, weekReset: Date.now() + 4 * 24 * H1 + 6 * H1, fetchedAt: 0, running: true });
+        let S = Object.assign(fresh(), store.get('luSim.state', {}));
+        const save = () => store.set('luSim.state', S);
+        const now = () => Date.now() + S.offset;
+        // needsReconnect: no access to the credentials yet, or Claude Code is logged out
+        const connected = () => !S.intro && S.access !== 'none' && S.loggedIn;
+
+        // ---------- Menu bar meter ----------
+        function renderIcon() {
+            const m = $('#luMeter'), l = $('#luLbl');
+            m.className = 'lu-meter';
+            l.className = 'lu-lbl';
+            if (!S.intro && !S.loggedIn) { m.classList.add('login'); l.classList.add('login'); l.textContent = 'Sign in'; return; }
+            if (!connected() || !S.fetchedAt) { m.classList.add('unknown'); l.textContent = S.showPercent ? '–' : ''; return; }
+            m.style.setProperty('--f', clampN(S.session / 100, 0, 1));
+            if (S.session <= 0) m.classList.add('empty');
+            l.textContent = S.showPercent ? Math.round(S.session) : '';
+        }
+
+        // ---------- Panel ----------
+        function resetText(t) {
+            const s = Math.max(0, Math.floor((t - now()) / 1000));
+            const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+            if (d > 0) return `Resets in ${d}d ${h}h`;
+            if (h > 0) return `Resets in ${h}h ${m}m`;
+            if (m > 0) return `Resets in ${m}m ${sec}s`;
+            return `Resets in ${sec}s`;
+        }
+        const ROWS = () => [['Session Usage', '5 hours', S.session, S.sessionReset], ['Weekly Usage', 'all models', S.week, S.weekReset], ['Weekly Usage', 'Sonnet', S.sonnet, S.weekReset], ['Weekly Usage', 'Opus', S.opus, S.weekReset]];
+        let panelMode = '';
+        function renderPanel() {
+            $('#luTitle').textContent = (!S.intro && !connected()) ? 'Not signed in' : 'Claude';
+            let mode = S.intro ? 'intro' : !connected() ? 'signin' : !S.fetchedAt ? 'loading' : 'rows';
+            if (mode !== panelMode) {
+                panelMode = mode;
+                if (mode === 'intro') body.innerHTML = `<div class="lu-intro"><div><h4>Welcome to LilUsage</h4><p>A meter in your menu bar showing how much of your Claude limits you've used.</p></div><div class="lu-hr"></div>
+                    <div class="lu-pt"><span>⚿</span><div><b>macOS will ask for permission</b><p>You'll see a prompt saying LilUsage wants to use information stored in "Claude Code-credentials". Click Always Allow, or you'll be asked again every few minutes.</p></div></div>
+                    <div class="lu-pt"><span>&gt;_</span><div><b>It uses your Claude Code login</b><p>There's no separate account. If you're signed in to the claude command, this works. When that expires, LilUsage walks you through signing in again.</p></div></div>
+                    <div class="lu-pt"><span>🔒︎</span><div><b>Nothing leaves your Mac</b><p>Your credentials are read locally and sent only to Anthropic, to ask for your own usage numbers. There's no other server involved.</p></div></div>
+                    <div class="lu-hr"></div><p class="lu-fine">Not affiliated with Anthropic. Usage figures come from an endpoint that isn't officially documented, so they may stop working without notice.</p>
+                    <button class="mk-btn blue" type="button" id="luStart">Get started</button></div>`;
+                else if (mode === 'signin') body.innerHTML = `<div class="lu-intro"><div><h4>Sign in to Claude</h4><p>LilUsage reads your usage through Claude Code. Signing in there connects it here.</p></div>
+                    <button class="mk-btn" type="button" id="luTerm">Open Terminal</button>
+                    <div class="lu-step"><i>1</i><span>Run <code>claude</code></span></div>
+                    <div class="lu-step"><i>2</i><span>Type <code>/login</code> and finish in your browser</span></div>
+                    <div class="lu-step"><i>3</i><span>Back here, macOS asks for access to “Claude Code-credentials”. Click Always Allow and enter your Mac password.</span></div>
+                    <div class="lu-wait">Waiting for sign-in…</div></div>`;
+                else if (mode === 'loading') body.innerHTML = '<div class="lu-note">Loading…</div>';
+                else body.innerHTML = '<div class="lu-rows">' + ROWS().map((r, i) => `<div class="lu-row" data-r="${i}"><div class="lu-row-top"><b>${r[0]}</b><small>${r[1]}</small><span class="lu-pct"></span></div><div class="lu-bar"><i></i></div><div class="lu-reset"></div></div>`).join('') + '</div>';
+            }
+            if (mode === 'rows') ROWS().forEach((r, i) => {
+                const el = body.querySelector(`[data-r="${i}"]`), p = clampN(r[2], 0, 100);
+                el.querySelector('.lu-pct').innerHTML = `${Math.round(p)}<em>%</em>`;
+                el.querySelector('.lu-bar i').style.width = p > 0 ? `max(10px, ${p}%)` : '0';
+                el.querySelector('.lu-reset').textContent = resetText(r[3]);
+            });
+        }
+        body.addEventListener('click', e => {
+            if (e.target.closest('#luStart')) startIntro();
+            if (e.target.closest('#luTerm')) { M.closePops(); M.openWin('term'); $('#luIn').focus({ preventScroll: true }); }
+        });
+        M.popItem(item, pop);
+        M.on('pop', (p, open) => { if (p === pop && open) { renderPanel(); Q.done('panel'); item.classList.remove('hint'); } });
+        $('#luQuit').addEventListener('click', () => { M.closePops(); setRunning(false); });
+
+        // ⋯ settings menu (a SwiftUI Menu)
+        $('#luDots').addEventListener('pointerdown', e => {
+            e.stopPropagation();
+            const items = () => [
+                { t: 'Show percentage in menu bar', on: S.showPercent, act: () => { S.showPercent = !S.showPercent; save(); renderIcon(); if (S.showPercent) Q.done('percent'); } },
+                { t: 'Launch at login', on: S.login, act: () => { S.login = !S.login; save(); } },
+                '-',
+                { t: 'How it works…', act: () => { S.intro = true; save(); renderAll(); M.openPop(item, pop); } },
+                ...(S.fetchedAt ? [{ t: 'Copy raw JSON', act: () => M.hud('Copied', 700) }] : []),
+                '-',
+                ...(S.fetchedAt ? [{ t: 'Updated ' + new Date(S.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), dis: true }] : [])
+            ];
+            M.closeMenus();
+            const m = document.createElement('div');
+            m.className = 'mk-menu';
+            items().forEach(it => {
+                if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                const d = document.createElement('div');
+                d.className = 'mk-mi' + (it.dis ? ' dis' : '');
+                d.innerHTML = `<span class="ck">${it.on ? '✓' : ''}</span><span>${it.t}</span>`;
+                d.addEventListener('click', ev => { ev.stopPropagation(); m.remove(); $('#luDots').classList.remove('open'); if (!it.dis && it.act) it.act(); });
+                m.appendChild(d);
+            });
+            m.style.top = '40px'; m.style.right = '10px'; m.style.left = 'auto'; m.id = 'luMenu';
+            pop.appendChild(m);
+            $('#luDots').classList.add('open');
+        });
+        pop.addEventListener('pointerdown', e => { if (!e.target.closest('#luMenu, #luDots')) { const m = $('#luMenu'); if (m) m.remove(); $('#luDots').classList.remove('open'); } });
+
+        // ---------- First run → Keychain prompt ----------
+        function startIntro() {
+            S.intro = false; save();
+            renderAll();
+            askKeychain();
+        }
+        let kcOpen = false;
+        function askKeychain() {
+            if (kcOpen) return;
+            kcOpen = true; $('#kc').hidden = false;
+        }
+        $('#kc').addEventListener('pointerdown', e => e.stopPropagation());
+        $('#kc').addEventListener('click', e => {
+            const b = e.target.closest('[data-kc]');
+            if (!b) return;
+            kcOpen = false; $('#kc').hidden = true;
+            const a = b.dataset.kc;
+            if (a === 'deny') { S.access = 'none'; M.hud('Denied<br><small style="font-weight:500;opacity:.7">LilUsage can’t read your usage</small>', 1500); }
+            else {
+                S.access = a === 'always' ? 'always' : 'once';
+                if (a === 'always') Q.done('connect');
+                else M.hud('Allowed once<br><small style="font-weight:500;opacity:.7">macOS will ask again soon</small>', 1700);
+                fetchSoon(600);
+            }
+            save(); renderAll();
+        });
+
+        // ---------- Polling (every 30 s in the app; the model also polls right after Claude answers) ----------
+        let fetchT = 0, polls = 0;
+        function fetchSoon(ms) { clearTimeout(fetchT); fetchT = setTimeout(doFetch, ms); }
+        function doFetch() {
+            if (!S.running || S.intro || !connected()) return;
+            // "Allow" (not Always) only lasts a while: the next token refresh asks again
+            if (S.access === 'once' && ++polls % 3 === 0) { askKeychain(); return; }
+            rollWindows();
+            S.fetchedAt = now(); save(); renderAll();
+        }
+        setInterval(() => { if (M.visible) doFetch(); }, 30000);
+        function rollWindows() {
+            if (now() >= S.sessionReset) { S.session = 0; S.sessionReset = now() + 5 * H1; if (S.fetchedAt) Q.done('reset'); }
+            if (now() >= S.weekReset) { S.week = S.sonnet = S.opus = 0; S.weekReset = now() + 7 * 24 * H1; }
+        }
+        // The panel's countdown ticks every second (local only)
+        setInterval(() => { if (M.popOpen(pop) && panelMode === 'rows') renderPanel(); }, 1000);
+
+        function renderAll() { renderIcon(); if (!pop.hidden) renderPanel(); $('[data-do="relaunch"]').hidden = S.running; item.hidden = !S.running; }
+        function setRunning(r) { S.running = r; save(); renderAll(); M.hud(r ? 'LilUsage' : 'LilUsage quit', 800); if (r) fetchSoon(500); }
+
+        // ---------- Terminal: Claude Code ----------
+        const term = M.win({ id: 'term', title: 'lantern — claude', cls: 'dark', x: 0, y: 0, w: 10, h: 10,
+            html: '<div class="lu-term"><div class="lu-out"><pre id="luOut"></pre></div><div class="lu-box"><span>&gt;</span><input id="luIn" type="text" autocomplete="off" spellcheck="false" aria-label="Ask Claude" placeholder="Ask Claude to do something…"></div><div class="lu-sugg" id="luSugg"></div></div>' });
+        const notes = M.win({ id: 'notes', title: 'Notes', x: 0, y: 0, w: 10, h: 10, html: '<div style="position:absolute;inset:0;padding:12px 14px;font-size:12.5px;line-height:1.5;background:var(--win-bg)"><b style="font-size:14px">Today</b><br>☑ Fix the login bug<br>☐ Write tests for Parser<br>☐ Refactor Sync<br>☐ Ship 1.2 before the weekly limit resets</div>' });
+        function placeWins() {
+            const L = M.W > 900 ? { term: [36, 50, 560, 360], notes: [640, 120, 300, 180] } : { term: [14, 40, 460, 300], notes: [490, 90, 250, 160] };
+            [term.x, term.y, term.w, term.h] = L.term; [notes.x, notes.y, notes.w, notes.h] = L.notes;
+            M.place(term); M.place(notes);
+        }
+        M.on('layout', c => { if (c) placeWins(); });
+        M.focusWin('term');
+        M.on('focus', w => { $('#mbApp').textContent = w.id === 'term' ? 'Terminal' : 'Notes'; });
+
+        const out = $('#luOut'), input = $('#luIn');
+        const lines = ['<span class="o">✻</span> Welcome to <b>Claude Code</b>', '<span class="d">  cwd: ~/dev/lantern</span>', ''];
+        const print = (...l) => { lines.push(...l); out.innerHTML = lines.slice(-18).join('\n'); };
+        print();
+        const TASKS = [
+            { q: 'Fix the failing login test', cost: [4, 7], steps: ['Read Tests/AuthTests.swift', 'Read Sources/Auth/Session.swift', 'Edit Session.swift  <span class="g">+6</span> <span class="r">-2</span>', 'Bash swift test  <span class="g">✓ 48 passed</span>'], done: 'The token expiry was compared in seconds against milliseconds. Fixed and the suite passes.' },
+            { q: 'Write tests for Parser', cost: [6, 10], steps: ['Read Sources/Parser.swift', 'Write Tests/ParserTests.swift  <span class="g">+112</span>', 'Bash swift test  <span class="g">✓ 61 passed</span>'], done: 'Added 13 tests, including the empty-input and Unicode cases.' },
+            { q: 'Explain this crash log', cost: [2, 4], steps: ['Read crash.log', 'Grep "unowned" Sources/'], done: 'An unowned reference outlives its view controller in SyncView. Make it weak.' }
+        ];
+        const BIG = { q: 'Refactor Sync to async/await', cost: [22, 30], steps: ['Read 14 files', 'Edit Sources/Sync/Engine.swift  <span class="g">+210</span> <span class="r">-188</span>', 'Edit Sources/Sync/Queue.swift  <span class="g">+64</span> <span class="r">-97</span>', 'Edit 6 more files', 'Bash swift build  <span class="g">✓</span>', 'Bash swift test  <span class="g">✓ 61 passed</span>'], done: 'Sync now uses async/await end to end; 140 fewer lines.' };
+        function renderSugg() {
+            $('#luSugg').innerHTML = TASKS.map((t, i) => `<button type="button" data-t="${i}"${busy ? ' disabled' : ''}>${t.q}</button>`).join('') + `<button type="button" data-t="big"${busy ? ' disabled' : ''}>${BIG.q}</button>`;
+            $('#luSugg').classList.toggle('hint', connected() && !Q.has('work'));
+        }
+        let busy = false;
+        async function ask(task, typed) {
+            if (busy) return;
+            M.openWin('term');
+            print(`<span class="d">&gt;</span> ${typed || task.q}`);
+            if (!S.loggedIn) { print('<span class="r">  Invalid API key · Please run /login</span>', ''); return; }
+            if (S.session >= 100) { print(`<span class="y">  5-hour limit reached ∙ ${resetText(S.sessionReset).toLowerCase()}</span>`, ''); Q.done('limit'); return; }
+            busy = true; renderSugg();
+            print('<span class="o">✻ Thinking…</span>');
+            for (const st of task.steps) { await wait(REDUCED ? 20 : rnd(380, 650)); lines.pop(); print(`<span class="o">⏺</span> ${st}`, '<span class="o">✻ Working…</span>'); }
+            await wait(REDUCED ? 20 : 400); lines.pop(); print(`<span class="o">⏺</span> ${task.done}`, '');
+            const c = rnd(task.cost[0], task.cost[1]);
+            S.session = Math.min(100, S.session + c);
+            S.week = Math.min(100, S.week + c * 0.16); S.sonnet = Math.min(100, S.sonnet + c * 0.18); S.opus = Math.min(100, S.opus + c * 0.05);
+            if (S.session >= 100) print(`<span class="y">  5-hour limit reached ∙ ${resetText(S.sessionReset).toLowerCase()}</span>`, '');
+            save(); busy = false; renderSugg();
+            if (connected()) Q.done('work');
+            if (S.session >= 100) Q.done('limit');
+            fetchSoon(REDUCED ? 50 : 900);
+        }
+        $('#luSugg').addEventListener('click', e => {
+            const b = e.target.closest('[data-t]');
+            if (b && !b.disabled) ask(b.dataset.t === 'big' ? BIG : TASKS[+b.dataset.t]);
+        });
+        input.addEventListener('keydown', e => {
+            e.stopPropagation();
+            if (e.key !== 'Enter' || !input.value.trim()) return;
+            const v = input.value.trim(); input.value = '';
+            if (v === '/login') return login();
+            if (v === '/logout') return logout();
+            ask({ q: v, cost: [3, 7], steps: ['Read Sources/', 'Edit 2 files  <span class="g">+18</span> <span class="r">-5</span>'], done: 'Done.' }, v);
+        });
+        term.body.addEventListener('pointerup', () => input.focus({ preventScroll: true }));
+
+        function logout() {
+            S.loggedIn = false; save();
+            print('<span class="d">&gt;</span> /logout', '  Logged out of your Claude account.', '');
+            renderAll(); fetchSoon(400);
+        }
+        async function login() {
+            print('<span class="d">&gt;</span> /login', '  Opening your browser to sign in…');
+            await wait(900);
+            print('  <span class="g">Login successful.</span>', '');
+            const was = S.loggedIn; S.loggedIn = true; save();
+            renderAll();
+            // Claude Code rewrote the Keychain item: with Always Allow, LilUsage keeps reading it without a prompt
+            if (S.access !== 'always') askKeychain(); else fetchSoon(500);
+            if (!was && !S.intro) Q.done('signin');
+        }
+
+        // ---------- Menus, dock ----------
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }, '-', { t: 'Sleep', dis: true }],
+            app: () => [{ t: 'About ' + $('#mbApp').textContent, dis: true }, '-', { t: 'Quit ' + $('#mbApp').textContent, k: '⌘Q', dis: true }],
+            file: () => [{ t: 'New Window', k: '⌘N', dis: true }],
+            edit: () => [{ t: 'Copy', k: '⌘C', dis: true }, { t: 'Paste', k: '⌘V', dis: true }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Terminal', act: () => M.openWin('term') }, { t: 'Notes', act: () => M.openWin('notes') }],
+            help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'term', name: 'Terminal', bg: '#1C1C1E', icon: '<span style="font:700 15px Space Mono,monospace;color:#5AD16A">&gt;_</span>' },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFE27A 0 28%, #FFFDF4 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M10 22h22M10 28h22M10 34h14" stroke="#C9C3A8" stroke-width="2"/></svg>' },
+            '|',
+            { id: 'trash', name: 'Trash', bg: 'linear-gradient(#E9E9EE,#C5C5CC)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M13 14h16l-2 18H15z" fill="none" stroke="#666" stroke-width="2"/><path d="M11 13h20" stroke="#666" stroke-width="2"/></svg>', act: () => M.hud('Trash is empty', 800) }
+        ]);
+
+        // ---------- Controls under the Mac ----------
+        function skipHour() {
+            S.offset += H1; save();
+            M.hud('⏩ +1 hour<br><small style="font-weight:500;opacity:.7">' + resetText(S.sessionReset) + '</small>', 1200);
+            fetchSoon(300); renderAll();
+        }
+        $$('[data-do]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.do) {
+                case 'ask': ask(TASKS[Math.floor(Math.random() * TASKS.length)]); break;
+                case 'big': ask(BIG); break;
+                case 'skip': skipHour(); break;
+                case 'expire': if (S.loggedIn) logout(); else login(); b.textContent = S.loggedIn ? 'Log out of Claude Code' : 'Run /login'; break;
+                case 'relaunch': setRunning(true); break;
+            }
+        }));
+        M.on('layout', () => { $('[data-do="expire"]').textContent = S.loggedIn ? 'Log out of Claude Code' : 'Run /login'; });
+
+        // ---------- Things to try ----------
+        const ensurePop = async () => { if (!S.running) setRunning(true); if (!M.popOpen(pop)) { await M.press(item); await wait(450); } };
+        const connectFlow = async () => {
+            await ensurePop();
+            if (S.intro) { await M.press($('#luStart')); await wait(500); }
+            if (!$('#kc').hidden) { await M.press($('#kc [data-kc="always"]')); await wait(800); }
+            if (!S.loggedIn) { M.closePops(); await login(); await wait(400); if (!$('#kc').hidden) { await M.press($('#kc [data-kc="always"]')); await wait(600); } }
+        };
+        const Q = Quests({
+            key: 'luSim.quests',
+            items: [
+                { id: 'connect', t: 'Set it up', d: 'Click the meter, Get started, then Always Allow in the Keychain prompt. (Just Allow, and it asks again.)' },
+                { id: 'panel', t: 'Open the panel', d: 'Your 5-hour session and weekly windows, with live reset countdowns.' },
+                { id: 'work', t: 'Ask Claude something', d: 'Pick a task in Terminal (or type your own). The bar fills as you work.' },
+                { id: 'percent', t: 'Show the number', d: 'Panel › ••• › Show percentage in menu bar.' },
+                { id: 'limit', t: 'Hit the 5-hour limit', d: 'Run a few big refactors until the session reaches 100%.' },
+                { id: 'reset', t: 'Wait for the reset', d: 'Press ⏩ 1 hour later until the session window resets to 0.' },
+                { id: 'signin', t: 'Sign back in', d: 'Log out of Claude Code, see “Sign in” in the menu bar, then type /login in Terminal.' }
+            ],
+            show: {
+                async connect() { await connectFlow(); await wait(600); M.ghostHide(); },
+                async panel() { await connectFlow(); if (!M.popOpen(pop)) await M.press(item); await wait(1400); M.ghostHide(); },
+                async work() { await connectFlow(); M.closePops(); await M.press($('#luSugg [data-t="0"]')); while (busy) await wait(200); await wait(1000); await M.press(item); await wait(1200); M.ghostHide(); },
+                async percent() { await connectFlow(); await ensurePop(); await M.press($('#luDots')); await wait(400); await M.press($$('#luMenu .mk-mi')[0]); await wait(1000); M.ghostHide(); },
+                async limit() { await connectFlow(); M.closePops(); for (let i = 0; i < 6 && S.session < 100; i++) { await M.press($('#luSugg [data-t="big"]'), 350); while (busy) await wait(150); await wait(300); } await M.press($('#luSugg [data-t="0"]')); await wait(900); M.ghostHide(); },
+                async reset() { await connectFlow(); for (let i = 0; i < 6 && S.session > 0; i++) { skipHour(); await wait(700); } await ensurePop(); await wait(1200); M.ghostHide(); },
+                async signin() { await connectFlow(); M.closePops(); logout(); await wait(1200); await M.press(item); await wait(1200); M.closePops(); M.openWin('term'); input.value = '/login'; await wait(400); input.value = ''; await login(); await wait(300); if (!$('#kc').hidden) await M.press($('#kc [data-kc="always"]')); await wait(900); M.ghostHide(); }
+            },
+            onReset() { S = fresh(); save(); panelMode = ''; kcOpen = false; $('#kc').hidden = true; M.closePops(); renderAll(); renderSugg(); item.classList.add('hint'); }
+        });
+
+        // ---------- Start ----------
+        if (S.intro || !Q.has('panel')) item.classList.add('hint');
+        renderAll(); renderSugg();
+        if (connected()) fetchSoon(400);
+
+        // Test hooks: ?sim=connected | pop | percent | full | login
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'connected') { S.intro = false; S.access = 'always'; S.fetchedAt = now(); renderAll(); }
+            if (s === 'percent') { S.showPercent = true; renderAll(); }
+            if (s === 'full') { S.session = 100; renderAll(); }
+            if (s === 'login') { S.loggedIn = false; renderAll(); }
+            if (s === 'kc') askKeychain();
+            if (s === 'pop') M.openPop(item, pop);
+        })); });
+        window.__lu = { M, S: () => S, Q, busy: () => busy };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

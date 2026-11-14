@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/theme.js"></script>
     <title>LilStudio – Small Mac &amp; iOS apps that do one thing well</title>
 
     <!-- Favicon -->
@@ -11,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilPad, LilPass, LilBounce, LilDim and LilSnap.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilDim and LilSnap.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -396,7 +397,7 @@
 
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(4, 96px);
+            grid-template-columns: repeat(3, 96px);
             grid-template-rows: repeat(3, 96px);
             gap: 12px;
             transform: rotate(-4deg);
@@ -1077,7 +1078,7 @@
             h1 { font-size: 1.9rem; }
             section { padding: 4rem 1rem; }
             .section-header h2 { font-size: 2rem; }
-            .app-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(3, 70px); gap: 8px; }
+            .app-grid { grid-template-columns: repeat(3, 70px); grid-template-rows: repeat(3, 70px); gap: 8px; }
             .cell { font-size: 0.56rem; }
             .cell.app svg { width: 22px; height: 22px; }
             .hero-buttons { flex-direction: column; width: 100%; }
@@ -1626,14 +1627,6 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="14" height="10" rx="1"/><rect x="17" y="9" width="5" height="11" rx="1"/><path d="M6 18h6"/></svg>
                         LilDisplay
                     </a>
-                    <a class="cell app pad" href="/lilpad/" aria-label="LilPad">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="13" cy="12" r="2.5"/><circle cx="8" cy="14" r="1.5"/></svg>
-                        LilPad
-                    </a>
-                    <a class="cell app bounce" href="/lilbounce/" aria-label="LilBounce">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="9.5" cy="9" r="1" fill="currentColor"/><circle cx="14.5" cy="9" r="1" fill="currentColor"/><path d="M9.5 12.5c1.4 1.2 3.6 1.2 5 0"/><path d="M5 21h14"/></svg>
-                        LilBounce
-                    </a>
                     <a class="cell app dock" href="/lildock/" aria-label="LilDock">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><rect x="12" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/><rect x="16" y="5.5" width="2.5" height="2" fill="currentColor" stroke="none"/></svg>
                         LilDock
@@ -1662,10 +1655,6 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>
                         LilMirror
                     </a>
-                    <a class="cell app pass" href="/lilpass/" aria-label="LilPass">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20"/><path d="M6 13v3M8.5 13v3M10 13v3M12.5 13v3M15 13v3M16.5 13v3"/></svg>
-                        LilPass
-                    </a>
                 </div>
             </div>
         </div>
@@ -1681,7 +1670,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Twelve right now. Each one solves a single annoyance properly.</p>
+            <p>Nine right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -1763,7 +1752,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lilusage/" class="btn btn-app usage">Open LilUsage →</a>
-                        <span class="app-price">Free · macOS 14+</span>
+                        <span class="app-price">Free download &middot; macOS 14.6+</span>
                     </div>
                 </div>
             </div>
@@ -1815,7 +1804,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lilmirror/" class="btn btn-app mirror">Open LilMirror &rarr;</a>
-                        <span class="app-price">$1 once &middot; macOS 13+</span>
+                        <span class="app-price">Free &middot; macOS 13+</span>
                     </div>
                 </div>
             </div>
@@ -1862,7 +1851,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lilvibe/" class="btn btn-app vibe">Open LilVibe &rarr;</a>
-                        <span class="app-price">$0.99 once &middot; macOS 14+</span>
+                        <span class="app-price">Free &middot; macOS 14+</span>
                     </div>
                 </div>
             </div>
@@ -1887,7 +1876,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lildock/" class="btn btn-app dock">Open LilDock &rarr;</a>
-                        <span class="app-price">$0.99 once &middot; macOS 14+</span>
+                        <span class="app-price">Free download &middot; macOS 14.6+</span>
                     </div>
                 </div>
             </div>
@@ -1912,10 +1901,11 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lilstats/" class="btn btn-app stats">Open LilStats &rarr;</a>
-                        <span class="app-price">Mac App Store &middot; macOS 14.6+</span>
+                        <span class="app-price">Free &middot; macOS 14.6+</span>
                     </div>
                 </div>
             </div>
+            <!-- iPhone apps, hidden until they ship on the App Store (pages stay at /lilpad/, /lilpass/, /lilbounce/)
             <div class="app-card fade-in stagger-4">
                 <div class="app-stage pad" aria-hidden="true">
                     <div class="lp">
@@ -1995,6 +1985,7 @@
                     </div>
                 </div>
             </div>
+            -->
             <div class="app-card fade-in stagger-3">
                 <div class="app-stage dim" aria-hidden="true">
                     <div class="ldm"><i></i><i></i><i></i></div>
@@ -2013,7 +2004,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lildim/" class="btn btn-app dim">Open LilDim &rarr;</a>
-                        <span class="app-price">Coming soon &middot; macOS 14.6+</span>
+                        <span class="app-price">Free download &middot; macOS 14.6+</span>
                     </div>
                 </div>
             </div>
@@ -2038,7 +2029,7 @@
                     </div>
                     <div class="app-cta">
                         <a href="/lilsnap/" class="btn btn-app snap">Open LilSnap &rarr;</a>
-                        <span class="app-price">$0.99 once &middot; macOS 14+</span>
+                        <span class="app-price">Free download &middot; macOS 14+</span>
                     </div>
                 </div>
             </div>
@@ -2103,7 +2094,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lilpad/">LilPad</a> · <a href="/lilpass/">LilPass</a> · <a href="/lilbounce/">LilBounce</a> · <a href="/lildim/">LilDim</a> · <a href="/lilsnap/">LilSnap</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lildim/">LilDim</a> · <a href="/lilsnap/">LilSnap</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
@@ -2162,7 +2153,7 @@
             if (!grid || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             const sweepHook = location.search.match(/[?&]gridsweep=([a-z]+),([a-z]+)/);
             if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches && !sweepHook) return;
-            const COLS = 4, TILT = -4 * Math.PI / 180;
+            const COLS = getComputedStyle(grid).gridTemplateColumns.split(' ').length, TILT = -4 * Math.PI / 180;
             const MAG = 1.35, HOLD = 0.28, REACH = 0.85;   // swell, in grid pitches
             const K = 330, DAMP = 23;                      // same springs as the wheel
             const cells = [...grid.querySelectorAll('.cell')].map((el, k) => ({

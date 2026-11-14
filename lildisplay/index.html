@@ -3441,7 +3441,7 @@
         function launchpad() {
             const lp = $('#lp');
             if (!lp.children.length) {
-                const apps = [['lildisplay', 'LilDisplay'], ['lilstats', 'LilStats'], ['lildock', 'LilDock'], ['lilusage', 'LilUsage'], ['lilhide', 'LilHide'], ['lilmirror', 'LilMirror'], ['lilvibe', 'LilVibe'], ['lilpad', 'LilPad'], ['lilpass', 'LilPass'], ['lilbounce', 'LilBounce'], ['lildim', 'LilDim'], ['lilsnap', 'LilSnap']];
+                const apps = [['lildisplay', 'LilDisplay'], ['lilstats', 'LilStats'], ['lildock', 'LilDock'], ['lilusage', 'LilUsage'], ['lilhide', 'LilHide'], ['lilmirror', 'LilMirror'], ['lilvibe', 'LilVibe'], ['lildim', 'LilDim'], ['lilsnap', 'LilSnap']];
                 lp.innerHTML = apps.map(([id, n]) => `<a data-act="lp" href="/${id}/"><img src="/assets/wheel/${id}.png" alt="" width="128" height="128">${n}</a>`).join('');
             }
             exitOverlays();

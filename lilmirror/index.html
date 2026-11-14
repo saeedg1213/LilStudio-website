@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/theme.js"></script>
     <title>LilMirror – Check Yourself Before the Call</title>
 
     <!-- Favicon -->
@@ -11,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
 
-    <meta name="description" content="A tiny macOS menu bar mirror. One click for a live camera preview and a compliment, then the camera shuts off. $1 once, no subscription, nothing leaves your Mac.">
+    <meta name="description" content="A tiny macOS menu bar mirror. One click for a live camera preview and a compliment, then the camera shuts off. Free, no subscription, nothing leaves your Mac.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -1529,6 +1530,246 @@
         }
 
 
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilMirror, running inside the model ========== */
+        .lm-item.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .lm-item[hidden], .lm-ind[hidden] { display: none; }
+        .lm-ind { background: #28C840 !important; border-radius: 6px; padding: 0 6px; }
+        .lm-pop { width: 300px; padding: 6px; border-radius: 14px; }
+        .lm-view { position: relative; height: 188px; border-radius: 10px; overflow: hidden; background: #222; }
+        .lm-face, .lm-view video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .lm-view video { transform: scaleX(-1); }
+        .lm-view video[hidden] { display: none; }
+        .lm-view.wide .lm-face { transform: scale(0.82); transform-origin: 50% 70%; }
+        .lm-view.wide { background: #B5835A; }
+        .lm-view.off::after { content: ''; position: absolute; inset: 0; background: #0B0B0C; }
+        .lm-gear { position: absolute; right: 8px; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.35); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; z-index: 2; }
+        #lmEyes { transition: transform 0.12s ease-out; }
+        #lmEyes.blink { transform: scaleY(0.1); transform-origin: 160px 96px; }
+        #lmHand { transition: opacity 0.25s; }
+        .lm-foot { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 6px 4px; position: relative; }
+        .lm-comp { font-weight: 700; font-size: 13px; text-align: center; animation: lmIn 0.35s ease; }
+        .lm-comp[hidden] { display: none; }
+        @keyframes lmIn { from { opacity: 0; transform: translateY(4px); } }
+        .lm-quit { position: absolute; right: 8px; opacity: 0.45; font-size: 12px; }
+        .lm-quit:hover { opacity: 0.9; }
+        .lm-note { max-width: 560px; margin: 0.8rem auto 0; text-align: center; font-size: 0.78rem; color: var(--text-muted); }
+        /* Video call window */
+        .lm-call { position: absolute; inset: 0; background: #1E1F24; color: #EEE; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 12.5px; }
+        .lm-tiles { display: flex; gap: 8px; }
+        .lm-tiles i { width: 70px; height: 52px; border-radius: 8px; display: flex; align-items: flex-end; padding: 3px 5px; font-style: normal; font-size: 9.5px; color: #fff; }
+        .lm-join { background: #28C840; color: #062; border: 0; border-radius: 8px; padding: 5px 16px; font: 700 12.5px -apple-system, sans-serif; cursor: default; }
+        .lm-join.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .lm-call small { opacity: 0.6; }
     </style>
 </head>
 
@@ -1538,16 +1779,17 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilMirror</div>
+            <a class="logo" href="./">LilMirror</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how">How It Works</a></li>
                 <li><a href="#pricing">Price</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#pricing" class="btn btn-primary">Get It &mdash; $1</a>
+                <a href="#pricing" class="btn btn-primary">Get It &mdash; Free</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1556,82 +1798,110 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-
-                <div class="hero-device mirror">
-                    <div class="mirror-mock">
-                        <div class="mock-menubar">
-                            <span class="mb-dot"></span>
-                            <span class="mb-dot"></span>
-                            <span class="mb-cam lit" id="mbCam"><svg viewBox="0 0 18 18" aria-hidden="true">
-                        <g class="lens-off" fill="currentColor">
-                            <path d="M5 2.9h4.6a.8.8 0 0 1 .8.8v1.1H4.2V3.7a.8.8 0 0 1 .8-.8z"/>
-                            <path d="M2.7 4.6h12.6a1.7 1.7 0 0 1 1.7 1.7v7.1a1.7 1.7 0 0 1-1.7 1.7H2.7A1.7 1.7 0 0 1 1 13.4V6.3a1.7 1.7 0 0 1 1.7-1.7zm0 1.5a.4.4 0 0 0-.4.4v7.1c0 .2.2.4.4.4h12.6c.2 0 .4-.2.4-.4V6.5a.4.4 0 0 0-.4-.4z"/>
-                            <circle cx="9" cy="10" r="2.7"/>
-                        </g>
-                        <g class="lens-on" fill="currentColor">
-                            <path d="M5 2.9h4.6a.8.8 0 0 1 .8.8v1.1H4.2V3.7a.8.8 0 0 1 .8-.8z"/>
-                            <path d="M2.7 4.6h12.6a1.7 1.7 0 0 1 1.7 1.7v7.1a1.7 1.7 0 0 1-1.7 1.7H2.7A1.7 1.7 0 0 1 1 13.4V6.3a1.7 1.7 0 0 1 1.7-1.7zm6.3 2.6a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm4.7-.4a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/>
-                        </g>
-                    </svg></span>
-                            <span class="mb-clock">Fri 9:41</span>
+    <!-- ===================== HERO: copy · a Mac running LilMirror ===================== -->
+    <section class="hero" id="try" aria-label="LilMirror, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilMirror app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Menu Bar Mirror for macOS</div>
+                </div>
+                <h1>Check yourself <span class="highlight">before the call</span></h1>
+                <p class="hero-subtitle">One click in the menu bar gives you a live mirror and a small compliment. Click away and the camera shuts off &mdash; green light and all.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="https://apps.apple.com/app/id6811193440" class="btn btn-primary" data-appstore><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Get It on the Mac App Store</a>
+                            <span class="system-req">Free &middot; macOS 13+ &middot; No IAP</span>
                         </div>
-                        <div class="mock-panel">
-                            <div class="mock-preview">
-                                <svg class="mock-face" viewBox="0 0 160 90" aria-hidden="true">
-                            <g stroke="#14110E" stroke-width="3.4" fill="none" stroke-linecap="round">
-                                <path d="M50 90c0-16 13-25 30-25s30 9 30 25" fill="#FBF6E6"/>
-                                <circle cx="80" cy="42" r="22" fill="#FBF6E6"/>
-                                <g class="blinker">
-                                    <path d="M72 39v2.5M88 39v2.5"/>
-                                </g>
-                                <path d="M73 51c4 3.5 10 3.5 14 0"/>
-                                <path d="M124 20l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" fill="#5B9BF8" stroke-width="2.6" stroke-linejoin="round"/>
-                            </g>
-                        </svg>
-                                <span class="mock-live" title="Camera on"></span>
-                                <span class="mock-gear">&#9881;</span>
-                            </div>
-                            <div class="mock-foot">
-                                <span class="mock-compliment" id="mockCompliment">Certified work of art</span>
-                                <span class="mock-quit">&#9211;</span>
+                    </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>The camera feed never leaves your Mac. Nothing recorded, nothing uploaded, no network access at all. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
+                </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>Your call starts in a minute. <b>Click the camera icon</b> in this Mac's menu bar, and watch the green light next to its camera.</p>
+            </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac running LilMirror, with a video call about to start">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
+
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi lm-ind" id="lmInd" hidden aria-label="Camera in use"><svg viewBox="0 0 20 12" width="20" height="12"><rect x="1" y="1.5" width="12" height="9" rx="2" fill="#fff"/><path d="M14 5l5-3v8l-5-3z" fill="#fff"/></svg></div>
+                                            <div class="mk-mbi lm-item" id="lmItem" role="button" aria-label="LilMirror"><svg viewBox="0 0 18 18" width="17" height="17" aria-hidden="true"><path d="M5 2.9h4.6a.8.8 0 0 1 .8.8v1.1H4.2V3.7a.8.8 0 0 1 .8-.8z" fill="currentColor"/><path d="M2.7 4.6h12.6a1.7 1.7 0 0 1 1.7 1.7v7.1a1.7 1.7 0 0 1-1.7 1.7H2.7A1.7 1.7 0 0 1 1 13.4V6.3a1.7 1.7 0 0 1 1.7-1.7zm6.3 2.6a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="mk-pop lm-pop" id="lmPop" hidden>
+                                        <div class="lm-view" id="lmView">
+                                            <svg class="lm-face" id="lmFace" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                                                <defs><radialGradient id="lmLamp" cx="0.82" cy="0.25" r="0.5"><stop offset="0" stop-color="#FFE7B0" stop-opacity="0.9"/><stop offset="1" stop-color="#FFE7B0" stop-opacity="0"/></radialGradient></defs>
+                                                <rect width="320" height="200" fill="#C98E5A"/>
+                                                <rect width="320" height="200" fill="url(#lmLamp)"/>
+                                                <rect x="20" y="22" width="56" height="44" rx="3" fill="#6A4A33"/><rect x="25" y="27" width="46" height="34" fill="#9FC7D9"/>
+                                                <rect x="236" y="18" width="10" height="70" fill="#5A3B26"/><ellipse cx="241" cy="18" rx="22" ry="12" fill="#F6D8A0"/>
+                                                <path d="M20 200v-40h60v40" fill="#3D5A3A"/><circle cx="50" cy="150" r="22" fill="#4E7A49"/><circle cx="64" cy="138" r="16" fill="#5E8E57"/>
+                                                <g id="lmPerson">
+                                                    <path d="M92 205c4-44 34-64 68-64s64 20 68 64z" fill="#F2E6D3"/>
+                                                    <path d="M118 96c0-34 18-56 42-56s44 22 44 56c0 30-6 52-8 70h-72c-2-18-6-40-6-70z" fill="#3B2416"/>
+                                                    <ellipse cx="160" cy="98" rx="34" ry="40" fill="#E8B48D"/>
+                                                    <path d="M126 82c6-26 22-34 34-34s30 6 36 30c-12-10-26-14-36-14s-24 6-34 18z" fill="#3B2416"/>
+                                                    <g id="lmEyes"><ellipse cx="146" cy="96" rx="4.2" ry="5" fill="#2A1A10"/><ellipse cx="174" cy="96" rx="4.2" ry="5" fill="#2A1A10"/></g>
+                                                    <path id="lmMouth" d="M148 118c6 6 18 6 24 0" stroke="#8A3B2A" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+                                                    <ellipse cx="138" cy="112" rx="7" ry="4" fill="#F09A8A" opacity="0.45"/><ellipse cx="182" cy="112" rx="7" ry="4" fill="#F09A8A" opacity="0.45"/>
+                                                    <g id="lmHand" opacity="0"><path d="M236 200v-60" stroke="#E8B48D" stroke-width="16" stroke-linecap="round"/><circle cx="236" cy="132" r="13" fill="#E8B48D"/></g>
+                                                </g>
+                                            </svg>
+                                            <video id="lmVideo" playsinline muted hidden></video>
+                                            <span class="lm-gear" id="lmGear" role="button" aria-label="Settings">⚙︎</span>
+                                        </div>
+                                        <div class="lm-foot"><span class="lm-comp" id="lmComp">You look great today</span><span class="lm-quit" id="lmQuit" role="button" aria-label="Quit LilMirror">⏻</span></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="mk-base"></div>
                 </div>
-
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        Menu Bar Mirror for macOS
-                    </div>
-                    <h1>Check yourself <span class="highlight">before the call</span></h1>
-                    <p class="hero-subtitle">One click in the menu bar gives you a live mirror and a small compliment. Click away and the camera shuts off &mdash; green light and all.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="https://apps.apple.com/app/id6811193440" class="btn btn-primary">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    Get It on the Mac App Store
-                                </a>
-                                <span class="system-req">$1 once &middot; macOS 13+ &middot; No IAP</span>
-                            </div>
-                        </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>The camera feed never leaves your Mac. Nothing recorded, nothing uploaded, no network access at all. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
-                    </div>
+                <div class="desk-bar">
+                    <button class="chip g" type="button" data-do="open">Open the mirror</button>
+                    <button class="chip" type="button" data-do="menu">Right-click menu</button>
+                    <button class="chip" type="button" data-do="hand">Raise your right hand</button>
+                    <button class="chip" type="button" data-do="real" id="lmReal">Use my real camera</button>
+                    <button class="chip on" type="button" data-do="relaunch" hidden>Open LilMirror again</button>
                 </div>
-
-                <div class="hero-shot">
-                    <img src="screenshots/call-check.png" alt="LilMirror open in the macOS menu bar over a video call, showing a live mirror and a compliment">
-                </div>
+                <p class="lm-note">Your real camera is optional: it runs only while the mirror is open, stays in this tab, and nothing is recorded or sent anywhere.</p>
+            </div>
+        </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Six things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 6</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilMirror. One dollar, once.</b><br>153 compliments, zero data collected.</div>
+                <a href="https://apps.apple.com/app/id6811193440" class="btn btn-primary" data-appstore>Get it on the Mac App Store</a>
             </div>
         </div>
     </section>
+
 
     <div class="compliment-strip" aria-hidden="true">
         <div class="compliment-track">
@@ -1651,8 +1921,8 @@
                 <p>Compliments</p>
             </div>
             <div class="stat-item">
-                <h3>$1</h3>
-                <p>Once, forever</p>
+                <h3>Free</h3>
+                <p>No catch</p>
             </div>
             <div class="stat-item">
                 <h3>0</h3>
@@ -1772,11 +2042,11 @@
     <section class="pricing" id="pricing">
         <div class="section-header fade-in">
             <h2>Price</h2>
-            <p>One dollar. That's the whole pricing page.</p>
+            <p>Free. That's the whole pricing page.</p>
         </div>
         <div class="pricing-card scale-in">
-            <div class="price-tag"><span class="currency">$</span>1</div>
-            <div class="price-period">One time &middot; no subscription</div>
+            <div class="price-tag"><span class="currency">$</span>0</div>
+            <div class="price-period">Free on the Mac App Store</div>
             <ul class="pricing-features">
                 <li>
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1795,12 +2065,12 @@
                     Family Sharing enabled
                 </li>
             </ul>
-            <a href="https://apps.apple.com/app/id6811193440" class="btn btn-primary pricing-cta">
+            <a href="https://apps.apple.com/app/id6811193440" class="btn btn-primary pricing-cta" data-appstore>
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 Get It on the Mac App Store
             </a>
             <p class="trial-note">macOS 13+ &middot; Apple silicon &amp; Intel</p>
-            <p class="price-note">Priced in your local App Store currency.</p>
+            <p class="price-note">No ads, no upsells, no "Pro" tier.</p>
         </div>
     </section>
 
@@ -1822,8 +2092,8 @@
                 <p>Yes. Built-in cameras, USB webcams, and iPhone via Continuity Camera all show up in the picker, and the list updates as you plug things in or wake your phone.</p>
             </div>
             <div class="faq-item fade-in stagger-4">
-                <h3>Why $1 instead of free?</h3>
-                <p>Because a dollar covers the developer account and keeps the app free of ads, upsells, and a "Pro" tier that unlocks the parts you actually wanted. You pay once and get everything, including whatever gets added later.</p>
+                <h3>Free? What's the catch?</h3>
+                <p>There isn't one. No ads, no upsells and no "Pro" tier that unlocks the parts you actually wanted. You get everything, including whatever gets added later.</p>
             </div>
             <div class="faq-item fade-in stagger-1">
                 <h3>Can I turn the compliments off?</h3>
@@ -1857,7 +2127,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 <a href="/">LilStudio</a> &middot; LilMirror | <a href="privacy.html">Privacy Policy</a> | <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilhide/">LilHide</a> &middot; <a href="/lildim/">LilDim</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
     </footer>
 
     <script>
@@ -1909,6 +2179,549 @@
                 }, 260);
             }
         })();
+    </script>
+    <script>
+    (function () {
+        'use strict';
+
+        // Every "Get It" button picks this up.
+        const APP_STORE_URL = 'https://apps.apple.com/app/id6811193440';
+        document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0) }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilMirror, live ----------
+        const M = MacKit($('#mac'));
+        const item = $('#lmItem'), pop = $('#lmPop'), view = $('#lmView'), video = $('#lmVideo');
+        const COMPLIMENTS = ['You look great today', 'Certified work of art', 'Museum quality', 'Main character energy', 'Devastating, respectfully', 'The camera is not worthy', 'Best face in the meeting', 'The good angle found you', 'Quietly excellent', 'Approved by this mirror', 'Ten out of ten', 'Immaculate', 'Somebody’s looking sharp', 'Radiating competence', 'No notes', 'The room’s about to notice', 'Go be brilliant', 'First-take material'];
+        const P = Object.assign({ compliments: true, login: false, camera: 'facetime' }, store.get('lmSim.prefs', {}));
+        const save = () => store.set('lmSim.prefs', P);
+        let quit = false, opens = 0, seen = 0, bag = [], lastComp = '', real = false, stream = null;
+
+        // Shuffled so you never get the same one twice in a row
+        function nextCompliment() {
+            if (!bag.length) { bag = COMPLIMENTS.slice().sort(() => Math.random() - 0.5); if (bag[0] === lastComp) bag.push(bag.shift()); }
+            return (lastComp = bag.shift());
+        }
+
+        // ---------- The camera: on while the mirror is open, off the moment it closes ----------
+        function cameraOn(on) {
+            $('#lmInd').hidden = !on;
+            $('.mk-cam', M.root).classList.toggle('on', on);
+            if (on && real) startReal(); else stopReal();
+        }
+        async function startReal() {
+            if (stream || !navigator.mediaDevices) return;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 400 }, audio: false });
+                if (!M.popOpen(pop)) { stopReal(); return; }
+                video.srcObject = stream; video.hidden = false; await video.play();
+            } catch (e) { real = false; syncReal(); M.hud('No camera access<br><small style="font-weight:500;opacity:.7">The illustrated mirror it is</small>', 1500); }
+        }
+        function stopReal() {
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+            video.srcObject = null; video.hidden = true;
+        }
+        function syncReal() { $('#lmReal').textContent = real ? 'Back to the illustration' : 'Use my real camera'; $('#lmReal').classList.toggle('on', real); }
+
+        M.popItem(item, pop);
+        M.on('pop', (p, open) => {
+            if (p !== pop) return;
+            cameraOn(open);
+            if (open) {
+                opens++;
+                const c = $('#lmComp');
+                c.hidden = !P.compliments;
+                if (P.compliments) { c.textContent = nextCompliment(); c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; seen++; if (seen >= 3) Q.done('compliments'); }
+                view.classList.toggle('wide', P.camera === 'iphone');
+                Q.done('open'); item.classList.remove('hint');
+            } else if (opens) { M.hud('Camera off<br><small style="font-weight:500;opacity:.7">The green light is out</small>', 1100); Q.done('light'); }
+        });
+        // Right-click (or control-click) for the menu
+        item.addEventListener('pointerdown', e => { if (e.button === 2 || e.ctrlKey) { e.stopImmediatePropagation(); e.preventDefault(); openMenu(); } }, true);
+        item.addEventListener('contextmenu', e => e.preventDefault());
+        $('#lmGear').addEventListener('click', () => { M.closePops(); openMenu(); });
+        $('#lmQuit').addEventListener('click', () => { M.closePops(); setQuit(true); });
+        function openMenu() {
+            if (quit) return;
+            const cam = (id, name) => ({ t: name, on: P.camera === id, act: () => { P.camera = id; save(); if (id === 'iphone') Q.done('camera'); M.hud(name, 900); } });
+            M.openMenu(item, () => [
+                { t: 'Camera', sub: [cam('facetime', 'FaceTime HD Camera'), cam('iphone', 'iPhone Camera')] }, '-',
+                { t: 'Compliments', on: P.compliments, act: () => { P.compliments = !P.compliments; save(); if (!P.compliments) Q.done('compliments_off'); } },
+                { t: 'Launch at Login', on: P.login, act: () => { P.login = !P.login; save(); } }, '-',
+                { t: 'Quit LilMirror', k: '⌘Q', act: () => setQuit(true) }
+            ], 'right');
+        }
+        function setQuit(q) { quit = q; item.hidden = q; $('[data-do="relaunch"]').hidden = !q; M.hud(q ? 'LilMirror quit' : 'LilMirror', 800); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && M.popOpen(pop)) M.closePops(); });
+
+        // The illustrated you: eyes follow the pointer and blink now and then
+        const eyes = $('#lmEyes');
+        M.screen.addEventListener('pointermove', e => {
+            if (!M.popOpen(pop) || real) return;
+            const b = view.getBoundingClientRect();
+            const dx = Math.max(-1, Math.min(1, (e.clientX - (b.left + b.width / 2)) / 200)), dy = Math.max(-1, Math.min(1, (e.clientY - (b.top + b.height * 0.45)) / 200));
+            eyes.setAttribute('transform', `translate(${(-dx * 3).toFixed(1)} ${(dy * 2).toFixed(1)})`);   // mirrored, like a mirror
+        });
+        setInterval(() => { if (!M.popOpen(pop) || REDUCED) return; eyes.classList.add('blink'); setTimeout(() => eyes.classList.remove('blink'), 140); }, 3200);
+        function raiseHand() {
+            if (!M.popOpen(pop)) M.openPop(item, pop);
+            $('#lmHand').setAttribute('opacity', '1');
+            M.hud('Right hand up, on the right<br><small style="font-weight:500;opacity:.7">It’s a mirror, not a monitor</small>', 1500);
+            setTimeout(() => $('#lmHand').setAttribute('opacity', '0'), 1600);
+        }
+
+        // ---------- The call ----------
+        const call = M.win({ id: 'call', title: 'Video Call — Weekly sync', x: 0, y: 0, w: 10, h: 10, html: '<div class="lm-call"><b style="font-size:15px">Weekly sync</b><small>Starts in 1 minute · 4 people waiting</small><div class="lm-tiles"><i style="background:#6C8CFF">Sam</i><i style="background:#FF7AC6">Priya</i><i style="background:#3FD98A">Leo</i></div><button class="lm-join hint" type="button" id="lmJoin">Join</button></div>' });
+        const notes = M.win({ id: 'notes', title: 'Notes', x: 0, y: 0, w: 10, h: 10, html: '<div style="position:absolute;inset:0;padding:12px 14px;background:#FFFDF4;color:#222;font-size:12.5px;line-height:1.5"><b style="font-size:14px">Before the call</b><br>☐ Hair<br>☐ Something in my teeth?<br>☐ Lighting</div>' });
+        M.on('layout', c => { if (!c) return; const s = M.W / 1024; [call.x, call.y, call.w, call.h] = [60 * s, M.MB + 40 * s, 440 * s, 280 * s]; [notes.x, notes.y, notes.w, notes.h] = [540 * s, M.MB + 250 * s, 240 * s, 170 * s]; M.place(call); M.place(notes); });
+        M.focusWin('call');
+        M.on('focus', w => { $('#mbApp').textContent = w.id === 'call' ? 'Video Call' : 'Notes'; });
+        $('#lmJoin').addEventListener('click', () => {
+            if (opens) { M.hud('Joined. You look great.', 1300); Q.done('call'); }
+            else M.hud('Joined… with something in your teeth?<br><small style="font-weight:500;opacity:.7">Check the mirror first next time</small>', 1800);
+            $('#lmJoin').textContent = 'Joined ✓'; $('#lmJoin').classList.remove('hint');
+            setTimeout(() => { $('#lmJoin').textContent = 'Join'; $('#lmJoin').classList.add('hint'); }, 2600);
+        });
+
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }],
+            app: () => [{ t: 'About ' + $('#mbApp').textContent, dis: true }],
+            file: () => [{ t: 'New Window', k: '⌘N', dis: true }],
+            edit: () => [{ t: 'Copy', k: '⌘C', dis: true }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Video Call', act: () => M.openWin('call') }, { t: 'Notes', act: () => M.openWin('notes') }],
+            help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'call', name: 'Video Call', bg: 'linear-gradient(160deg,#3FD98A,#11994F)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><rect x="9" y="14" width="17" height="14" rx="3" fill="#fff"/><path d="M27 19l7-4v12l-7-4z" fill="#fff"/></svg>' },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFE27A 0 28%, #FFFDF4 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M10 22h22M10 28h22M10 34h14" stroke="#C9C3A8" stroke-width="2"/></svg>' }
+        ]);
+        $$('[data-do]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.do) {
+                case 'open': if (quit) setQuit(false); M.popOpen(pop) ? M.closePops() : M.openPop(item, pop); break;
+                case 'menu': openMenu(); break;
+                case 'hand': raiseHand(); break;
+                case 'real': real = !real; syncReal(); if (real) { if (!M.popOpen(pop)) M.openPop(item, pop); else startReal(); } else stopReal(); break;
+                case 'relaunch': setQuit(false); break;
+            }
+        }));
+        M.on('visible', v => { if (!v && M.popOpen(pop)) M.closePops(); });
+
+        const Q = Quests({
+            key: 'lmSim.quests',
+            items: [
+                { id: 'open', t: 'Open the mirror', d: 'Click the camera icon in the menu bar. The green light next to the Mac’s camera comes on.' },
+                { id: 'compliments', t: 'Collect three compliments', d: 'Open it three times. They’re shuffled, never the same twice in a row.' },
+                { id: 'light', t: 'Watch the light go out', d: 'Click anywhere else or press Esc. The camera stops the moment the mirror closes.' },
+                { id: 'camera', t: 'Switch to your iPhone', d: 'Right-click the icon › Camera › iPhone Camera, via Continuity Camera.' },
+                { id: 'compliments_off', t: 'Turn compliments off', d: 'Right-click › Compliments. (Give them a week first.)' },
+                { id: 'call', t: 'Check, then join', d: 'Open the mirror, fix your hair, close it, then click Join in the call.' }
+            ],
+            show: {
+                async open() { if (quit) setQuit(false); if (!M.popOpen(pop)) await M.press(item); await wait(1400); M.ghostHide(); },
+                async compliments() { if (quit) setQuit(false); for (let i = 0; i < 3; i++) { if (M.popOpen(pop)) { M.closePops(); await wait(300); } await M.press(item, i ? 250 : 500); await wait(900); } M.ghostHide(); },
+                async light() { if (!M.popOpen(pop)) { await M.press(item); await wait(900); } await M.ghostTo({ x: M.W * 0.3, y: M.H * 0.7 }); await M.ghostTap(); M.closePops(); await wait(1000); M.ghostHide(); },
+                async camera() { M.closePops(); openMenu(); await wait(400); const r = $('.mk-ui > .mk-menu .has-sub'); await M.ghostTo(r); r.classList.add('open'); await wait(400); await M.press($$('.mk-ui > .mk-menu .mk-sub .mk-mi')[1]); await wait(500); await M.press(item); await wait(1200); M.ghostHide(); },
+                async compliments_off() { M.closePops(); openMenu(); await wait(400); await M.press($$('.mk-ui > .mk-menu > .mk-mi').find(m => m.textContent.includes('Compliments'))); await wait(500); await M.press(item); await wait(1100); M.ghostHide(); },
+                async call() { if (!M.popOpen(pop)) await M.press(item); await wait(1200); M.closePops(); await wait(400); M.openWin('call'); await M.press($('#lmJoin')); await wait(1200); M.ghostHide(); }
+            },
+            onReset() { M.closePops(); Object.assign(P, { compliments: true, login: false, camera: 'facetime' }); save(); opens = 0; seen = 0; real = false; syncReal(); stopReal(); setQuit(false); item.classList.add('hint'); }
+        });
+        if (!Q.has('open')) item.classList.add('hint');
+
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'pop') M.openPop(item, pop);
+            if (s === 'menu') openMenu();
+        })); });
+        window.__lm = { M, P, Q, opens: () => opens };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

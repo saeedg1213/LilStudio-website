@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <script src="/assets/theme.js"></script>
     <title>LilDock &ndash; Your Dock, in the Mac Menu Bar</title>
 
     <link rel="icon" href="/favicon/favicon.ico" sizes="any">
@@ -1639,6 +1640,319 @@
             .tile { transition: none; }
         }
 
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilDock, running inside the model ========== */
+        .hero { overflow-x: clip; }
+        .ld-magchip { cursor: default; }
+        .ld-magchip input { width: 90px; accent-color: var(--primary); }
+        .ld-magchip output { min-width: 2.6em; }
+        /* App icons (drawn, so they scale cleanly) */
+        .ld-ic { display: block; position: relative; border-radius: 22%; flex-shrink: 0; overflow: hidden; box-shadow: 0 0.5px 1.5px rgba(0,0,0,0.35); }
+        .ld-ic svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+        /* The strip in the menu bar: magnified icons hang below it, like the Dock swelling upwards */
+        .ld-strip { padding: 0 4px; height: 26px; gap: 0; align-items: center; cursor: default; position: relative; }
+        .ld-strip[hidden] { display: none; }
+        .ld-strip:hover, .ld-strip.open { background: none !important; }
+        .ld-strip.hint { animation: mkHint 1.1s ease-in-out infinite; border-radius: 6px; }
+        .ld-t { position: relative; width: var(--sz); height: var(--sz); margin: 0 calc(var(--gap) / 2); flex-shrink: 0; }
+        .ld-t .ld-ic { position: absolute; left: 0; top: 0; width: var(--sz); height: var(--sz); transform-origin: 50% 0; transform: scale(var(--s, 1)); transition: transform 0.12s ease-out; z-index: 1; }
+        .ld-t:hover .ld-ic { z-index: 3; }
+        .ld-t.run::after { content: ''; position: absolute; left: 50%; bottom: -3px; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: var(--mb-ink); opacity: 0.75; }
+        .ld-t .tip { position: absolute; top: calc(var(--sz) * var(--s, 1) + 6px); left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 5px; background: rgba(246,244,240,0.96); color: #1D1D1F; font-size: 11.5px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.2); display: none; z-index: 4; pointer-events: none; }
+        .ld-t:hover .tip { display: block; }
+        .ld-div { width: 1px; height: 16px; margin: 0 4px; background: var(--mb-ink); opacity: 0.3; flex-shrink: 0; }
+        .ld-folder { background: linear-gradient(#7CC4F7, #4FA7EC); }
+        .ld-t.bounce .ld-ic { animation: ldPop 0.5s ease; }
+        @keyframes ldPop { 40% { transform: scale(1.25); } }
+
+        /* The macOS Dock (hideable) */
+        .ld-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255,255,255,0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+        [data-theme="dark"] .ld-dock { background: rgba(40,40,46,0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .ld-dock.away { transform: translate(-50%, 90px); }
+        .ld-dk { position: relative; }
+        .ld-dk .ld-ic { width: 42px; height: 42px; }
+        .ld-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .ld-dk.bounce { animation: mkBounce 0.6s ease 2; }
+
+        /* App windows */
+        .ld-pg { position: absolute; inset: 0; padding: 12px 14px; overflow: hidden; font-size: 12.5px; }
+        .ld-pg h4 { font-size: 15px; margin-bottom: 6px; }
+        .ld-lines i { display: block; height: 8px; border-radius: 4px; background: var(--win-line); margin-bottom: 8px; }
+        .ld-banner { height: 70px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: flex-end; padding: 8px 10px; font-size: 18px; font-weight: 800; color: #111; }
+        .ld-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; font-size: 10px; color: var(--win-muted); }
+        .ld-cal span { aspect-ratio: 1.4; border-radius: 4px; background: var(--win-line); padding: 2px 4px; }
+        .ld-cal span.t { background: #FF453A; color: #fff; font-weight: 700; }
+        .ld-term { position: absolute; inset: 0; background: #1C1C1E; color: #D7D7DB; font: 11px/1.55 'Space Mono', ui-monospace, monospace; padding: 8px 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .ld-term pre { margin: 0; white-space: pre-wrap; word-break: break-all; font: inherit; }
+        .ld-term .g { color: #5AD16A; } .ld-term .b { color: #6CB6FF; } .ld-term .d { color: #7D7D84; }
+        .ld-term-act { display: flex; gap: 6px; margin-top: 8px; }
+        .ld-term-act button { font: 700 10.5px -apple-system, sans-serif; border: 0; border-radius: 10px; padding: 3px 10px; background: #3A3A3E; color: #E8E8EC; cursor: default; }
+        .ld-term-act button.hot { background: #5AD16A; color: #08240E; animation: mkHint 1.1s ease-in-out infinite; }
+        .ld-caret { display: inline-block; width: 7px; height: 13px; background: #D7D7DB; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+        .mk-win.dark .mk-bar { background: #2B2B2E; border-bottom-color: #000; }
+        .mk-win.dark .mk-bar span { color: #A9A9AE; }
+        .ld-files { position: absolute; inset: 0; display: flex; font-size: 12px; }
+        .ld-files aside { width: 110px; padding: 10px; background: rgba(0,0,0,0.04); border-right: 1px solid var(--win-line); color: var(--win-muted); line-height: 2; }
+        .ld-files aside b { color: var(--win-text); }
+        .ld-files ul { list-style: none; flex: 1; padding: 6px; }
+        .ld-files li { display: flex; gap: 8px; align-items: center; padding: 3px 6px; border-radius: 5px; }
+        .ld-files li:nth-child(odd) { background: rgba(0,0,0,0.03); }
+        .ld-fi { width: 14px; height: 17px; border-radius: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.25); flex-shrink: 0; }
+        .ld-music { position: absolute; inset: 0; display: flex; gap: 14px; align-items: center; padding: 14px; }
+        .ld-art { width: 80px; height: 80px; border-radius: 10px; background: conic-gradient(from 200deg, #FF61D8, #FFE135, #00FF88, #00CCFF, #B68CFF, #FF61D8); flex-shrink: 0; }
+
+        /* Downloads stack */
+        .ld-dl .mk-mi { gap: 6px; }
+        .ld-dl .ld-fi { width: 11px; height: 14px; display: block; margin-top: 4px; }
+
+        /* LilDock Settings (from the real window) */
+        .ld-set { position: absolute; inset: 0; overflow-y: auto; padding: 4px 14px 12px; background: var(--set-bg); overscroll-behavior: contain; scrollbar-width: thin; font-size: 13px; }
+        .ld-sh { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--win-muted); margin: 12px 4px 6px; }
+        .ld-add { color: var(--win-text); font-weight: 500; font-size: 13px; padding: 1px 6px; border-radius: 5px; }
+        .ld-add:hover { background: rgba(0,0,0,0.07); }
+        .ld-add.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .ld-box { background: var(--set-box); border-radius: 9px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.13); }
+        [data-theme="dark"] .ld-box { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.1); }
+        .ld-box > * + * { border-top: 1px solid var(--win-line); }
+        .ld-row { display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 32px; }
+        .ld-row input[type="range"] { flex: 1; max-width: 150px; margin-left: auto; accent-color: #2F7CF6; height: 4px; }
+        .ld-row output { width: 44px; text-align: right; color: var(--win-muted); font-variant-numeric: tabular-nums; }
+        .ld-sw { width: 30px; height: 18px; border-radius: 9px; background: rgba(0,0,0,0.13); margin-left: auto; position: relative; flex-shrink: 0; }
+        [data-theme="dark"] .ld-sw { background: rgba(255,255,255,0.16); }
+        .ld-sw::after { content: ''; position: absolute; left: 1.5px; top: 1.5px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .ld-sw.on { background: #2F7CF6; }
+        .ld-sw.on::after { transform: translateX(12px); }
+        .ld-app { touch-action: none; user-select: none; }
+        .ld-app .ld-ic { width: 18px; height: 18px; }
+        .ld-app .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--win-muted); opacity: 0; }
+        .ld-app .dot.on { opacity: 0.7; }
+        .ld-app .rm { margin-left: auto; width: 16px; height: 16px; border-radius: 50%; background: var(--win-muted); opacity: 0.55; position: relative; }
+        .ld-app .rm::after { content: ''; position: absolute; left: 4px; right: 4px; top: 7px; height: 2px; background: var(--set-box); }
+        .ld-app .rm:hover { opacity: 0.9; }
+        .ld-app.dragging { background: rgba(47,124,246,0.12); box-shadow: 0 4px 12px rgba(0,0,0,0.18); position: relative; z-index: 2; }
+        .ld-two { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+        .ld-two b { display: block; font-weight: 500; }
+        .ld-two small { display: block; font-size: 11px; color: var(--win-muted); line-height: 1.3; }
+        .ld-two .mk-btn { margin-left: auto; flex-shrink: 0; }
+        .ld-note { padding: 8px 10px; font-size: 11px; color: var(--win-muted); }
+        .ld-sf { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--win-muted); }
+        .mk-dock { transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+        .mk-dock.away { transform: translate(-50%, 90px); }
+        .mk-dk .ld-ic { width: 42px; height: 42px; }
+        /* Real screenshots, below the hero */
+        .real-grid { max-width: 1100px; margin: 0 auto; display: grid; gap: 1.5rem; }
+        .real-grid img { display: block; width: 100%; height: auto; border: var(--border-width) solid var(--border); box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .real-grid p { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.6rem; }
     </style>
 </head>
 <body>
@@ -1647,7 +1961,7 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilDock</div>
+            <a class="logo" href="./">LilDock</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
                 <li><a href="#try">Try It</a></li>
@@ -1657,7 +1971,7 @@
                 <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#pricing" class="btn btn-primary" data-appstore>Get It &mdash; $0.99</a>
+                <a href="LilDock.dmg" class="btn btn-primary" download>Download</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1666,47 +1980,84 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-
-                <div class="hero-center">
-                    <img src="screenshots/app-icon.png" alt="LilDock app icon" class="hero-appicon" onerror="this.remove()">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        A Dock for your menu bar
+    <!-- ===================== HERO: copy · a Mac running LilDock ===================== -->
+    <section class="hero" id="try" aria-label="LilDock, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilDock app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>A Dock for your menu bar</div>
+                </div>
+                <h1>Your apps, up by <span class="highlight">the clock</span>.</h1>
+                <p class="hero-subtitle">LilDock puts the apps you use most, and your Downloads, in the Mac menu bar next to Wi-Fi and battery. Hide the macOS Dock and your windows get the whole screen, top to bottom.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="LilDock.dmg" class="btn btn-primary" download><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Download for Mac</a>
+                            <span class="system-req">Free &middot; v1.0 &middot; macOS 14.6+ &middot; Apple silicon &amp; Intel</span>
+                        </div>
                     </div>
-                    <h1>Your apps, up by <span class="highlight">the clock.</span></h1>
-                    <p class="hero-subtitle">LilDock puts the apps you use most, and your Downloads, in the Mac menu bar next to Wi-Fi and battery. Hide the macOS Dock and your windows get the whole screen, top to bottom.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="#pricing" class="btn btn-primary" data-appstore>
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    Get It on the Mac App Store
-                                </a>
-                                <span class="system-req">$0.99 once &middot; macOS 14+ &middot; No IAP</span>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>Sandboxed. No Accessibility or Screen Recording permission, no account, no analytics. It only knows which apps you pinned. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
+                </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>The strip next to the clock is LilDock. <b>Glide along it, click an app</b>, and right-click it for Settings.</p>
+            </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac with LilDock in its menu bar">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
+
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi ld-strip" id="strip" role="toolbar" aria-label="LilDock"></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="ld-dock" id="macDock" aria-label="The macOS Dock"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Sandboxed. No Accessibility or Screen Recording permission, no account, no analytics. It only knows which apps you pinned. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
                     </div>
+                    <div class="mk-base"></div>
                 </div>
-
-                <div class="hero-photo-wrap">
-                    <div class="hero-photo">
-                        <img src="screenshots/desktop.jpg" alt="A Mac desktop with no Dock. Safari, Calendar, Finder, Notes, Terminal, Chrome, Xcode and a Downloads folder sit in the menu bar beside Wi-Fi and the clock.">
-                        <span class="hero-callout" aria-hidden="true"></span>
-                    </div>
-                    <img class="hero-zoom" src="screenshots/strip-zoom.png" alt="" aria-hidden="true">
-                    <p class="shot-hint">The strip, up close. And no Dock at the bottom.</p>
+                <div class="desk-bar">
+                    <button class="chip" type="button" data-do="settings">LilDock Settings…</button>
+                    <button class="chip g" type="button" data-do="hide">Hide the macOS Dock</button>
+                    <button class="chip" type="button" data-do="zoom">Zoom the front window</button>
+                    <label class="chip ld-magchip">Magnification <input type="range" id="magChip" min="0" max="0.5" step="0.05" aria-label="Magnification"> <output id="magChipV"></output></label>
+                    <button class="chip on" type="button" data-do="relaunch" hidden>Open LilDock again</button>
                 </div>
-
+            </div>
+        </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Seven things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 7</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilDock. Free, no permissions.</b><br>Your apps up by the clock, and the whole screen for your windows.</div>
+                <a href="LilDock.dmg" class="btn btn-primary" download>Download</a>
             </div>
         </div>
     </section>
+
 
     <div class="perk-strip" aria-hidden="true">
         <div class="perk-track">
@@ -1730,70 +2081,20 @@
                 <p>Accounts</p>
             </div>
             <div class="stat-item">
-                <h3>$0.99</h3>
-                <p>Once, forever</p>
+                <h3>Free</h3>
+                <p>Direct download</p>
             </div>
         </div>
     </section>
 
-    <section class="try" id="try">
+    <section class="real" id="real">
         <div class="section-header fade-in">
-            <h2>Try It</h2>
-            <p>Move your pointer along the strip. Click an app to open it, or the folder for your recent downloads.</p>
+            <h2>On a Real Mac</h2>
+            <p>No Dock at the bottom. Your apps up by the clock.</p>
         </div>
-        <div class="try-stage">
-            <div class="dock-mac" id="dockMac">
-                <div class="dm-bar">
-                    <span class="dm-apple" aria-hidden="true"></span>
-                    <span class="dm-text">Finder</span>
-                    <span class="dm-text menu">File</span>
-                    <span class="dm-text menu">Edit</span>
-                    <span class="dm-text menu">View</span>
-                    <span class="dm-spacer"></span>
-                    <div class="dm-strip" id="dmStrip" role="toolbar" aria-label="LilDock demo">
-                        <button class="tile t-cream running" data-name="Safari" aria-label="Safari"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="#E8564D"/></svg></button>
-                        <button class="tile t-red running" data-name="Calendar" aria-label="Calendar">29</button>
-                        <button class="tile t-blue running" data-name="Finder" aria-label="Finder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 8v2M15 8v2M8 15c2 2 6 2 8 0"/></svg></button>
-                        <button class="tile t-yellow" data-name="Notes" aria-label="Notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 8h12M6 12h12M6 16h8"/></svg></button>
-                        <button class="tile t-ink running" data-name="Terminal" aria-label="Terminal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l4 4-4 4M12 17h7"/></svg></button>
-                        <button class="tile t-green" data-name="Music" aria-label="Music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 17V6l10-2v11"/><circle cx="7" cy="17" r="2" fill="currentColor"/><circle cx="17" cy="15" r="2" fill="currentColor"/></svg></button>
-                        <span class="dm-divider" aria-hidden="true"></span>
-                        <button class="tile t-folder" data-name="Downloads" data-downloads aria-label="Downloads" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v9M8 11l4 4 4-4M6 19h12"/></svg></button>
-                    </div>
-                    <div class="dm-sys" aria-hidden="true"><i></i><i></i></div>
-                    <span class="dm-text">Tue 9:41</span>
-                </div>
-                <div class="dm-desk" aria-hidden="true">
-                    <svg viewBox="0 0 860 200" preserveAspectRatio="xMidYMax slice">
-                        <path d="M0 150 L140 70 L230 120 L360 40 L500 130 L620 80 L760 120 L860 90 V200 H0Z" fill="#D9C08A" stroke="#17150F" stroke-width="3" stroke-linejoin="round"/>
-                        <path d="M320 60 L360 40 L400 64 L380 70 L360 60 L340 72Z" fill="#FAF3E3" stroke="#17150F" stroke-width="2.5" stroke-linejoin="round"/>
-                        <path d="M0 175 L60 140 L110 165 L190 118 L260 170 L340 150 L420 180 L520 140 L600 176 L700 146 L780 170 L860 150 V200 H0Z" fill="#4E6B3A" stroke="#17150F" stroke-width="3" stroke-linejoin="round"/>
-                        <g fill="#2F4A26" stroke="#17150F" stroke-width="2.5" stroke-linejoin="round">
-                            <path d="M40 200 L60 150 L80 200Z"/><path d="M90 200 L112 140 L134 200Z"/><path d="M700 200 L722 146 L744 200Z"/><path d="M760 200 L784 136 L808 200Z"/>
-                        </g>
-                    </svg>
-                    <div class="dm-toast" id="dmToast"></div>
-                </div>
-                <div class="dm-menu" id="dmMenu" role="menu" hidden>
-                    <div><i></i>LilDock-screenshot.png</div>
-                    <div><i></i>receipt-0929.pdf</div>
-                    <div><i></i>trip-photos.zip</div>
-                    <div><i></i>Notes export.txt</div>
-                    <hr>
-                    <div>Open Downloads</div>
-                </div>
-            </div>
-
-            <label class="try-controls">
-                Magnification
-                <input type="range" id="magSlider" min="0" max="0.5" step="0.05" value="0.35">
-                <output id="magValue" for="magSlider">35%</output>
-            </label>
-
-            <div class="real-strip fade-in">
-                <img src="screenshots/menubar.png" alt="The real LilDock strip in a Mac menu bar: Safari, Calendar, Finder, Notes, Terminal, Chrome, Xcode, a divider, then Downloads, followed by Wi-Fi, battery and the clock" loading="lazy">
-                <p>And the real one, straight off a real Mac</p>
-            </div>
+        <div class="real-grid">
+            <figure class="fade-in"><img src="screenshots/desktop.jpg" alt="A Mac desktop with no Dock. Safari, Calendar, Finder, Notes, Terminal, Chrome, Xcode and a Downloads folder sit in the menu bar beside Wi-Fi and the clock." width="1600" height="1000" loading="lazy" decoding="async"><p>The whole screen for your windows</p></figure>
+            <figure class="fade-in"><img src="screenshots/menubar.png" alt="The real LilDock strip in a Mac menu bar: Safari, Calendar, Finder, Notes, Terminal, Chrome, Xcode, a divider, then Downloads, followed by Wi-Fi, battery and the clock" width="1500" height="70" loading="lazy" decoding="async"><p>The strip, straight off a real Mac</p></figure>
         </div>
     </section>
 
@@ -1857,19 +2158,19 @@
                 <div class="step-number">1</div>
                 <h3>Pick your apps</h3>
                 <p>Right-click the strip and choose Settings. Add apps from your Applications folder or from what's open right now, and drag to reorder.</p>
-                <img src="screenshots/settings.jpg" alt="LilDock Settings with icon size, spacing, magnification, the Downloads toggle and a list of pinned apps" loading="lazy">
+                <img src="screenshots/settings.jpg" width="790" height="1305" alt="LilDock Settings with icon size, spacing, magnification, the Downloads toggle and a list of pinned apps" loading="lazy">
             </div>
             <div class="how-card fade-in stagger-2">
                 <div class="step-number">2</div>
                 <h3>Hide the Dock</h3>
                 <p>Click Copy &amp; Open Terminal, then paste and press Return. Change your mind later with the button right under it.</p>
-                <img src="screenshots/hide-dock.jpg" alt="The macOS Dock section of LilDock Settings with Hide and Show buttons" loading="lazy">
+                <img src="screenshots/hide-dock.jpg" width="708" height="365" alt="The macOS Dock section of LilDock Settings with Hide and Show buttons" loading="lazy">
             </div>
             <div class="how-card fade-in stagger-3">
                 <div class="step-number">3</div>
                 <h3>Enjoy the room</h3>
                 <p>Windows run all the way to the bottom of the screen, and your apps are a short flick up, next to the clock.</p>
-                <img src="screenshots/windows.jpg" alt="Safari, a system monitor and a terminal filling the whole screen, with LilDock in the menu bar" loading="lazy">
+                <img src="screenshots/windows.jpg" width="1600" height="1000" alt="Safari, a system monitor and a terminal filling the whole screen, with LilDock in the menu bar" loading="lazy">
             </div>
         </div>
     </section>
@@ -1877,12 +2178,12 @@
     <section class="pricing" id="pricing">
         <div class="section-header fade-in">
             <h2>Price</h2>
-            <p>Less than a coffee. Keep it forever.</p>
+            <p>There isn't one.</p>
         </div>
         <div class="pricing-card scale-in">
             <img src="screenshots/app-icon.png" alt="" class="pricing-icon" onerror="this.remove()">
-            <div class="price-tag"><span class="currency">$</span>0.99</div>
-            <div class="price-period">One time &middot; no subscription</div>
+            <div class="price-tag"><span class="currency">$</span>0</div>
+            <div class="price-period">Free Download</div>
             <ul class="pricing-features">
                 <li>
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1901,12 +2202,12 @@
                     All future updates included
                 </li>
             </ul>
-            <a href="#pricing" class="btn btn-primary pricing-cta" data-appstore>
+            <a href="LilDock.dmg" class="btn btn-primary pricing-cta" download>
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                Get It on the Mac App Store
+                Download for Mac
             </a>
-            <p class="trial-note">macOS 14+ &middot; Apple silicon &amp; Intel</p>
-            <p class="price-note">Priced in your local App Store currency.</p>
+            <p class="trial-note">macOS 14.6+ &middot; Apple silicon &amp; Intel</p>
+            <p class="price-note">Notarized by Apple. Open the DMG and drag it into Applications.</p>
         </div>
     </section>
 
@@ -1921,7 +2222,7 @@
             </div>
             <div class="faq-item fade-in stagger-2">
                 <h3>Why does hiding the Dock go through Terminal?</h3>
-                <p>LilDock is sandboxed for the App Store, so it isn't allowed to change another app's settings, the Dock included. It copies the one-line command for you instead, and the Show button undoes it.</p>
+                <p>LilDock is sandboxed, so it isn't allowed to change another app's settings, the Dock included. It copies the one-line command for you instead, and the Show button undoes it.</p>
             </div>
             <div class="faq-item fade-in stagger-3">
                 <h3>Does it need any permissions?</h3>
@@ -1951,7 +2252,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 <a href="/">LilStudio</a> &middot; LilDock | <a href="privacy.html">Privacy Policy</a> | <a href="support.html">Support</a></p>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilhide/">LilHide</a> &middot; <a href="/lilstats/">LilStats</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
     </footer>
 
     <script>
@@ -1979,60 +2280,772 @@
 
         document.querySelectorAll('.fade-in, .scale-in').forEach(el => observer.observe(el));
 
-        // ---------- Try It: the same magnification math as the app ----------
-        const strip = document.getElementById('dmStrip');
-        const tiles = [...strip.querySelectorAll('.tile')];
-        const slider = document.getElementById('magSlider');
-        const magOut = document.getElementById('magValue');
-        const toast = document.getElementById('dmToast');
-        const menu = document.getElementById('dmMenu');
-        let mag = parseFloat(slider.value);
-        let toastTimer;
+    </script>
+    <script>
+    (function () {
+        'use strict';
 
+        // Set this once the app is live; every "Get It" button picks it up.
+        const APP_STORE_URL = '';
+        if (APP_STORE_URL) document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0) }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilDock, live (modelled on LilDock 1.0 and its Settings window) ----------
+        const M = MacKit($('#mac'));
+        const stripEl = $('#strip');
+        const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+        // App icons, drawn so they scale with the icon-size slider
+        const G = {
+            safari: ['radial-gradient(circle at 50% 50%, #fff 0 52%, #1E8CF8 53%)', '<path d="M27 13l-5 10-9 4 5-10z" fill="#FF3B30"/><path d="M13 27l5-10 4 6z" fill="#D1D1D6"/>'],
+            calendar: ['#fff', '<rect width="40" height="11" fill="#FF3B30"/><text x="20" y="32" text-anchor="middle" font-size="18" font-weight="700" font-family="-apple-system,sans-serif" fill="#1D1D1F">13</text>'],
+            finder: ['linear-gradient(90deg,#3FA0F5 50%,#E6F2FF 50%)', '<path d="M14 14v5M26 14v5M12 26c5 4 11 4 16 0" stroke="#10243A" stroke-width="2.6" fill="none" stroke-linecap="round"/>'],
+            notes: ['linear-gradient(#FFD93D 0 30%, #FFFDF4 30%)', '<path d="M8 20h24M8 26h24M8 32h16" stroke="#D3CCAF" stroke-width="2"/>'],
+            terminal: ['#1C1C1E', '<text x="8" y="25" font-size="14" font-weight="700" font-family="Menlo,monospace" fill="#5AD16A">&gt;_</text>'],
+            music: ['linear-gradient(160deg,#FF6F91,#FA2D48)', '<path d="M24 10v15.5a4 4 0 11-3-3.9V14l-6 1.5v12a4 4 0 11-3-3.9V12z" fill="#fff"/>'],
+            mail: ['linear-gradient(#53B8FF,#1A7CF5)', '<rect x="8" y="12" width="24" height="17" rx="2" fill="#fff"/><path d="M8.5 13l11.5 9 11.5-9" fill="none" stroke="#1A7CF5" stroke-width="2"/>'],
+            photos: ['#fff', '<g transform="translate(20 20)">' + ['#FFCC00', '#FF9500', '#FF3B30', '#AF52DE', '#5856D6', '#007AFF', '#34C759', '#A2D729'].map((c, i) => `<ellipse rx="4.5" ry="9" cy="-7" fill="${c}" opacity="0.85" transform="rotate(${i * 45})"/>`).join('') + '</g>'],
+            maps: ['linear-gradient(135deg,#BFE6A8 50%,#F4EBD6 50%)', '<path d="M8 32C16 22 22 30 32 8" stroke="#2F7CF6" stroke-width="4" fill="none"/><circle cx="29" cy="12" r="4" fill="#FF3B30"/>'],
+            messages: ['linear-gradient(#6BE37E,#2BC14A)', '<path d="M20 10c-7 0-12 4-12 9.5 0 3 1.6 5.6 4 7.3L11 31l5.5-2.6c1.1.3 2.3.5 3.5.5 7 0 12-4.3 12-9.5S27 10 20 10z" fill="#fff"/>'],
+            xcode: ['linear-gradient(#5FB6FF,#1460D8)', '<path d="M12 28l12-16 4 3-12 16z" fill="#fff"/><path d="M22 10l8 6" stroke="#E9EEF5" stroke-width="3"/>']
+        };
+        const NAMES = { safari: 'Safari', calendar: 'Calendar', finder: 'Finder', notes: 'Notes', terminal: 'Terminal', music: 'Music', mail: 'Mail', photos: 'Photos', maps: 'Maps', messages: 'Messages', xcode: 'Xcode' };
+        const icon = (id, px) => `<i class="ld-ic" style="background:${G[id][0]};${px ? `width:${px}px;height:${px}px` : ''}"><svg viewBox="0 0 40 40" aria-hidden="true">${G[id][1]}</svg></i>`;
+        const folderIcon = () => '<i class="ld-ic ld-folder" style="border-radius:3px"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 8h12l3 4h17v22H4z" fill="#5EB2EF"/><path d="M4 14h32v20H4z" fill="#86C8F8"/><path d="M14 22l6 6 6-6M20 27V16" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg></i>';
+
+        // ---------- Settings (defaults match a fresh install) ----------
+        const defaults = () => ({ size: 22, spacing: 12, mag: 0.35, downloads: true, apps: ['safari', 'calendar', 'finder', 'notes', 'terminal', 'music'] });
+        let P = Object.assign(defaults(), store.get('ldSim.prefs', {}));
+        if (!Array.isArray(P.apps) || P.apps.some(a => !G[a])) P.apps = defaults().apps;
+        const save = () => store.set('ldSim.prefs', P);
+        let quit = false, dockHidden = store.get('ldSim.dockHidden', false);
+        const running = new Set(['finder', 'safari', 'notes']);
+
+        // ---------- The strip ----------
+        function renderStrip() {
+            stripEl.style.setProperty('--sz', (P.size * 0.8).toFixed(1) + 'px');
+            stripEl.style.setProperty('--gap', (P.spacing * 0.6).toFixed(1) + 'px');
+            stripEl.innerHTML = P.apps.map(id => `<div class="ld-t${running.has(id) ? ' run' : ''}" data-app="${id}" role="button" aria-label="${NAMES[id]}">${icon(id)}<span class="tip">${NAMES[id]}</span></div>`).join('')
+                + (P.downloads ? `<span class="ld-div"></span><div class="ld-t" data-app="downloads" role="button" aria-label="Downloads">${folderIcon()}<span class="tip">Downloads</span></div>` : '');
+            stripEl.hidden = quit;
+            if (setWin && setWin.open) renderSettings();
+        }
+        // Dock-style magnification: the same falloff as the app, from rest positions
+        const glided = new Set();
         function magnify(x) {
+            const tiles = $$('.ld-t', stripEl);
+            const reach = (P.size * 0.8 + P.spacing * 0.6) * 2;
             tiles.forEach(t => {
                 let s = 1;
-                if (x !== null && mag > 0) {
-                    const r = t.getBoundingClientRect();
-                    const reach = (r.width + 10) * 2;
-                    s = 1 + mag * Math.max(0, 1 - Math.abs(x - (r.left + r.width / 2)) / reach);
+                if (x !== null && P.mag > 0) {
+                    const b = M.box(t);
+                    s = 1 + P.mag * Math.max(0, 1 - Math.abs(x - (b.x + b.w / 2)) / reach);
                 }
                 t.style.setProperty('--s', s.toFixed(3));
+                if (s > 1 + P.mag * 0.7) glided.add(t.dataset.app);
             });
+            if (glided.size >= 4) Q.done('magnify');
+        }
+        stripEl.addEventListener('pointermove', e => magnify(M.pt(e).x));
+        stripEl.addEventListener('pointerleave', () => magnify(null));
+        stripEl.addEventListener('contextmenu', e => e.preventDefault());
+        stripEl.addEventListener('pointerdown', e => {
+            e.stopPropagation();
+            if (e.pointerType === 'mouse') e.preventDefault();
+            const t = e.target.closest('.ld-t');
+            if (e.button === 2 || e.ctrlKey || !t) { stripMenu(t || stripEl); return; }
+            M.closeMenus();
+            if (t.dataset.app === 'downloads') { downloadsMenu(t); return; }
+            t.classList.remove('bounce'); void t.offsetWidth; t.classList.add('bounce');
+            launch(t.dataset.app);
+            Q.done('open');
+            stripEl.classList.remove('hint');
+        });
+        function stripMenu(anchor) {
+            M.openMenu(anchor, () => [{ t: 'Settings…', act: openSettings }, '-', { t: 'Quit LilDock', act: () => setQuit(true) }], 'right');
+        }
+        const DOWNLOADS = [['LilDock-screenshot.png', '#7DB8E4'], ['receipt-0929.pdf', '#E5484D'], ['trip-photos.zip', '#C7CBD1'], ['Notes export.txt', '#8E8E93'], ['invoice-1042.pdf', '#E5484D'], ['podcast-ep12.mp3', '#FF7AC6'], ['design-v3.sketch', '#FFB020'], ['IMG_4022.HEIC', '#7ED48A']];
+        function downloadsMenu(anchor) {
+            const m = M.openMenu(anchor, () => [...DOWNLOADS.map(([n, c]) => ({ t: n, ic: `<i class="ld-fi" style="box-shadow:inset 0 -4px 0 ${c},0 0 0 1px rgba(0,0,0,.25)"></i>`, act: () => { M.hud('Opened ' + n, 900); Q.done('downloads'); } })), '-', { t: 'Open Downloads', act: () => { launch('finder', true); Q.done('downloads'); } }], 'right');
+            m.classList.add('ld-dl');
+        }
+        function setQuit(q) {
+            quit = q; stripEl.hidden = q;
+            $('[data-do="relaunch"]').hidden = !q;
+            if (q) { M.hud('LilDock quit', 900); M.closeWin('settings'); } else { M.hud('LilDock', 700); renderStrip(); }
         }
 
-        strip.addEventListener('pointermove', e => magnify(e.clientX));
-        strip.addEventListener('pointerleave', () => magnify(null));
-
-        slider.addEventListener('input', () => {
-            mag = parseFloat(slider.value);
-            magOut.textContent = mag < 0.01 ? 'Off' : Math.round(mag * 100) + '%';
+        // ---------- Apps and their windows ----------
+        const BODY = {
+            safari: '<div class="ld-pg"><div class="ld-banner" style="background:linear-gradient(120deg,#F5D65C,#5ED3A0)">lilstudio.app</div><div class="ld-lines"><i style="width:80%"></i><i style="width:62%"></i><i style="width:72%"></i><i style="width:50%"></i></div></div>',
+            calendar: '<div class="ld-pg"><h4>November 2026</h4><div class="ld-cal">' + Array.from({ length: 35 }, (_, i) => { const d = i - 6 + 1; return `<span class="${d === 13 ? 't' : ''}">${d > 0 && d <= 30 ? d : ''}</span>`; }).join('') + '</div></div>',
+            finder: '<div class="ld-files"><aside><b>Downloads</b><br>Desktop<br>Documents<br>Applications</aside><ul>' + DOWNLOADS.map(([n, c]) => `<li><i class="ld-fi" style="box-shadow:inset 0 -4px 0 ${c},0 0 0 1px rgba(0,0,0,.25)"></i>${n}</li>`).join('') + '</ul></div>',
+            notes: '<div class="ld-pg" style="background:#FFFDF4;color:#222"><h4>Groceries</h4>Oat milk<br>Coffee beans<br>Lemons<br>Basil</div>',
+            terminal: '<div class="ld-term"><pre id="ldOut"></pre><div class="ld-term-act" id="ldAct"></div></div>',
+            music: '<div class="ld-music"><div class="ld-art"></div><div><b>Golden Hour</b><br><small style="color:var(--win-muted)">Lil Band — Sunsets</small><br><br>▶︎ ▶▶</div></div>',
+            mail: '<div class="ld-pg"><h4>Inbox</h4><div class="ld-lines"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div></div>',
+            photos: '<div class="ld-pg" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px">' + ['#7DB8E4', '#F3D2B0', '#7ED48A', '#FF7AC6', '#FFB020', '#6C8CFF', '#B68CFF', '#3FD98A'].map(c => `<i style="aspect-ratio:1;border-radius:4px;background:${c}"></i>`).join('') + '</div>',
+            maps: '<div class="ld-pg" style="background:linear-gradient(135deg,#DDEFD0,#F4EBD6)"><svg viewBox="0 0 200 120" width="100%" height="100%"><path d="M10 110C60 60 110 100 190 10" stroke="#2F7CF6" stroke-width="6" fill="none"/></svg></div>',
+            messages: '<div class="ld-pg"><p style="background:#E9E9EB;color:#111;border-radius:12px;padding:5px 9px;display:inline-block">Lunch at 1?</p><br><br><p style="background:#2F7CF6;color:#fff;border-radius:12px;padding:5px 9px;display:inline-block;float:right">Yes!</p></div>',
+            xcode: '<div class="ld-term" style="background:#1F2026"><pre><span class="b">struct</span> ContentView: View {\n    <span class="b">var</span> body: some View {\n        Text(<span class="g">"Hello"</span>)\n    }\n}</pre></div>'
+        };
+        const SIZES = { safari: [460, 300], calendar: [360, 270], finder: [420, 240], notes: [260, 200], terminal: [440, 230], music: [330, 140], mail: [380, 240], photos: [360, 240], maps: [380, 240], messages: [300, 220], xcode: [440, 260] };
+        let cascade = 0;
+        function ensureWin(id) {
+            if (M.wins.has(id)) return M.wins.get(id);
+            const [w, h] = SIZES[id], s = M.W / 1024;
+            const x = clampN(40 + (cascade % 6) * 46 * s + (id === 'terminal' ? 260 * s : 0), 10, M.W - w * s - 10), y = M.MB + 18 + (cascade % 6) * 26 * s;
+            cascade++;
+            return M.win({ id, title: id === 'terminal' ? 'Terminal — zsh' : NAMES[id], cls: id === 'terminal' || id === 'xcode' ? 'dark' : '', x, y, w: w * s, h: h * s, html: BODY[id], dock: id });
+        }
+        function launch(id, downloads) {
+            const fresh = !running.has(id);
+            running.add(id);
+            ensureWin(id);
+            M.openWin(id);
+            const dk = M.dockEl.querySelector(`[data-dk="${id}"]`);
+            if (fresh && dk) { dk.classList.remove('bounce'); void dk.offsetWidth; dk.classList.add('bounce'); }
+            if (id === 'terminal') termRender();
+            renderStrip(); renderDock();
+            void downloads;
+        }
+        function quitApp(id) {
+            if (!running.has(id)) return;
+            running.delete(id);
+            M.closeWin(id);
+            renderStrip(); renderDock();
+        }
+        M.on('focus', w => { $('#mbApp').textContent = w.id === 'settings' ? 'LilDock' : NAMES[w.id] || 'Finder'; });
+        M.on('win', (w, what) => {
+            if (what === 'zoom' && w.saved && dockHidden) Q.done('full');
+            if (what === 'open' && w.id === 'terminal') termRender();
         });
 
-        function say(text) {
-            toast.textContent = text;
-            toast.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+        // ---------- The macOS Dock ----------
+        const DOCK_APPS = ['finder', 'safari', 'mail', 'messages', 'photos', 'calendar', 'notes', 'music', 'terminal'];
+        function renderDock() {
+            M.dockEl.querySelectorAll('.mk-dk[data-dk]').forEach(d => d.classList.toggle('run', running.has(d.dataset.dk)));
+        }
+        M.dock([...DOCK_APPS.map(id => ({ id, name: NAMES[id], bg: 'transparent', icon: icon(id, 42), act: () => launch(id) })), '|',
+            { id: 'trash', name: 'Trash', bg: 'linear-gradient(#E9E9EE,#C5C5CC)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M13 14h16l-2 18H15z" fill="none" stroke="#666" stroke-width="2"/><path d="M11 13h20" stroke="#666" stroke-width="2"/></svg>', act: () => M.hud('Trash is empty', 800) }]);
+        M.updateDock = renderDock;
+        function setDockHidden(h) {
+            dockHidden = h; store.set('ldSim.dockHidden', h);
+            M.dockEl.classList.toggle('away', h);
+            M.DOCK = h ? 0 : 60;
+            M.wins.forEach(w => { if (w.saved) { w.h = M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0); M.place(w); } });
+            $('[data-do="hide"]').textContent = h ? 'Show the macOS Dock' : 'Hide the macOS Dock';
+            if (h) Q.done('hide');
         }
 
-        tiles.forEach(t => t.addEventListener('click', e => {
-            e.stopPropagation();
-            if (t.hasAttribute('data-downloads')) {
-                const open = menu.hidden;
-                menu.hidden = !open;
-                t.setAttribute('aria-expanded', String(open));
-                return;
+        // ---------- Terminal: paste the copied command, press Return ----------
+        const CMD = {
+            hide: 'defaults write com.apple.dock autohide -bool true && defaults write com.apple.dock autohide-delay -float 1000 && killall Dock',
+            show: 'defaults write com.apple.dock autohide -bool false && defaults delete com.apple.dock autohide-delay && killall Dock'
+        };
+        let clip = null, typed = '', tLines = ['<span class="d">Last login: ' + new Date().toDateString() + ' on ttys002</span>'];
+        const PROMPT = '<span class="g">~</span> <span class="b">%</span> ';
+        function termRender() {
+            const out = $('#ldOut');
+            if (!out) return;
+            out.innerHTML = tLines.slice(-10).join('\n') + '\n' + PROMPT + typed + '<span class="ld-caret"></span>';
+            $('#ldAct').innerHTML = clip && !typed ? '<button type="button" class="hot" data-k="paste">⌘V  Paste</button>' : typed ? '<button type="button" class="hot" data-k="ret">⏎  Return</button>' : '';
+        }
+        function paste() { if (!clip) return; typed = clip; termRender(); }
+        function ret() {
+            if (!typed) return;
+            tLines.push(PROMPT + typed);
+            const which = typed === CMD.hide ? 'hide' : typed === CMD.show ? 'show' : null;
+            typed = ''; clip = null; termRender();
+            if (which) { M.dockEl.classList.add('away'); setTimeout(() => setDockHidden(which === 'hide'), REDUCED ? 30 : 650); }
+        }
+        document.addEventListener('pointerdown', e => { const b = e.target.closest('#ldAct [data-k]'); if (b) { e.stopPropagation(); b.dataset.k === 'paste' ? paste() : ret(); } }, true);
+        document.addEventListener('keydown', e => {
+            if (M.focus !== 'terminal' || !M.wins.get('terminal') || !M.wins.get('terminal').open) return;
+            const r = $('#stage').getBoundingClientRect();
+            if (r.bottom < 0 || r.top > innerHeight) return;
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'v' && clip) { e.preventDefault(); paste(); }
+            else if (e.key === 'Enter' && typed) { e.preventDefault(); ret(); }
+        });
+        function copyAndOpen(which) {
+            clip = CMD[which];
+            try { navigator.clipboard && navigator.clipboard.writeText(clip).catch(() => {}); } catch (e) { /* not allowed here */ }
+            launch('terminal');
+            M.hud('Command copied<br><small style="font-weight:500;opacity:.7">Press ⌘V, then Return</small>', 1600);
+            termRender();
+        }
+
+        // ---------- LilDock Settings ----------
+        const setWin = M.win({ id: 'settings', title: 'LilDock Settings', open: false, x: 0, y: 0, w: 10, h: 10, html: '<div class="ld-set" id="ldSet"></div>' });
+        function placeSettings() { const s = M.W / 1024; [setWin.x, setWin.y, setWin.w, setWin.h] = [M.W - 410 * s - 20, M.MB + 10, Math.max(330, 380 * s), M.H - M.MB - 80 * s]; M.place(setWin); }
+        function renderSettings() {
+            const el = $('#ldSet'), top = el.scrollTop;
+            el.innerHTML = `
+                <div class="ld-sh">Appearance</div>
+                <div class="ld-box">
+                    <div class="ld-row"><span>Icon size</span><input type="range" min="16" max="28" step="1" value="${P.size}" data-p="size"><output>${P.size} pt</output></div>
+                    <div class="ld-row"><span>Spacing</span><input type="range" min="2" max="24" step="1" value="${P.spacing}" data-p="spacing"><output>${P.spacing} pt</output></div>
+                    <div class="ld-row"><span>Magnification</span><input type="range" min="0" max="0.5" step="0.05" value="${P.mag}" data-p="mag"><output>${P.mag < 0.01 ? 'Off' : Math.round(P.mag * 100) + '%'}</output></div>
+                    <div class="ld-row"><span>Downloads folder</span><span class="ld-sw${P.downloads ? ' on' : ''}" data-act="downloads" role="switch" aria-checked="${P.downloads}"></span></div>
+                </div>
+                <div class="ld-sh">Apps <span class="ld-add" data-act="add" role="button">+ Add</span></div>
+                <div class="ld-box" id="ldApps">${P.apps.map((id, i) => `<div class="ld-row ld-app" data-i="${i}">${icon(id)}<span>${NAMES[id]}</span><i class="dot${running.has(id) ? ' on' : ''}"></i><span class="rm" data-act="rm" role="button" aria-label="Remove ${NAMES[id]}"></span></div>`).join('') || '<div class="ld-note">No apps yet. Click + Add.</div>'}</div>
+                <div class="ld-sh">macOS Dock</div>
+                <div class="ld-box" id="ldDockBox">
+                    <div class="ld-two"><div><b>Hide the macOS Dock</b><small>Stays hidden, even when you hover the bottom edge</small></div><button class="mk-btn" type="button" data-act="hide">Copy &amp; Open Terminal</button></div>
+                    <div class="ld-two"><div><b>Show the macOS Dock</b><small>Brings the macOS Dock back to normal</small></div><button class="mk-btn" type="button" data-act="show">Copy &amp; Open Terminal</button></div>
+                    <div class="ld-note">Terminal opens with the command copied: press ⌘V, then Return.</div>
+                </div>
+                <div class="ld-sf"><button class="mk-btn" type="button" data-act="restore">Restore Defaults</button><span>LilDock 1.0</span><button class="mk-btn" type="button" data-act="quit">Quit LilDock</button></div>`;
+            el.scrollTop = top;
+        }
+        function openSettings() { if (quit) setQuit(false); placeSettings(); M.openWin('settings'); renderSettings(); }
+        $('#ldSet').addEventListener('input', e => {
+            const k = e.target.dataset.p;
+            if (!k) return;
+            P[k] = +e.target.value; save();
+            e.target.nextElementSibling.textContent = k === 'mag' ? (P.mag < 0.01 ? 'Off' : Math.round(P.mag * 100) + '%') : P[k] + ' pt';
+            stripEl.style.setProperty('--sz', (P.size * 0.8).toFixed(1) + 'px');
+            stripEl.style.setProperty('--gap', (P.spacing * 0.6).toFixed(1) + 'px');
+            syncMagChip();
+        });
+        $('#ldSet').addEventListener('click', e => {
+            const a = e.target.closest('[data-act]');
+            if (!a) return;
+            switch (a.dataset.act) {
+                case 'downloads': P.downloads = !P.downloads; break;
+                case 'rm': P.apps.splice(+a.closest('[data-i]').dataset.i, 1); Q.done('arrange'); break;
+                case 'add': addMenu(a); return;
+                case 'hide': case 'show': copyAndOpen(a.dataset.act); return;
+                case 'restore': P = defaults(); syncMagChip(); break;
+                case 'quit': setQuit(true); return;
             }
-            menu.hidden = true;
-            say((t.classList.contains('running') ? 'Switching to ' : 'Opening ') + t.dataset.name);
-            t.classList.add('running');
+            save(); renderStrip(); renderSettings();
+        });
+        function addMenu(anchor) {
+            const all = Object.keys(NAMES).filter(id => !P.apps.includes(id));
+            const add = id => () => { P.apps.push(id); save(); renderStrip(); renderSettings(); Q.done('add'); };
+            M.openMenu(anchor, () => [{ h: 'Open right now' }, ...[...running].filter(id => !P.apps.includes(id)).map(id => ({ t: NAMES[id], act: add(id) })), '-', { h: 'Applications' }, ...all.map(id => ({ t: NAMES[id], act: add(id) }))], 'right');
+            const m = $('.mk-ui > .mk-menu');
+            if (m) { const b = M.box(anchor); m.style.top = (b.y + b.h + 4) + 'px'; }
+        }
+        // Drag to reorder (like the app's list)
+        let rowDrag = null;
+        $('#ldSet').addEventListener('pointerdown', e => {
+            const row = e.target.closest('.ld-app');
+            if (!row || e.target.closest('[data-act]')) return;
+            if (e.pointerType === 'mouse') e.preventDefault();
+            rowDrag = { i: +row.dataset.i, y0: M.pt(e).y, h: row.offsetHeight, id: e.pointerId, row };
+            row.setPointerCapture(e.pointerId);
+            row.classList.add('dragging');
+        });
+        $('#ldSet').addEventListener('pointermove', e => {
+            if (!rowDrag || e.pointerId !== rowDrag.id) return;
+            const dy = M.pt(e).y - rowDrag.y0, steps = Math.round(dy / rowDrag.h);
+            rowDrag.row.style.transform = `translateY(${dy - steps * rowDrag.h}px)`;
+            const j = clampN(rowDrag.i + steps, 0, P.apps.length - 1);
+            if (j !== rowDrag.i) {
+                const [a] = P.apps.splice(rowDrag.i, 1); P.apps.splice(j, 0, a);
+                rowDrag.y0 += (j - rowDrag.i) * rowDrag.h; rowDrag.i = j;
+                save(); renderStrip();
+                rowDrag.row = $(`#ldApps [data-i="${j}"]`); rowDrag.row.classList.add('dragging'); rowDrag.row.setPointerCapture(e.pointerId);
+                Q.done('arrange');
+            }
+        });
+        const endRow = e => { if (!rowDrag || e.pointerId !== rowDrag.id) return; rowDrag.row.classList.remove('dragging'); rowDrag.row.style.transform = ''; rowDrag = null; };
+        $('#ldSet').addEventListener('pointerup', endRow);
+        $('#ldSet').addEventListener('pointercancel', endRow);
+
+        // ---------- Menus, controls ----------
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }, '-', { t: 'Sleep', dis: true }],
+            app: () => { const a = $('#mbApp').textContent, id = Object.keys(NAMES).find(k => NAMES[k] === a); return a === 'LilDock' ? [{ t: 'Settings…', k: '⌘,', act: openSettings }, '-', { t: 'Quit LilDock', k: '⌘Q', act: () => setQuit(true) }] : [{ t: 'About ' + a, dis: true }, '-', { t: 'Quit ' + a, k: '⌘Q', dis: !id || id === 'finder', act: () => quitApp(id) }]; },
+            file: () => [{ t: 'New Window', k: '⌘N', dis: true }, { t: 'Close Window', k: '⌘W', act: () => M.focus && M.closeWin(M.focus) }],
+            edit: () => [{ t: 'Paste', k: '⌘V', dis: !(M.focus === 'terminal' && clip), act: paste }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Minimize', k: '⌘M', act: () => M.focus && M.minWin(M.focus) }, { t: 'Zoom', act: () => M.focus && M.zoomWin(M.focus) }],
+            help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        const magChip = $('#magChip');
+        function syncMagChip() { magChip.value = P.mag; $('#magChipV').textContent = P.mag < 0.01 ? 'Off' : Math.round(P.mag * 100) + '%'; }
+        magChip.addEventListener('input', () => { P.mag = +magChip.value; save(); syncMagChip(); if (setWin.open) renderSettings(); });
+        function frontWin() { return M.focus && M.wins.get(M.focus) && M.wins.get(M.focus).open ? M.focus : [...M.wins.values()].filter(w => w.open && !w.min).sort((a, b) => b.z - a.z).map(w => w.id)[0]; }
+        $$('[data-do]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.do) {
+                case 'settings': openSettings(); break;
+                case 'hide': openSettings(); copyAndOpen(dockHidden ? 'show' : 'hide'); break;
+                case 'zoom': { const id = frontWin(); if (id) M.zoomWin(id); break; }
+                case 'relaunch': setQuit(false); break;
+            }
         }));
 
-        document.addEventListener('click', () => {
-            menu.hidden = true;
-            strip.querySelector('[data-downloads]').setAttribute('aria-expanded', 'false');
+        // ---------- Things to try ----------
+        const tile = id => $(`.ld-t[data-app="${id}"]`, stripEl);
+        const Q = Quests({
+            key: 'ldSim.quests',
+            items: [
+                { id: 'magnify', t: 'Glide along the strip', d: 'Move the pointer across the icons next to the clock. They swell like the Dock does.' },
+                { id: 'open', t: 'Open an app from it', d: 'Click Terminal or Music in the strip. A running dot appears under it.' },
+                { id: 'downloads', t: 'Open your Downloads', d: 'Click the folder at the end of the strip for your newest downloads.' },
+                { id: 'add', t: 'Pin another app', d: 'Right-click the strip › Settings…, then + Add.' },
+                { id: 'arrange', t: 'Rearrange it', d: 'Drag an app up or down in Settings, or remove one with ⊖. The strip follows.' },
+                { id: 'hide', t: 'Hide the macOS Dock', d: 'Settings › Copy & Open Terminal. Then press ⌘V and Return (or the green buttons).' },
+                { id: 'full', t: 'Get the whole screen', d: 'With the Dock hidden, click a window’s green button. It fills the screen, top to bottom.' }
+            ],
+            show: {
+                async magnify() {
+                    if (quit) setQuit(false);
+                    const ts = $$('.ld-t', stripEl), a = M.box(ts[0]), b = M.box(ts[ts.length - 1]), y = a.y + a.h / 2;
+                    await M.ghostTo({ x: a.x, y });
+                    await M.tween(1400, t => { const x = a.x + (b.x + b.w - a.x) * t; magnify(x); M.ghostTo({ x, y }, 0); });
+                    magnify(null); M.ghostHide();
+                },
+                async open() { if (quit) setQuit(false); const id = P.apps.find(a => !running.has(a)) || P.apps[0]; await M.press(tile(id)); await wait(1000); M.ghostHide(); },
+                async downloads() { if (quit) setQuit(false); if (!P.downloads) { P.downloads = true; renderStrip(); } await M.press(tile('downloads')); await wait(600); await M.press($$('.mk-ui > .mk-menu .mk-mi').pop()); await wait(900); M.ghostHide(); },
+                async add() { openSettings(); await wait(400); await M.press($('#ldSet [data-act="add"]')); await wait(500); const items = $$('.mk-ui > .mk-menu .mk-mi'); await M.press(items[items.length - 1]); await wait(900); M.ghostHide(); },
+                async arrange() {
+                    openSettings(); await wait(400);
+                    const rows = $$('#ldApps .ld-app'); if (rows.length < 2) return;
+                    await M.ghostTo(rows[rows.length - 1]); await wait(200);
+                    const [a] = P.apps.splice(P.apps.length - 1, 1); P.apps.unshift(a); save(); renderStrip(); renderSettings(); Q.done('arrange');
+                    await M.ghostTo($('#ldApps .ld-app')); await wait(900); M.ghostHide();
+                },
+                async hide() {
+                    if (dockHidden) setDockHidden(false), M.dockEl.classList.remove('away');
+                    openSettings(); await wait(300);
+                    const box = $('#ldDockBox'); $('#ldSet').scrollTop = box.offsetTop - 40; await wait(300);
+                    await M.press($('#ldDockBox [data-act="hide"]')); await wait(900);
+                    await M.press($('#ldAct [data-k]')); await wait(500);
+                    await M.press($('#ldAct [data-k]')); await wait(1300); M.ghostHide();
+                },
+                async full() {
+                    if (!dockHidden) { M.dockEl.classList.add('away'); setDockHidden(true); await wait(600); }
+                    launch('safari'); await wait(300);
+                    const w = M.wins.get('safari'); if (w.saved) M.zoomWin('safari');
+                    await M.press($('[data-win="safari"] .mk-bar i[data-a="zoom"]')); await wait(1200); M.ghostHide();
+                }
+            },
+            onReset() {
+                P = defaults(); save(); quit = false; running.clear(); ['finder', 'safari', 'notes'].forEach(a => running.add(a));
+                M.closeMenus(); M.closeWin('settings'); ['calendar', 'terminal', 'music', 'mail', 'photos', 'maps', 'messages', 'xcode'].forEach(id => M.closeWin(id));
+                M.wins.forEach(w => { if (w.saved) M.zoomWin(w.id); });
+                M.dockEl.classList.remove('away'); setDockHidden(false);
+                setQuit(false); syncMagChip(); renderDock(); stripEl.classList.add('hint');
+            }
         });
+
+        // ---------- Start ----------
+        renderStrip(); syncMagChip();
+        ['notes', 'safari'].forEach(id => { ensureWin(id); });
+        M.on('layout', changed => {
+            if (!changed) return;
+            const s = M.W / 1024;
+            const sw = M.wins.get('safari'), nw = M.wins.get('notes');
+            [sw.x, sw.y, sw.w, sw.h] = [70 * s, M.MB + 30 * s, 470 * s, 320 * s];
+            [nw.x, nw.y, nw.w, nw.h] = [580 * s, M.MB + 120 * s, 260 * s, 200 * s];
+            M.place(sw); M.place(nw);
+            if (setWin.open) placeSettings();
+        });
+        M.focusWin('safari'); renderDock();
+        if (dockHidden) { M.dockEl.classList.add('away'); setDockHidden(true); }
+        if (!Q.has('open')) stripEl.classList.add('hint');
+
+        // Test hooks: ?sim=settings | downloads | hidden | mag
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'settings') openSettings();
+            if (s === 'downloads') downloadsMenu(tile('downloads'));
+            if (s === 'hidden') { M.dockEl.classList.add('away'); setDockHidden(true); }
+            if (s === 'mag') { const b = M.box($$('.ld-t', stripEl)[2]); magnify(b.x + b.w / 2); }
+            if (s === 'term') copyAndOpen('hide');
+        })); });
+        window.__ld = { M, P: () => P, running, dockHidden: () => dockHidden, Q };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

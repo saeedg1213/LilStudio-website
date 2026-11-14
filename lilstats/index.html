@@ -38,6 +38,14 @@
             --border: #FFFFFF;
             --border-width: 3px;
             --shadow-offset: 6px;
+            /* Windows inside the model follow the site theme */
+            --win-bg: #262628;
+            --win-bar: #333336;
+            --win-text: #F2F2F2;
+            --win-muted: #9A9AA0;
+            --win-line: rgba(255,255,255,0.08);
+            --set-bg: #1F1F21;
+            --set-box: #2C2C2F;
         }
 
         [data-theme="light"] {
@@ -46,6 +54,13 @@
             --text: #17150F;
             --text-muted: #55503F;
             --border: #17150F;
+            --win-bg: #FFFFFF;
+            --win-bar: #ECEAE4;
+            --win-text: #1D1D1F;
+            --win-muted: #77736A;
+            --win-line: rgba(0,0,0,0.07);
+            --set-bg: #F2F1EE;
+            --set-box: #FFFFFF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -87,7 +102,7 @@
 
         .logo {
             font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.5rem;
-            color: var(--text); letter-spacing: -0.02em; position: relative; z-index: 0;
+            color: var(--text); letter-spacing: -0.02em; position: relative; z-index: 0; text-decoration: none;
         }
 
         /* Three load bars under the logo: green, yellow, orange, like the icon */
@@ -146,30 +161,7 @@
         [data-theme="light"] .moon-icon { display: block; }
         [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
 
-        /* ---- Hero ---- */
-        .hero {
-            position: relative; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            padding: 8rem 2rem 4rem; z-index: 1;
-        }
-
-        .hero-content { max-width: 1400px; width: 100%; }
-
-        .hero-top {
-            display: flex; align-items: center; justify-content: center; gap: 3rem;
-        }
-
-        .hero-device { flex: 0 0 auto; transition: transform 0.3s ease; }
-        .hero-device:hover { transform: rotate(-3deg) scale(1.06); }
-        .hero-appicon { width: 150px; height: 150px; display: block; animation: bob 5s ease-in-out infinite; }
-
-        @keyframes bob {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
-
-        .hero-center { flex: 1; text-align: center; max-width: 560px; }
-
+        /* ---- Hero copy ---- */
         .badge {
             display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.5rem 1rem; background: var(--yellow);
@@ -220,76 +212,327 @@
         .privacy-notice a:hover { background: var(--primary); color: #000; }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .hero-top > * { opacity: 0; animation: fadeInUp 0.7s ease forwards; }
-        .hero-top > *:nth-child(1) { animation-delay: 0.1s; }
-        .hero-top > *:nth-child(2) { animation-delay: 0.2s; }
-        .hero-top > *:nth-child(3) { animation-delay: 0.35s; }
 
-        /* ---- Live mock: menu bar + popover ---- */
-        .mock {
-            width: 330px; background: var(--bg-elevated);
-            border: var(--border-width) solid var(--border);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
-            transform: rotate(1deg); transition: transform 0.3s ease;
-        }
-        .mock:hover { transform: rotate(0) translate(-3px, -3px); }
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
 
-        .menubar {
-            display: flex; align-items: center; justify-content: flex-end; gap: 10px;
-            height: 38px; padding: 0 10px; border-bottom: var(--border-width) solid var(--border);
-            color: var(--text); overflow: hidden;
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
         }
-        .menubar canvas { display: block; flex-shrink: 0; }
-        .menubar .mb-glyph { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.85; }
-        .menubar .mb-clock { font: 600 0.78rem/1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; white-space: nowrap; }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
 
-        .pop { padding: 12px; }
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
 
-        .pop-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 12px; }
-        .pop-tile { border: 2px solid var(--border); padding: 6px 7px 7px; background: var(--bg); }
-        .pop-tile small {
-            display: block; font-family: 'Space Mono', monospace; font-size: 0.6rem;
-            text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);
-        }
-        .pop-tile b { display: block; font: 700 0.98rem/1.3 'Space Mono', monospace; white-space: nowrap; }
-        .pop-tile b.small { font-size: 0.72rem; line-height: 1.75; }
-        .pop-cap { height: 5px; border: 1.5px solid var(--border); margin-top: 4px; overflow: hidden; }
-        .pop-cap span { display: block; height: 100%; width: 0; background: var(--load-low);
-                        transition: width 0.3s cubic-bezier(.2,.9,.25,1), background-color 0.3s; }
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% + 4px); top: -5px; display: none; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
 
-        .pop-cores { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 12px; }
-        .core-group small {
-            display: block; font-family: 'Space Mono', monospace; font-size: 0.58rem;
-            text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 3px;
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
         }
-        .core-bars { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
-        .core-bars i {
-            display: block; width: 14px; height: 100%; position: relative;
-            border: 1.5px solid var(--border); background: var(--bg); overflow: hidden;
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
         }
-        .core-bars i::after {
-            content: ''; position: absolute; left: 0; right: 0; bottom: 0;
-            height: calc(var(--v, 0) * 100%); background: var(--c, var(--load-low));
-            transition: height 0.3s cubic-bezier(.2,.9,.25,1), background-color 0.3s;
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
         }
 
-        .pop-graph { margin-bottom: 8px; }
-        .pop-graph:last-child { margin-bottom: 0; }
-        .pop-graph-top {
-            display: flex; justify-content: space-between;
-            font-family: 'Space Mono', monospace; font-size: 0.62rem; text-transform: uppercase;
-            letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 2px;
-        }
-        .pop-graph-top span:last-child { color: var(--text); font-weight: 700; }
-        .pop-graph svg { display: block; width: 100%; height: 30px; border: 1.5px solid var(--border); background: var(--bg); }
-        .pop-graph path.area { opacity: 0.28; }
-        .pop-graph path.line { fill: none; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+        /* ========== LilStats, running inside the model ========== */
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .ls-item { padding: 0 6px; }
+        .ls-item canvas { display: block; }
+        .ls-item[hidden] { display: none; }
+        .mk-mbi.ls-gly { padding: 0 6px; }
+        .mk-mbi.ls-gly svg { opacity: 0.9; }
 
-        .mock-caption {
-            font-family: 'Space Mono', monospace; font-size: 0.66rem; text-transform: uppercase;
-            letter-spacing: 0.06em; color: var(--text-muted); text-align: center; margin-top: 0.9rem;
+        /* Popover (PopoverView.swift: 272 pt content, 14 pt padding) */
+        .ls-pop { width: 300px; padding: 14px; }
+        .lp-tiles { display: flex; gap: 8px; margin-bottom: 14px; }
+        .lp-tile { flex: 1; min-width: 0; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.05); }
+        [data-theme="dark"] .lp-tile { background: rgba(255,255,255,0.06); }
+        .lp-tile small, .lp-gh small, .lp-group small { display: block; font-size: 11px; opacity: 0.58; }
+        .lp-tile b { display: block; font: 600 15px/1.35 ui-rounded, -apple-system, BlinkMacSystemFont, sans-serif; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; margin: 2px 0 4px; }
+        .lp-tile b.sm { font-size: 12px; line-height: 20px; }
+        .lp-cap { height: 4px; border-radius: 2px; background: rgba(0,0,0,0.1); overflow: hidden; }
+        [data-theme="dark"] .lp-cap { background: rgba(255,255,255,0.1); }
+        .lp-cap span { display: block; height: 100%; width: 4px; border-radius: 2px; transition: width 0.35s ease, background-color 0.35s; }
+        .lp-cores { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+        .lp-bars { display: flex; gap: 3px; align-items: flex-end; height: 44px; margin-bottom: 4px; }
+        .lp-bars i { width: 16px; height: 44px; border-radius: 2px; background: rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+        [data-theme="dark"] .lp-bars i { background: rgba(255,255,255,0.08); }
+        .lp-bars i::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: max(2px, calc(var(--v, 0) * 44px)); border-radius: 2px; background: var(--c, #33C759); transition: height 0.35s ease, background-color 0.35s; }
+        .lp-g + .lp-g { margin-top: 10px; }
+        .lp-gh { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+        .lp-g svg { display: block; width: 100%; height: 34px; border-radius: 6px; background: rgba(0,0,0,0.05); }
+        [data-theme="dark"] .lp-g svg { background: rgba(255,255,255,0.05); }
+        .lp-g path.l { fill: none; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+        .lp-hr { height: 1px; background: rgba(0,0,0,0.12); margin: 14px 0 10px; }
+        [data-theme="dark"] .lp-hr { background: rgba(255,255,255,0.14); }
+        .lp-foot { display: flex; justify-content: space-between; }
+        .ls-pop.still *, .ls-pop.still *::after { transition: none !important; }
+
+        /* Terminal */
+        .mk-win.dark .mk-bar { background: #2B2B2E; border-bottom-color: #000; }
+        .mk-win.dark .mk-bar span { color: #A9A9AE; }
+        .ls-term { position: absolute; inset: 0; background: #1C1C1E; color: #D7D7DB; padding: 8px 12px 10px; font: 11px/1.5 'Space Mono', ui-monospace, Menlo, monospace; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .ls-term pre { margin: 0; white-space: pre-wrap; word-break: break-all; font: inherit; }
+        .ls-term .g { color: #5AD16A; } .ls-term .d { color: #7D7D84; } .ls-term .y { color: #FFD43B; } .ls-term .b { color: #6CB6FF; }
+        .ls-caret { display: inline-block; width: 7px; height: 13px; background: #D7D7DB; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+        .ls-run { position: absolute; right: 10px; top: 8px; height: 22px; padding: 0 10px; border-radius: 11px; border: 0; background: #5AD16A; color: #08240E; font: 700 11px -apple-system, sans-serif; display: flex; align-items: center; gap: 5px; cursor: default; }
+        .ls-run.busy { background: #3A3A3E; color: #D7D7DB; }
+        .ls-run.hint, .ls-newtab.hint, .ls-expbtn.hint { animation: mkHint 1.1s ease-in-out infinite; }
+
+        /* Video export */
+        .ls-exp { position: absolute; inset: 0; display: flex; gap: 14px; padding: 14px; align-items: center; }
+        .ls-thumb { width: 118px; height: 74px; border-radius: 8px; flex-shrink: 0; position: relative; overflow: hidden; background: linear-gradient(160deg, #7DB8E4 0%, #F3D2B0 55%, #D9875A 75%, #3C6E8F 100%); }
+        .ls-thumb::before { content: ''; position: absolute; left: -10%; right: -10%; bottom: -30%; height: 60%; border-radius: 50%; background: #2C5C7A; }
+        .ls-thumb::after { content: ''; position: absolute; left: 50%; top: 50%; margin: -9px 0 0 -6px; border-left: 15px solid rgba(255,255,255,0.92); border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+        .ls-exp-info { flex: 1; min-width: 0; }
+        .ls-exp-info b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ls-exp-info small { display: block; font-size: 11px; color: var(--win-muted); }
+        .ls-prog { height: 6px; border-radius: 3px; background: var(--win-line); margin: 9px 0 5px; overflow: hidden; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.12); }
+        .ls-prog span { display: block; height: 100%; width: 0; background: #8B5CF6; border-radius: 3px; }
+        .ls-exp-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+        /* Safari */
+        .ls-tabs { height: 33px; display: flex; gap: 4px; padding: 5px 8px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); align-items: center; overflow: hidden; }
+        .ls-tab { flex: 0 1 118px; min-width: 24px; height: 22px; border-radius: 6px; display: flex; align-items: center; gap: 5px; padding: 0 6px; font-size: 11px; color: var(--win-muted); overflow: hidden; white-space: nowrap; }
+        .ls-tab.on { background: var(--win-bg); color: var(--win-text); box-shadow: 0 0 0 0.5px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.08); }
+        .ls-tab i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .ls-tab span { overflow: hidden; text-overflow: ellipsis; }
+        .ls-tab .x { margin-left: auto; opacity: 0; font-size: 12px; padding: 0 2px; }
+        .ls-tab:hover .x { opacity: 0.6; }
+        .ls-newtab { width: 24px; height: 22px; border-radius: 6px; font-size: 17px; line-height: 1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--win-text); margin-left: auto; }
+        .ls-newtab:hover, .ls-tab:not(.on):hover { background: rgba(0,0,0,0.07); }
+        [data-theme="dark"] .ls-newtab:hover, [data-theme="dark"] .ls-tab:not(.on):hover { background: rgba(255,255,255,0.08); }
+        .ls-page { position: absolute; top: 33px; left: 0; right: 0; bottom: 0; padding: 14px 16px; overflow: hidden; }
+        .ls-addr { height: 22px; border-radius: 6px; background: var(--win-line); font-size: 11px; color: var(--win-muted); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .ls-banner { height: 92px; border-radius: 10px; background: var(--c); display: flex; align-items: flex-end; padding: 10px 12px; font-size: 22px; font-weight: 800; color: #111; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .ls-lines i { display: block; height: 8px; border-radius: 4px; background: var(--win-line); margin-bottom: 8px; }
+        .ls-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .ls-cards i { height: 54px; border-radius: 8px; background: color-mix(in srgb, var(--c) 35%, var(--win-bg)); }
+
+        /* Settings (SettingsView.swift: a grouped Form) */
+        .ls-set { position: absolute; inset: 0; overflow-y: auto; padding: 4px 16px 18px; background: var(--set-bg); overscroll-behavior: contain; scrollbar-width: thin; }
+        .ls-sec-h { font-size: 11.5px; font-weight: 600; color: var(--win-muted); margin: 14px 6px 5px; }
+        .ls-box { background: var(--set-box); border-radius: 9px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.13); }
+        [data-theme="dark"] .ls-box { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.1); }
+        .ls-pad { padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .ls-row { display: flex; align-items: center; gap: 9px; padding: 7px 10px; min-height: 36px; }
+        .ls-box > * + * { border-top: 1px solid var(--win-line); }
+        .ls-row small { display: block; font-size: 11px; color: var(--win-muted); }
+        .ls-foot { font-size: 11px; color: var(--win-muted); margin: 6px 6px 0; }
+        .ls-strip { height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; gap: 11px; padding: 0 12px; font-size: 12px; font-weight: 500; }
+        .ls-strip svg { width: 14px; height: 14px; }
+        .ls-strip.dk { background: linear-gradient(90deg, #292B3D, #171A24); color: #fff; }
+        .ls-strip.lt { background: linear-gradient(90deg, #F2F0E8, #E0E6F0); color: #000; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.1); }
+        .ls-ck { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3); background: #fff; position: relative; }
+        .ls-ck.on { background: #2F7CF6; box-shadow: none; }
+        .ls-ck.on::after { content: ''; position: absolute; left: 4.5px; top: 1.5px; width: 3.5px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+        [data-theme="dark"] .ls-ck:not(.on) { background: rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); }
+        .ls-rowbtn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; border-radius: 6px; }
+        .ls-rowbtn b { font-size: 13px; }
+        .ls-ml { font-size: 12px; color: var(--win-muted); white-space: nowrap; }
+        .ls-sp { flex: 1; }
+        .ls-chev { font-size: 13px; color: var(--win-muted); transition: transform 0.2s; display: inline-block; width: 10px; text-align: center; }
+        .ls-chev.open { transform: rotate(90deg); }
+        .ls-mrow.off .ls-rowbtn { opacity: 0.4; }
+        .ls-ar { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #2F7CF6; }
+        .ls-ar:hover { background: rgba(47,124,246,0.12); }
+        .ls-ar.dis { color: var(--win-muted); opacity: 0.4; pointer-events: none; }
+        .ls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 7px; padding: 2px 10px 10px; border-top: 0 !important; animation: mkMenuIn 0.2s ease-out; }
+        .ls-lt { border-radius: 8px; padding: 6px 4px 5px; background: rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10.5px; color: var(--win-muted); }
+        [data-theme="dark"] .ls-lt { background: rgba(255,255,255,0.05); }
+        .ls-lt:hover { background: rgba(47,124,246,0.08); }
+        .ls-lt.on { box-shadow: 0 0 0 2px #2F7CF6; background: rgba(47,124,246,0.1); color: var(--win-text); }
+        .ls-lt .scr { height: 26px; width: 100%; display: grid; place-items: center; }
+        .ls-seg2 { display: flex; background: rgba(0,0,0,0.07); border-radius: 7px; padding: 2px; width: 220px; margin-left: auto; }
+        [data-theme="dark"] .ls-seg2 { background: rgba(255,255,255,0.08); }
+        .ls-seg2 button { flex: 1; height: 20px; border: 0; background: none; border-radius: 5px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; cursor: default; }
+        .ls-seg2 button.on { background: #fff; box-shadow: 0 0.5px 2px rgba(0,0,0,0.22); }
+        [data-theme="dark"] .ls-seg2 button.on { background: #636366; }
+        .ls-sw { width: 30px; height: 18px; border-radius: 9px; background: rgba(0,0,0,0.13); margin-left: auto; position: relative; flex-shrink: 0; transition: background 0.2s; }
+        [data-theme="dark"] .ls-sw { background: rgba(255,255,255,0.16); }
+        .ls-sw::after { content: ''; position: absolute; left: 1.5px; top: 1.5px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1); }
+        .ls-sw.on { background: #2F7CF6; }
+        .ls-sw.on::after { transform: translateX(12px); }
+        .ls-hl { animation: mkHint 1.1s ease-in-out 3; border-radius: 6px; }
+
+        /* About This Mac, sleep */
+        .ls-about { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 16px 18px; text-align: center; font-size: 11.5px; }
+        .ls-about .lap { width: 96px; height: 60px; border-radius: 6px 6px 0 0; border: 4px solid #2C2C2E; border-bottom-width: 0; background: linear-gradient(160deg, #7DB8E4, #F3D2B0 60%, #D9875A); margin-bottom: 0; }
+        .ls-about .lap + i { display: block; width: 116px; height: 6px; border-radius: 0 0 6px 6px; background: #B9BABE; margin-bottom: 12px; }
+        .ls-about b { font-size: 16px; display: block; margin-bottom: 8px; }
+        .ls-about dl { display: grid; grid-template-columns: auto auto; gap: 2px 8px; text-align: left; }
+        .ls-about dt { text-align: right; font-weight: 600; } .ls-about dd { color: var(--win-muted); }
+        .ls-sleep { position: absolute; inset: 0; z-index: 80; background: #000; color: #555; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .ls-sleep[hidden] { display: none; }
+
+        @media (max-width: 1100px) {
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
         }
-        .mock-caption b { color: var(--text); }
 
         /* ---- Stats bar ---- */
         .stats-bar {
@@ -398,6 +641,7 @@
             width: 100%; height: 56px; display: grid; place-items: center;
             border: 2px solid var(--border); background: var(--bg-elevated); color: var(--text);
         }
+        .tile-screen canvas { max-width: 100%; }
         .style-tile span {
             font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.06em;
@@ -511,7 +755,6 @@
 
         /* ---- Responsive ---- */
         @media (max-width: 1000px) {
-            .hero-top { flex-direction: column; gap: 2.25rem; }
             .style-grid { grid-template-columns: repeat(3, 1fr); }
             .lean-grid { grid-template-columns: 1fr; }
         }
@@ -530,12 +773,9 @@
             .nav-links { display: none; }
             .nav-right .btn { padding: 0.6rem 0.9rem; font-size: 0.8rem; width: auto; }
             .theme-toggle { width: 42px; height: 42px; }
-            .hero { padding: 6.5rem 1rem 3rem; min-height: auto; }
-            .hero-appicon { width: 110px; height: 110px; }
             h1 { font-size: 2rem; }
-            .btn { width: 100%; justify-content: center; }
+            .hero-copy .btn { width: 100%; justify-content: center; }
             .download-btn-wrapper { width: 100%; }
-            .mock { width: 100%; max-width: 340px; transform: none; }
             section { padding: 4rem 1rem; }
             .section-header h2 { font-size: 2rem; }
             .style-controls { margin-top: -1rem; }
@@ -549,7 +789,7 @@
                 animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important; scroll-behavior: auto !important;
             }
-            .hero-top > * { opacity: 1; }
+            .hero-copy { opacity: 1; }
             .rd-track i { animation: none !important; left: var(--x, 50%); }
         }
     </style>
@@ -559,9 +799,10 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilStats</div>
+            <a class="logo" href="./">LilStats</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#styles">Styles</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -576,60 +817,101 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-                <div class="hero-device">
-                    <img src="screenshots/app-icon.png" alt="LilStats app icon" class="hero-appicon" width="150" height="150">
+    <!-- ===================== HERO: copy · a Mac running LilStats ===================== -->
+    <section class="hero" id="try" aria-label="LilStats, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilStats app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Menu Bar Monitor for macOS</div>
                 </div>
+                <h1>Your Mac's vitals, <span class="highlight">lil</span> and live.</h1>
+                <p class="hero-subtitle">LilStats keeps CPU, GPU and RAM in your menu bar, drawn however you like &mdash; rings, bars, graphs, per-core meters or plain numbers. Click it for P&#8209;cores, E&#8209;cores and the last minute of history.</p>
+                <div class="hero-buttons">
+                    <div class="download-btn-wrapper">
+                        <a href="https://apps.apple.com/app/id6821720769" class="btn btn-primary" data-appstore>
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                            Mac App Store
+                        </a>
+                        <span class="system-req">Free &middot; macOS 14.6+ &middot; Apple silicon &amp; Intel &middot; No account</span>
+                    </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>Sandboxed. No helper tools, no admin password, no permissions, no network. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
+                </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>That's LilStats running on the Mac. <b>Click its readings in the menu bar</b>, then give the Mac some work and watch them move.</p>
+            </div>
 
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        Menu Bar Monitor for macOS
-                    </div>
-                    <h1>Your Mac's vitals, <span class="highlight">lil</span> and live.</h1>
-                    <p class="hero-subtitle">LilStats keeps CPU, GPU and RAM in your menu bar, drawn however you like &mdash; rings, bars, graphs, per-core meters or plain numbers. Click it for P&#8209;cores, E&#8209;cores and the last minute of history.</p>
-                    <div class="hero-buttons">
-                        <div class="download-btn-wrapper">
-                            <a href="https://apps.apple.com/app/id6821720769" class="btn btn-primary" data-appstore>
-                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                Mac App Store
-                            </a>
-                            <span class="system-req">macOS 14.6+ &middot; Apple silicon &amp; Intel &middot; No account</span>
-                        </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Sandboxed. No helper tools, no admin password, no permissions, no network. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
-                    </div>
-                </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac desktop running LilStats. Click the readings in its menu bar.">
+                            <div class="mk-world">
+                                <div class="mk-wall sky"></div>
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi ls-item" id="lsItem" role="button" aria-label="LilStats"><canvas id="lsBar" aria-hidden="true"></canvas></div>
+                                            <div class="mk-mbi ls-gly" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi ls-gly" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi ls-gly" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="5.5" rx="2.75"/><rect x="3" y="13.5" width="18" height="5.5" rx="2.75"/><circle cx="7" cy="7.75" r="1.4" fill="currentColor"/><circle cx="17" cy="16.25" r="1.4" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
 
-                <div class="hero-mock">
-                    <div class="mock" aria-label="Animated preview of LilStats in the menu bar with its popover open" role="img">
-                        <div class="menubar">
-                            <canvas id="heroBar" aria-hidden="true"></canvas>
-                            <svg class="mb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
-                            <svg class="mb-glyph" viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="width:22px"><rect x="1" y="2" width="22" height="12" rx="3"/><rect x="4" y="5" width="13" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg>
-                            <span class="mb-clock" id="clock">9:41</span>
-                        </div>
-                        <div class="pop">
-                            <div class="pop-tiles">
-                                <div class="pop-tile"><small>CPU</small><b id="tCpu">–</b><div class="pop-cap"><span id="cCpu"></span></div></div>
-                                <div class="pop-tile"><small>GPU</small><b id="tGpu">–</b><div class="pop-cap"><span id="cGpu"></span></div></div>
-                                <div class="pop-tile"><small>RAM</small><b id="tRam" class="small">–</b><div class="pop-cap"><span id="cRam"></span></div></div>
+                                    <div class="mk-pop ls-pop" id="lsPop" hidden>
+                                        <div class="lp-tiles">
+                                            <div class="lp-tile"><small>CPU</small><b id="pCpu">–</b><div class="lp-cap"><span id="pcCpu"></span></div></div>
+                                            <div class="lp-tile"><small>GPU</small><b id="pGpu">–</b><div class="lp-cap"><span id="pcGpu"></span></div></div>
+                                            <div class="lp-tile"><small>RAM</small><b id="pRam" class="sm">–</b><div class="lp-cap"><span id="pcRam"></span></div></div>
+                                        </div>
+                                        <div class="lp-cores">
+                                            <div class="lp-group"><div class="lp-bars" id="pBarsP"></div><small>P-cores</small></div>
+                                            <div class="lp-group"><div class="lp-bars" id="pBarsE"></div><small>E-cores</small></div>
+                                        </div>
+                                        <div class="lp-g" data-g="cpu"><div class="lp-gh"><small>CPU</small><span>–</span></div><svg viewBox="0 0 59 34" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lgcpu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F7CF6" stop-opacity="0.35"/><stop offset="1" stop-color="#2F7CF6" stop-opacity="0.04"/></linearGradient></defs><path class="a" fill="url(#lgcpu)"/><path class="l" stroke="#2F7CF6"/></svg></div>
+                                        <div class="lp-g" data-g="gpu"><div class="lp-gh"><small>GPU</small><span>–</span></div><svg viewBox="0 0 59 34" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lggpu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A855F7" stop-opacity="0.35"/><stop offset="1" stop-color="#A855F7" stop-opacity="0.04"/></linearGradient></defs><path class="a" fill="url(#lggpu)"/><path class="l" stroke="#A855F7"/></svg></div>
+                                        <div class="lp-g" data-g="ram"><div class="lp-gh"><small>RAM</small><span>–</span></div><svg viewBox="0 0 59 34" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lgram" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9500" stop-opacity="0.35"/><stop offset="1" stop-color="#FF9500" stop-opacity="0.04"/></linearGradient></defs><path class="a" fill="url(#lgram)"/><path class="l" stroke="#FF9500"/></svg></div>
+                                        <div class="lp-hr"></div>
+                                        <div class="lp-foot"><button class="mk-btn" type="button" id="pSettings">Settings…</button><button class="mk-btn" type="button" id="pQuit">Quit LilStats</button></div>
+                                    </div>
+                                    <div class="ls-sleep" id="sleep" hidden>Click to wake</div>
+                                </div>
                             </div>
-                            <div class="pop-cores">
-                                <div class="core-group"><div class="core-bars" id="pCores"></div><small>P-cores</small></div>
-                                <div class="core-group"><div class="core-bars" id="eCores"></div><small>E-cores</small></div>
-                            </div>
-                            <div class="pop-graph" data-metric="cpu"><div class="pop-graph-top"><span>CPU</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
-                            <div class="pop-graph" data-metric="gpu"><div class="pop-graph-top"><span>GPU</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
-                            <div class="pop-graph" data-metric="ram"><div class="pop-graph-top"><span>RAM</span><span>–</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path class="area"/><path class="line"/></svg></div>
                         </div>
                     </div>
-                    <p class="mock-caption">Showing <b id="heroStyleName">Ring + %</b> &middot; <a href="#styles" style="color:inherit">try another style</a></p>
+                    <div class="mk-base"></div>
                 </div>
+                <div class="desk-bar">
+                    <span class="bar-label">Give it work:</span>
+                    <button class="chip g" type="button" data-work="build">▶ Build in Terminal</button>
+                    <button class="chip g" type="button" data-work="export">▶ Export a video</button>
+                    <button class="chip g" type="button" data-work="tabs">+ 3 tabs</button>
+                    <button class="chip" type="button" data-work="calm">■ Calm down</button>
+                    <button class="chip on" type="button" data-work="relaunch" hidden>Open LilStats again</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Eight things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 8</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilStats. Now put it in your own menu bar.</b><br>No account, no permissions, nothing to set up.</div>
+                <a href="https://apps.apple.com/app/id6821720769" class="btn btn-primary" data-appstore>Get it on the Mac App Store</a>
             </div>
         </div>
     </section>
@@ -801,13 +1083,20 @@
         const APP_STORE_URL = 'https://apps.apple.com/app/id6821720769';
         document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
 
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-        // ---- Scroll reveal --------------------------------------------------------
-        const revealer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealer.unobserve(e.target); } });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.fade-in, .scale-in').forEach(el => revealer.observe(el));
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
 
         // Count-up for the stats bar
         const counter = new IntersectionObserver((entries) => {
@@ -815,7 +1104,7 @@
                 if (!e.isIntersecting) return;
                 counter.unobserve(e.target);
                 const end = +e.target.dataset.count;
-                if (reduced || end === 0) return;
+                if (REDUCED || end === 0) return;
                 const t0 = performance.now();
                 const tick = (now) => {
                     const p = Math.min(1, (now - t0) / 900);
@@ -827,49 +1116,10 @@
         }, { threshold: 0.6 });
         document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
 
-        // ---- Simulated readings ---------------------------------------------------
-        // A gentle random walk with the odd spike, sampled like the app: a new reading,
-        // then a 250 ms ease-out glide. Changes under 2 points jump instead of animating.
-        const P_CORES = 6, E_CORES = 4, HISTORY = 60, SPARK = 24;
-        const SAMPLE_MS = 1400, GLIDE_MS = 250;
+        // ---------- Readings, colours (LoadColor.swift) ----------
+        const P_CORES = 6, E_CORES = 4, SPARK = 24;
         const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
         const rnd = (a, b) => a + Math.random() * (b - a);
-
-        const target = { cpu: 0.32, gpu: 0.18, ram: 0.64, cores: [] };
-        for (let i = 0; i < P_CORES + E_CORES; i++) target.cores.push(rnd(0.1, 0.5));
-        let from = structuredClone(target), shown = structuredClone(target), glideStart = 0;
-        const history = { cpu: [], gpu: [], ram: [] };
-        for (let i = 0; i < HISTORY; i++) {
-            history.cpu.push(clamp(0.3 + 0.12 * Math.sin(i / 5) + rnd(-0.06, 0.06)));
-            history.gpu.push(clamp(0.18 + 0.08 * Math.sin(i / 7 + 1) + rnd(-0.04, 0.04)));
-            history.ram.push(clamp(0.63 + 0.01 * Math.sin(i / 9)));
-        }
-
-        let spike = 0;
-        function nextReading() {
-            if (spike <= 0 && Math.random() < 0.12) spike = Math.floor(rnd(2, 5));
-            const busy = spike-- > 0;
-            const t = {
-                cpu: clamp(busy ? rnd(0.62, 0.94) : target.cpu * 0.55 + rnd(0.12, 0.42) * 0.45 + rnd(-0.05, 0.05), 0.04, 0.98),
-                gpu: clamp(busy ? rnd(0.35, 0.7) : target.gpu * 0.6 + rnd(0.06, 0.3) * 0.4, 0.02, 0.95),
-                ram: clamp(target.ram + rnd(-0.012, 0.014) + (busy ? 0.01 : -0.002), 0.55, 0.82),
-                cores: []
-            };
-            for (let i = 0; i < P_CORES + E_CORES; i++) {
-                const isE = i >= P_CORES;
-                const base = isE ? t.cpu * 0.7 + 0.1 : t.cpu * 1.1 - 0.05;
-                t.cores.push(clamp(base + rnd(-0.22, 0.22), 0.02, 1));
-            }
-            return t;
-        }
-
-        function lerpState(a, b, k) {
-            return {
-                cpu: a.cpu + (b.cpu - a.cpu) * k, gpu: a.gpu + (b.gpu - a.gpu) * k, ram: a.ram + (b.ram - a.ram) * k,
-                cores: a.cores.map((v, i) => v + (b.cores[i] - v) * k)
-            };
-        }
-
         function loadColor(v) {
             v = clamp(v);
             const g = [51, 199, 89], y = [255, 194, 0], r = [255, 69, 58];
@@ -902,7 +1152,6 @@
         const opts = { colored: true, labels: true };
         let ink = '#17150F';
         function readInk() { ink = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#17150F'; }
-        readInk();
 
         function withAlpha(color, a) {
             measureCtx.fillStyle = color;
@@ -1090,155 +1339,888 @@
             }
         }
 
-        // A canvas showing one or more metrics, sized in menu bar points × zoom.
-        function makeBar(canvas, items, zoom) {
-            const bar = { canvas, ctx: canvas.getContext('2d'), items, zoom, visible: true, w: 0 };
-            bars.push(bar);
-            visibility.observe(canvas);
-            return bar;
-        }
-        const bars = [];
-        const visibility = new IntersectionObserver((entries) => {
-            entries.forEach(e => { const b = bars.find(x => x.canvas === e.target); if (b) b.visible = e.isIntersecting; });
-        });
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
 
-        function renderBar(bar, state, force) {
-            if (!bar.visible && !force) return;
-            const items = bar.items.map(spec => ({
-                kind: spec.kind, layout: spec.layout(),
-                value: state[spec.kind], cores: state.cores,
-                history: history[spec.kind].slice(-SPARK)
-            }));
-            const widths = items.map(it => itemWidth(it, opts.labels));
-            const w = Math.ceil(widths.reduce((a, b) => a + b, 0) + SPACING * (items.length - 1));
-            const dpr = Math.min(window.devicePixelRatio || 1, 3), z = bar.zoom;
-            if (w !== bar.w || bar.dpr !== dpr) {
-                bar.w = w; bar.dpr = dpr;
-                bar.canvas.width = Math.ceil(w * z * dpr); bar.canvas.height = Math.ceil(H * z * dpr);
-                bar.canvas.style.width = (w * z) + 'px'; bar.canvas.style.height = (H * z) + 'px';
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
             }
-            const ctx = bar.ctx;
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - M.DOCK - 4 }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : ''}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) d.appendChild(buildMenu(it.sub)).classList.add('mk-sub');
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.dis || it.sub) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                el.style.left = clampN(x, 4, M.W - w - 4) + 'px';
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- Painting the status item (one image for every metric, like MenuBarRenderer) ----------
+        function paint(canvas, items, zoom, inkColor) {
+            ink = inkColor;
+            const widths = items.map(it => itemWidth(it, opts.labels));
+            const w = Math.max(1, Math.ceil(widths.reduce((a, b) => a + b, 0) + SPACING * Math.max(0, items.length - 1)));
+            const dpr = Math.min(window.devicePixelRatio || 1, 3) * (canvas.dataset.boost ? +canvas.dataset.boost : 1);
+            const cw = Math.ceil(w * zoom * dpr), ch = Math.ceil(H * zoom * dpr);
+            if (canvas.width !== cw || canvas.height !== ch) {
+                canvas.width = cw; canvas.height = ch;
+                canvas.style.width = (w * zoom) + 'px'; canvas.style.height = (H * zoom) + 'px';
+            }
+            const ctx = canvas.getContext('2d');
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.clearRect(0, 0, bar.canvas.width, bar.canvas.height);
-            ctx.setTransform(z * dpr, 0, 0, z * dpr, 0, 0);
+            ctx.clearRect(0, 0, cw, ch);
+            ctx.setTransform(zoom * dpr, 0, 0, zoom * dpr, 0, 0);
             let x = 0;
             items.forEach((it, i) => { drawItem(ctx, it, x, opts.labels); x += widths[i] + SPACING; });
         }
 
-        // ---- Hero menu bar + gallery -------------------------------------------------
-        let heroLayout = 'ringText';
-        const heroFor = kind => () => (heroLayout === 'perCore' && kind !== 'cpu') ? 'bar' : heroLayout;
-        const hero = makeBar(document.getElementById('heroBar'),
-            ['cpu', 'gpu', 'ram'].map(kind => ({ kind, layout: heroFor(kind) })), 1.15);
+        // ---------- Settings (AppSettings.swift defaults) ----------
+        const KINDS = ['cpu', 'gpu', 'ram'];
+        const LNAME = Object.fromEntries(LAYOUTS);
+        const optionsFor = kind => LAYOUTS.map(l => l[0]).filter(l => kind === 'cpu' || l !== 'perCore');
+        const defaults = () => ({ metrics: KINDS.map(kind => ({ kind, enabled: true, layout: 'ringText' })), color: 'mono', labels: true, smooth: true, interval: 2, login: true });
+        let SET = defaults();
+        (function load() {
+            const s = store.get('lsSim.set', null);
+            if (!s || !Array.isArray(s.metrics) || s.metrics.length !== 3 || !KINDS.every(k => s.metrics.some(m => m.kind === k))) return;
+            s.metrics.forEach(m => { if (!optionsFor(m.kind).includes(m.layout)) m.layout = 'bar'; });
+            SET = Object.assign(defaults(), s);
+        })();
+        function applyOpts() { opts.colored = SET.color === 'colored'; opts.labels = SET.labels; }
+        function saved() { applyOpts(); store.set('lsSim.set', SET); syncGallery(); draw(true); if (setWin && setWin.open) renderSettings(); }
+        applyOpts();
 
-        const grid = document.getElementById('styleGrid');
-        const heroName = document.getElementById('heroStyleName');
+        // ---------- The Mac ----------
+        const M = MacKit($('#mac'));
+        const lsItem = $('#lsItem'), lsBar = $('#lsBar'), pop = $('#lsPop');
+        const mbInk = () => getComputedStyle(M.world).getPropertyValue('--mb-ink').trim() || '#111';
+        const winInk = () => getComputedStyle(M.world).getPropertyValue('--win-text').trim() || '#111';
+
+        // Workloads: they set what the next reading looks like
+        const WORK = { build: false, exportOn: false, tabs: 1, spike: 0 };
+        const CORES = P_CORES + E_CORES;
+        function reading() {
+            const cores = [];
+            for (let i = 0; i < P_CORES; i++) {
+                let v = rnd(0.04, 0.16);
+                if (WORK.build) v = rnd(0.86, 1);
+                else if (WORK.exportOn && i < 2) v = rnd(0.32, 0.55);
+                if (WORK.spike > 0 && i < 3) v = Math.min(1, v + rnd(0.25, 0.45));
+                cores.push(v);
+            }
+            for (let i = 0; i < E_CORES; i++) cores.push(WORK.build ? rnd(0.55, 0.85) : rnd(0.08, 0.26) + (WORK.exportOn ? 0.12 : 0));
+            if (WORK.spike > 0) WORK.spike--;
+            const cpu = cores.reduce((a, b) => a + b, 0) / CORES;
+            const gpu = WORK.exportOn ? rnd(0.82, 0.96) : clamp(0.03 + 0.012 * WORK.tabs + rnd(0, 0.05) + (WORK.build ? 0.03 : 0));
+            const gb = 7.6 + 0.6 * WORK.tabs + (WORK.exportOn ? 1.1 : 0) + (WORK.build ? 1.4 : 0) + rnd(-0.03, 0.03);
+            return { cpu, gpu, ram: clamp(gb / 16, 0, 0.985), cores };
+        }
+        const HISTORY_CAP = 60;
+        const hist = { cpu: [], gpu: [], ram: [] };
+        for (let i = 0; i < 40; i++) { const r = reading(); KINDS.forEach(k => hist[k].push(r[k])); }
+        let shown = reading(), from = shown, target = shown, glideT0 = 0, gliding = false;
+        let quit = store.get('lsSim.quit', false), asleep = false;
+
+        function lerpR(a, b, k) { return { cpu: a.cpu + (b.cpu - a.cpu) * k, gpu: a.gpu + (b.gpu - a.gpu) * k, ram: a.ram + (b.ram - a.ram) * k, cores: a.cores.map((v, i) => v + (b.cores[i] - v) * k) }; }
+        function itemsFor(metrics, v) {
+            return metrics.filter(m => m.enabled).map(m => ({ kind: m.kind, layout: m.layout, value: v[m.kind], cores: v.cores, history: hist[m.kind].slice(-SPARK) }));
+        }
+
+        // The menu bar is redrawn only when what it shows would change (like the app's render key)
+        let lastKey = '', redraws = 0;
+        function draw(force) {
+            if (!quit) {
+                const items = itemsFor(SET.metrics, shown);
+                const key = [document.documentElement.dataset.theme, SET.color, SET.labels, M.W, ...items.map(it => it.layout + ':' + (it.layout === 'perCore' ? it.cores.map(c => Math.round(c * 28)).join('.') : it.layout === 'sparkline' ? it.history.map(h => Math.round(h * 28)).join('.') : pct(it.value)))].join('|');
+                if (force || key !== lastKey) {
+                    lastKey = key; redraws++;
+                    paint(lsBar, items.length ? items : [], 1, mbInk());
+                    lsItem.style.minWidth = items.length ? '' : '22px';
+                }
+            }
+            if (setWin && setWin.open) paintSettings();
+            if (galleryVisible) paintGallery();
+        }
+
+        // Sampler: every 1, 2 or 5 s; every second while the popover is open; stops while nobody can see it
+        let sampleTimer = 0;
+        function running() { return M.visible && !asleep && !quit; }
+        function schedule() {
+            clearTimeout(sampleTimer);
+            if (!running()) return;
+            const iv = (M.popOpen(pop) ? Math.min(SET.interval, 1) : SET.interval) * 1000;
+            sampleTimer = setTimeout(() => { sample(); schedule(); }, iv);
+        }
+        function sample() {
+            const r = reading();
+            KINDS.forEach(k => { hist[k].push(r[k]); if (hist[k].length > HISTORY_CAP) hist[k].shift(); });
+            target = r;
+            if (M.popOpen(pop)) updatePop(r);
+            if (r.ram >= 0.8) Q.done('ram');
+            const big = KINDS.some(k => Math.abs(r[k] - shown[k]) >= 0.02) || r.cores.some((c, i) => Math.abs(c - shown.cores[i]) >= 0.02);
+            if (!SET.smooth || REDUCED || !big) { shown = r; draw(); return; }
+            from = shown; glideT0 = performance.now();
+            if (!gliding) { gliding = true; requestAnimationFrame(glide); }
+        }
+        function glide(now) {
+            const p = Math.min(1, (now - glideT0) / 250);
+            shown = lerpR(from, target, 1 - Math.pow(1 - p, 3));
+            draw();
+            if (p < 1) requestAnimationFrame(glide); else gliding = false;
+        }
+        M.on('visible', schedule);
+
+        // ---------- Popover ----------
+        const barEls = [];
+        [['#pBarsP', P_CORES], ['#pBarsE', E_CORES]].forEach(([s, n]) => { for (let i = 0; i < n; i++) barEls.push($(s).appendChild(document.createElement('i'))); });
+        const graphs = $$('.lp-g', pop).map(g => ({ k: g.dataset.g, v: $('.lp-gh span', g), a: $('path.a', g), l: $('path.l', g) }));
+        function updatePop(r) {
+            pop.classList.toggle('still', !SET.smooth || REDUCED);
+            $('#pCpu').textContent = pct(r.cpu) + '%';
+            $('#pGpu').textContent = pct(r.gpu) + '%';
+            $('#pRam').textContent = (r.ram * 16).toFixed(1) + '/16 GB';
+            [['#pcCpu', r.cpu], ['#pcGpu', r.gpu], ['#pcRam', r.ram]].forEach(([s, v]) => { const e = $(s); e.style.width = `max(4px, ${pct(v)}%)`; e.style.backgroundColor = loadColor(v); });
+            r.cores.forEach((v, i) => { barEls[i].style.setProperty('--v', v.toFixed(3)); barEls[i].style.setProperty('--c', loadColor(v)); });
+            graphs.forEach(g => {
+                const s = hist[g.k], x0 = 59 - (s.length - 1);
+                const pts = s.map((v, i) => `${(x0 + i).toFixed(1)},${(32 - 30 * clamp(v)).toFixed(2)}`);
+                g.l.setAttribute('d', 'M' + pts.join('L'));
+                g.a.setAttribute('d', `M${x0},34L${pts.join('L')}L59,34Z`);
+                g.v.textContent = pct(s[s.length - 1]) + '%';
+            });
+        }
+        M.popItem(lsItem, pop);
+        M.on('pop', (p, open) => {
+            if (p !== pop) return;
+            if (open) { updatePop(target); Q.done('open'); lsItem.classList.remove('hint'); }
+            schedule();
+        });
+        $('#pSettings').addEventListener('click', () => { M.closePops(); openSettings(); });
+        $('#pQuit').addEventListener('click', () => { M.closePops(); setQuit(true); });
+        function setQuit(q) {
+            quit = q; store.set('lsSim.quit', q);
+            lsItem.hidden = q;
+            $('[data-work="relaunch"]').hidden = !q;
+            if (q) { M.hud('LilStats quit.<br><small style="font-weight:500;opacity:.7">Its menu bar item is gone.</small>', 1800); if (setWin) M.closeWin('settings'); }
+            else { lastKey = ''; draw(true); M.hud('LilStats', 900); }
+            schedule();
+        }
+
+        // ---------- Windows ----------
+        const LAYOUTS_FOR = {
+            1024: { safari: [282, 42, 480, 296], term: [24, 352, 440, 200], exp: [604, 370, 390, 150], settings: [292, 36, 440, 540], about: [392, 130, 240, 280] },
+            760: { safari: [196, 32, 400, 218], term: [10, 262, 366, 150], exp: [392, 288, 356, 122], settings: [170, 30, 420, 400], about: [260, 70, 240, 280] }
+        };
+        const TABS = [['Maps', '#7ED48A'], ['Recipes', '#FFB020'], ['Docs', '#6C8CFF'], ['Flights', '#7CC4F0'], ['News', '#FF6B5E'], ['Design', '#FF7AC6'], ['Forum', '#B68CFF'], ['Shop', '#FFE135'], ['Wiki', '#C7C7CC'], ['Video', '#FF6B35'], ['Mail', '#3FD98A'], ['Music', '#FF9466'], ['Photos', '#F7DC3C'], ['Notes', '#FFD43B']];
+        const safari = M.win({ id: 'safari', title: 'Safari', x: 0, y: 0, w: 10, h: 10, html: '<div class="ls-tabs" id="tabs"></div><div class="ls-page" id="page"></div>' });
+        const term = M.win({ id: 'term', title: 'Lantern — zsh', cls: 'dark', x: 0, y: 0, w: 10, h: 10, html: '<div class="ls-term"><pre id="tOut"></pre><button class="ls-run" type="button" id="tRun">⏎ Run</button></div>' });
+        const exp = M.win({ id: 'exp', title: 'Export', x: 0, y: 0, w: 10, h: 10, html: '<div class="ls-exp"><div class="ls-thumb"></div><div class="ls-exp-info"><b>Trip to the Coast.mov</b><small>4K · HEVC · 2:41</small><div class="ls-prog"><span id="expBar"></span></div><div class="ls-exp-row"><small id="expStat">Ready to export</small><button class="mk-btn blue ls-expbtn" type="button" id="expBtn">Export</button></div></div></div>' });
+        const setWin = M.win({ id: 'settings', title: 'LilStats Settings', open: false, x: 0, y: 0, w: 10, h: 10, html: '<div class="ls-set" id="setBody"></div>' });
+        const about = M.win({ id: 'about', title: '', open: false, x: 0, y: 0, w: 10, h: 10, html: '<div class="ls-about"><div class="lap"></div><i></i><b>MacBook Pro</b><dl><dt>Chip</dt><dd>Apple M2 Pro</dd><dt>CPU</dt><dd>6 P-cores, 4 E-cores</dd><dt>Memory</dt><dd>16 GB</dd><dt>macOS</dt><dd>Tahoe 26</dd></dl></div>' });
+        function placeAll() {
+            const L = LAYOUTS_FOR[M.W] || LAYOUTS_FOR[1024];
+            [['safari', safari], ['term', term], ['exp', exp], ['settings', setWin], ['about', about]].forEach(([k, w]) => { [w.x, w.y, w.w, w.h] = L[k]; w.saved = null; M.place(w); });
+        }
+        M.on('layout', changed => { if (changed) { placeAll(); draw(true); } });
+        M.focusWin('safari');
+
+        // Safari tabs: each one holds about 0.6 GB
+        let activeTab = 0;
+        function renderTabs() {
+            const n = WORK.tabs;
+            $('#tabs').innerHTML = Array.from({ length: n }, (_, i) => `<div class="ls-tab${i === activeTab ? ' on' : ''}" data-tab="${i}"><i style="background:${TABS[i][1]}"></i><span>${TABS[i][0]}</span><b class="x" data-close="${i}">×</b></div>`).join('') + `<div class="ls-newtab" id="newTab" title="New tab">+</div>`;
+            const [name, c] = n ? TABS[activeTab] : ['Start Page', '#E5E5EA'];
+            $('#page').style.setProperty('--c', c);
+            $('#page').innerHTML = `<div class="ls-addr">${n ? name.toLowerCase() + '.example.com' : 'Search or enter website name'}</div><div class="ls-banner">${name}</div><div class="ls-lines"><i style="width:82%"></i><i style="width:64%"></i><i style="width:73%"></i></div><div class="ls-cards"><i></i><i></i><i></i></div>`;
+            safari.el.querySelector('.mk-bar span').textContent = n ? name : 'Safari';
+        }
+        function addTab() {
+            if (WORK.tabs >= TABS.length) { M.hud('That’s a lot of tabs.', 1100); return; }
+            WORK.tabs++; activeTab = WORK.tabs - 1; WORK.spike = 1;
+            renderTabs(); kick();
+        }
+        $('#tabs').addEventListener('click', e => {
+            const x = e.target.closest('[data-close]');
+            if (x) { WORK.tabs--; activeTab = Math.max(0, Math.min(activeTab, WORK.tabs - 1)); renderTabs(); kick(); return; }
+            const t = e.target.closest('[data-tab]');
+            if (t) { activeTab = +t.dataset.tab; renderTabs(); return; }
+            if (e.target.closest('#newTab')) addTab();
+        });
+        renderTabs();
+
+        // Terminal: a release build loads every core, P-cores first
+        const tOut = $('#tOut'), tRun = $('#tRun');
+        const PROMPT = '<span class="g">~/dev/Lantern</span> <span class="b">%</span> ';
+        const FILES = ['AppDelegate', 'Theme', 'Library', 'Player', 'Sidebar', 'Search', 'Settings', 'Sync', 'Waveform', 'Export', 'Tags', 'Inspector'];
+        let tLines = ['<span class="d">Last login: ' + new Date().toDateString() + ' on ttys001</span>'], buildTimer = 0;
+        function tRender(cmd) { tOut.innerHTML = tLines.slice(-14).join('\n') + '\n' + PROMPT + (cmd || '') + '<span class="ls-caret"></span>'; }
+        tRender('swift build -c release');
+        function startBuild() {
+            if (WORK.build) return;
+            M.openWin('term');
+            WORK.build = true; WORK.spike = 2;
+            tRun.textContent = 'Building…'; tRun.classList.add('busy'); tRun.classList.remove('hint');
+            tLines.push(PROMPT + 'swift build -c release');
+            const total = 86, t0 = performance.now(), dur = REDUCED ? 3000 : 11000;
+            let step = 0;
+            Q.done('build');
+            kick();
+            const tick = () => {
+                const p = Math.min(1, (performance.now() - t0) / dur);
+                const n = Math.round(p * total);
+                if (n > step) {
+                    step = n;
+                    tLines.push(`<span class="d">[${n}/${total}]</span> Compiling Lantern ${FILES[n % FILES.length]}.swift`);
+                    tRender('');
+                }
+                if (p < 1) { buildTimer = setTimeout(tick, 120); return; }
+                tLines.push(`<span class="g">Build complete!</span> <span class="d">(${(dur / 1000 + 0.4).toFixed(1)}s)</span>`);
+                WORK.build = false; tRun.textContent = '⏎ Run again'; tRun.classList.remove('busy');
+                tRender('swift build -c release'); kick();
+            };
+            tick();
+        }
+        function stopBuild() {
+            if (!WORK.build) return;
+            clearTimeout(buildTimer); WORK.build = false;
+            tLines.push('^C'); tRun.textContent = '⏎ Run'; tRun.classList.remove('busy');
+            tRender('swift build -c release');
+        }
+        tRun.addEventListener('click', () => WORK.build ? stopBuild() : startBuild());
+        term.body.addEventListener('dblclick', startBuild);
+
+        // Video export: the GPU does the work
+        const expBtn = $('#expBtn'), expBar = $('#expBar'), expStat = $('#expStat');
+        let expTimer = 0;
+        function startExport() {
+            if (WORK.exportOn) return;
+            M.openWin('exp');
+            WORK.exportOn = true; expBtn.textContent = 'Cancel'; expBtn.classList.remove('blue', 'hint');
+            Q.done('gpu');
+            kick();
+            const t0 = performance.now(), dur = REDUCED ? 3000 : 10000;
+            const tick = () => {
+                const p = Math.min(1, (performance.now() - t0) / dur);
+                expBar.style.width = (p * 100).toFixed(1) + '%';
+                expStat.textContent = p < 1 ? `Exporting… ${Math.round(p * 100)}%  ·  ${Math.max(1, Math.ceil((1 - p) * dur / 1000))} s left` : 'Exported to Movies';
+                if (p < 1) { expTimer = setTimeout(tick, 100); return; }
+                WORK.exportOn = false; expBtn.textContent = 'Export'; expBtn.classList.add('blue'); kick();
+            };
+            tick();
+        }
+        function stopExport() {
+            if (!WORK.exportOn) return;
+            clearTimeout(expTimer); WORK.exportOn = false;
+            expBtn.textContent = 'Export'; expBtn.classList.add('blue'); expStat.textContent = 'Cancelled'; expBar.style.width = '0';
+        }
+        expBtn.addEventListener('click', () => WORK.exportOn ? stopExport() : startExport());
+
+        // A new workload shows up at the next reading, not after a whole interval
+        let kickT = 0;
+        function kick() { clearTimeout(kickT); kickT = setTimeout(() => { if (running()) { sample(); schedule(); } }, 350); }
+
+        // ---------- Settings window ----------
+        let expanded = 'cpu';
+        const STRIP_GLYPHS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:20px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/></svg><span>9:41</span>';
+        function renderSettings() {
+            const body = $('#setBody'), top = body.scrollTop;
+            const n = SET.metrics.length;
+            const rows = SET.metrics.map((m, i) => {
+                const open = expanded === m.kind && m.enabled;
+                return `<div class="ls-mrow${m.enabled ? '' : ' off'}" data-i="${i}" data-kind="${m.kind}"><div class="ls-row">
+                    <span class="ls-ck${m.enabled ? ' on' : ''}" data-act="toggle" role="checkbox" aria-checked="${m.enabled}" aria-label="Show ${m.kind.toUpperCase()}"></span>
+                    <div class="ls-rowbtn" data-act="expand"><b>${m.kind.toUpperCase()}</b><span class="ls-ml">${LNAME[m.layout]}</span><span class="ls-sp"></span><canvas data-prev="${i}" data-boost="1.5"></canvas><span class="ls-chev${open ? ' open' : ''}">›</span></div>
+                    <span class="ls-ar${i === 0 ? ' dis' : ''}" data-act="up" title="Move left">▲</span><span class="ls-ar${i === n - 1 ? ' dis' : ''}" data-act="down" title="Move right">▼</span>
+                </div>${open ? `<div class="ls-grid">${optionsFor(m.kind).map(l => `<div class="ls-lt${l === m.layout ? ' on' : ''}" data-act="layout" data-l="${l}"><div class="scr"><canvas data-lt="${l}" data-boost="1.5"></canvas></div><span>${LNAME[l]}</span></div>`).join('')}</div>` : ''}</div>`;
+            }).join('');
+            const seg = (act, v, label) => `<button type="button" data-act="${act}" data-v="${v}" class="${String(SET[act === 'color' ? 'color' : 'interval']) === String(v) ? 'on' : ''}">${label}</button>`;
+            body.innerHTML = `
+                <div class="ls-sec-h">Preview</div>
+                <div class="ls-box ls-pad"><div class="ls-strip dk"><canvas data-strip="dark" data-boost="1.5"></canvas>${STRIP_GLYPHS}</div><div class="ls-strip lt"><canvas data-strip="light" data-boost="1.5"></canvas>${STRIP_GLYPHS}</div></div>
+                <div class="ls-sec-h">Menu Bar</div>
+                <div class="ls-box" id="setRows">${rows}</div>
+                <p class="ls-foot">Click a metric to choose its style. Lines get thicker as load rises.</p>
+                <div class="ls-sec-h">Appearance</div>
+                <div class="ls-box" id="setLook">
+                    <div class="ls-row"><span>Color</span><div class="ls-seg2">${seg('color', 'mono', 'Monochrome')}${seg('color', 'colored', 'Colored')}</div></div>
+                    <div class="ls-row"><span>Show labels</span><span class="ls-sw${SET.labels ? ' on' : ''}" data-act="labels" role="switch" aria-checked="${SET.labels}"></span></div>
+                    <div class="ls-row"><div><span>Smooth animations</span><small>Paused automatically in Low Power Mode.</small></div><span class="ls-sw${SET.smooth ? ' on' : ''}" data-act="smooth" role="switch" aria-checked="${SET.smooth}"></span></div>
+                </div>
+                <div class="ls-sec-h">Sampling</div>
+                <div class="ls-box" id="setRate"><div class="ls-row"><span>Update interval</span><div class="ls-seg2">${seg('interval', 1, '1 s')}${seg('interval', 2, '2 s')}${seg('interval', 5, '5 s')}</div></div></div>
+                <div class="ls-sec-h">General</div>
+                <div class="ls-box"><div class="ls-row"><span>Launch at login</span><span class="ls-sw${SET.login ? ' on' : ''}" data-act="login" role="switch" aria-checked="${SET.login}"></span></div></div>`;
+            body.scrollTop = top;
+            paintSettings();
+        }
+        function paintSettings() {
+            const body = $('#setBody'), tInk = winInk();
+            $$('canvas[data-strip]', body).forEach(c => paint(c, itemsFor(SET.metrics, shown), 1.15, c.dataset.strip === 'dark' ? '#FFFFFF' : '#000000'));
+            $$('canvas[data-prev]', body).forEach(c => { const m = SET.metrics[+c.dataset.prev]; paint(c, itemsFor([{ ...m, enabled: true }], shown), 1, tInk); });
+            const open = SET.metrics.find(m => m.kind === expanded);
+            if (open) $$('canvas[data-lt]', body).forEach(c => paint(c, itemsFor([{ kind: open.kind, enabled: true, layout: c.dataset.lt }], shown), 1, tInk));
+        }
+        $('#setBody').addEventListener('click', e => {
+            const a = e.target.closest('[data-act]');
+            if (!a) return;
+            const row = a.closest('[data-i]'), i = row ? +row.dataset.i : -1, m = SET.metrics[i];
+            switch (a.dataset.act) {
+                case 'toggle':
+                    if (m.enabled && SET.metrics.filter(x => x.enabled).length === 1) { M.hud('Keep at least one', 900); }
+                    m.enabled = !m.enabled; Q.done('arrange'); break;
+                case 'expand': if (!m.enabled) return; expanded = expanded === m.kind ? null : m.kind; renderSettings(); return;
+                case 'up': case 'down': {
+                    const j = i + (a.dataset.act === 'up' ? -1 : 1);
+                    if (j < 0 || j >= SET.metrics.length) return;
+                    [SET.metrics[i], SET.metrics[j]] = [SET.metrics[j], SET.metrics[i]];
+                    Q.done('arrange'); break;
+                }
+                case 'layout': {
+                    const om = SET.metrics.find(x => x.kind === expanded);
+                    if (om.layout !== a.dataset.l) { om.layout = a.dataset.l; Q.done('style'); }
+                    break;
+                }
+                case 'color': SET.color = a.dataset.v; if (SET.color === 'colored') Q.done('color'); break;
+                case 'labels': SET.labels = !SET.labels; break;
+                case 'smooth': SET.smooth = !SET.smooth; break;
+                case 'interval': SET.interval = +a.dataset.v; if (SET.interval === 5) Q.done('calm'); schedule(); break;
+                case 'login': SET.login = !SET.login; break;
+            }
+            saved();
+        });
+        function openSettings() { M.openWin('settings'); renderSettings(); }
+        M.on('win', (w, what) => {
+            if (w.id === 'settings' && what === 'open') renderSettings();
+        });
+        M.on('focus', w => { $('#mbApp').textContent = { safari: 'Safari', term: 'Terminal', exp: 'Clips', settings: 'LilStats', about: 'Finder' }[w.id] || 'Finder'; });
+
+        // ---------- Menu bar menus ----------
+        const front = () => $('#mbApp').textContent;
+        const winList = () => Array.from(M.wins.values()).filter(w => w.open).map(w => ({ t: w.el.querySelector('.mk-bar span').textContent || 'About This Mac', act: () => M.openWin(w.id) }));
+        const MENUS = {
+            apple: () => [
+                { t: 'About This Mac', act: () => M.openWin('about') }, '-',
+                { t: 'System Settings…' }, { t: 'App Store…' }, '-',
+                { t: 'Force Quit…', k: '⌥⌘⎋', dis: true }, '-',
+                { t: 'Sleep', act: goSleep }, { t: 'Restart…', dis: true }, { t: 'Shut Down…', dis: true }, '-',
+                { t: 'Lock Screen', k: '⌃⌘Q', dis: true }
+            ],
+            app: () => front() === 'LilStats'
+                ? [{ t: 'About LilStats', dis: true }, '-', { t: 'Settings…', k: '⌘,', act: openSettings }, '-', { t: 'Hide LilStats', k: '⌘H', act: () => M.closeWin('settings') }, '-', { t: 'Quit LilStats', k: '⌘Q', act: () => setQuit(true) }]
+                : [{ t: 'About ' + front(), dis: true }, '-', { t: 'Settings…', k: '⌘,', dis: true }, '-', { t: 'Hide ' + front(), k: '⌘H', dis: true }, '-', { t: 'Quit ' + front(), k: '⌘Q', dis: true }],
+            file: () => front() === 'Safari' ? [{ t: 'New Tab', k: '⌘T', act: addTab }, { t: 'Close Tab', k: '⌘W', dis: WORK.tabs < 1, act: () => { WORK.tabs--; activeTab = Math.max(0, Math.min(activeTab, WORK.tabs - 1)); renderTabs(); kick(); } }]
+                : front() === 'Terminal' ? [{ t: 'New Window', k: '⌘N', dis: true }, { t: 'Run swift build', act: startBuild }]
+                : front() === 'Clips' ? [{ t: 'Export…', k: '⌘E', act: startExport }]
+                : [{ t: 'New Window', k: '⌘N', dis: true }, { t: 'Close', k: '⌘W', dis: true }],
+            edit: () => [{ t: 'Undo', k: '⌘Z', dis: true }, { t: 'Redo', k: '⇧⌘Z', dis: true }, '-', { t: 'Cut', k: '⌘X', dis: true }, { t: 'Copy', k: '⌘C', dis: true }, { t: 'Paste', k: '⌘V', dis: true }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Minimize', k: '⌘M', act: () => M.focus && M.minWin(M.focus) }, { t: 'Zoom', act: () => M.focus && M.zoomWin(M.focus) }, '-', ...winList()],
+            help: () => [{ t: 'Search', dis: true }, '-', { t: front() + ' Help', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+
+        // Sleep: the displays go dark, sampling stops (like the app), a click wakes it
+        function goSleep() { asleep = true; $('#sleep').hidden = false; schedule(); }
+        $('#sleep').addEventListener('pointerdown', e => { e.stopPropagation(); asleep = false; $('#sleep').hidden = true; schedule(); kick(); });
+
+        // Dock
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'safari', name: 'Safari', bg: 'radial-gradient(circle,#fff 0 46%,#2F7CF6 47%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M27 15l-4 10-8 2 4-10z" fill="#FF453A"/></svg>' },
+            { id: 'term', name: 'Terminal', bg: '#1C1C1E', icon: '<span style="font:700 15px Space Mono,monospace;color:#5AD16A">&gt;_</span>' },
+            { id: 'exp', name: 'Clips', bg: 'linear-gradient(160deg,#B68CFF,#6C3BEA)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M17 13l13 8-13 8z" fill="#fff"/></svg>' },
+            '|',
+            { id: 'trash', name: 'Trash', bg: 'linear-gradient(#E9E9EE,#C5C5CC)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M13 14h16l-2 18H15z" fill="none" stroke="#666" stroke-width="2"/><path d="M11 13h20" stroke="#666" stroke-width="2"/></svg>', act: () => M.hud('Trash is empty', 800) }
+        ]);
+
+        // ---------- Controls under the Mac ----------
+        $$('[data-work]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.work) {
+                case 'build': startBuild(); break;
+                case 'export': startExport(); break;
+                case 'tabs': M.openWin('safari'); for (let i = 0; i < 3; i++) addTab(); break;
+                case 'calm': stopBuild(); stopExport(); WORK.tabs = 1; activeTab = 0; renderTabs(); kick(); break;
+                case 'relaunch': setQuit(false); break;
+            }
+        }));
+
+        // ---------- Theme changes swap the menu bar ink ----------
+        new MutationObserver(() => { readInk(); lastKey = ''; draw(true); if (setWin.open) renderSettings(); })
+            .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        // ---------- Styles gallery (below): picking one sets every metric in the model ----------
+        let galleryVisible = false;
+        const grid = $('#styleGrid'), galleryBars = [];
         LAYOUTS.forEach(([id, name], i) => {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'style-tile fade-in stagger-' + ((i % 4) + 1);
-            btn.setAttribute('aria-pressed', String(id === heroLayout));
+            btn.dataset.layout = id;
             btn.setAttribute('aria-label', name + ' style');
-            btn.innerHTML = '<div class="tile-screen"><canvas aria-hidden="true"></canvas></div><span></span>';
+            btn.innerHTML = '<div class="tile-screen"><canvas aria-hidden="true" data-boost="1"></canvas></div><span></span>';
             btn.querySelector('span').textContent = name;
-            // Spread the kinds around so the gallery isn't all CPU
-            const kind = id === 'perCore' ? 'cpu' : ['cpu', 'gpu', 'ram'][i % 3];
-            makeBar(btn.querySelector('canvas'), [{ kind, layout: () => id }], 1.6);
+            const kind = id === 'perCore' ? 'cpu' : KINDS[i % 3];
+            galleryBars.push({ canvas: btn.querySelector('canvas'), kind, layout: id });
             btn.addEventListener('click', () => {
-                heroLayout = id;
-                heroName.textContent = name;
-                grid.querySelectorAll('.style-tile').forEach(t => t.setAttribute('aria-pressed', String(t === btn)));
-                renderAll(true);
+                SET.metrics.forEach(m => { m.layout = optionsFor(m.kind).includes(id) ? id : 'bar'; });
+                Q.done('style');
+                saved();
+                const r = $('#stage').getBoundingClientRect();
+                if (r.bottom < 0) M.hud(name, 900);
             });
             grid.appendChild(btn);
-            revealer.observe(btn);
+            io.observe(btn);
+        });
+        new IntersectionObserver(es => { galleryVisible = es[0].isIntersecting; if (galleryVisible) paintGallery(); }).observe(grid);
+        function paintGallery() {
+            const t = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+            galleryBars.forEach(g => paint(g.canvas, itemsFor([{ kind: g.kind, enabled: true, layout: g.layout }], shown), 1.6, t));
+        }
+        function syncGallery() {
+            const all = SET.metrics.filter(m => m.enabled).map(m => m.layout);
+            $$('.style-tile', grid).forEach(t => t.setAttribute('aria-pressed', String(all.length > 0 && all.every(l => l === t.dataset.layout || (t.dataset.layout === 'perCore' && l === 'bar' && all.includes('perCore'))))));
+            $$('[data-color]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.color === SET.color)));
+            $$('[data-labels]').forEach(x => x.setAttribute('aria-pressed', String((x.dataset.labels === '1') === SET.labels)));
+        }
+        $$('[data-color]').forEach(b => b.addEventListener('click', () => { SET.color = b.dataset.color; if (SET.color === 'colored') Q.done('color'); saved(); }));
+        $$('[data-labels]').forEach(b => b.addEventListener('click', () => { SET.labels = b.dataset.labels === '1'; saved(); }));
+
+        // ---------- Things to try ----------
+        const openSet = async () => {
+            if (setWin.open && !setWin.min) { M.focusWin('settings'); return; }
+            if (quit) setQuit(false);
+            if (!M.popOpen(pop)) { await M.press(lsItem); await wait(500); }
+            await M.press($('#pSettings')); await wait(450);
+        };
+        const scrollSet = async sel => {
+            const body = $('#setBody'), el = $(sel, body);
+            if (!el) return;
+            const to = clamp(el.offsetTop - 60, 0, body.scrollHeight - body.clientHeight), a = body.scrollTop;
+            await M.tween(420, t => { body.scrollTop = a + (to - a) * t; });
+        };
+        const Q = Quests({
+            key: 'lsSim.quests',
+            items: [
+                { id: 'open', t: 'Open the popover', d: 'Click the readings in the Mac’s menu bar for every core and a minute of history.' },
+                { id: 'build', t: 'Build an app, watch the P-cores', d: 'Hit Run in Terminal. The performance cores fill up first, then the efficiency cores.' },
+                { id: 'gpu', t: 'Export a video', d: 'Click Export in Clips. CPU stays calm while the GPU does the work.' },
+                { id: 'ram', t: 'Fill the RAM with tabs', d: 'Click + in Safari until RAM passes 80%. Close tabs and it drops.' },
+                { id: 'style', t: 'Pick another style', d: 'Popover › Settings…, click CPU and try Per-core bars. Or pick one in the gallery below.' },
+                { id: 'color', t: 'Go Colored', d: 'Settings › Color › Colored. Every reading runs green → yellow → red with load.' },
+                { id: 'arrange', t: 'Make it yours', d: 'Hide a metric with its checkbox, or move one with ▲ ▼. The preview strips follow.' },
+                { id: 'calm', t: 'Make it calmer', d: 'Set Update interval to 5 s. Fewer readings, fewer redraws, same picture.' }
+            ],
+            show: {
+                async open() { if (quit) setQuit(false); if (!M.popOpen(pop)) await M.press(lsItem); await wait(1400); M.ghostHide(); },
+                async build() {
+                    M.closePops(); M.openWin('term'); await wait(200);
+                    await M.press(tRun); await wait(1500);
+                    if (!quit) await M.press(lsItem);
+                    await wait(1200); M.ghostHide();
+                },
+                async gpu() {
+                    M.closePops(); M.openWin('exp'); await wait(200);
+                    if (!WORK.exportOn) await M.press(expBtn); await wait(1500);
+                    if (!quit) await M.press(lsItem);
+                    await wait(1200); M.ghostHide();
+                },
+                async ram() {
+                    M.closePops(); M.openWin('safari'); await wait(250);
+                    for (let i = 0; i < 12 && target.ram < 0.8 && WORK.tabs < TABS.length; i++) { await M.press($('#newTab'), i ? 220 : 500); await wait(REDUCED ? 30 : 160); }
+                    await wait(500);
+                    if (!quit) await M.press(lsItem);
+                    await wait(1200); M.ghostHide();
+                },
+                async style() {
+                    await openSet();
+                    if (expanded !== 'cpu') { await M.press($('#setRows [data-kind="cpu"] [data-act="expand"]')); await wait(300); }
+                    await scrollSet('#setRows');
+                    await M.press($('#setRows .ls-lt[data-l="perCore"]')); await wait(1000); M.ghostHide();
+                },
+                async color() { await openSet(); await scrollSet('#setLook'); await M.press($('#setLook [data-v="colored"]')); await wait(1000); M.ghostHide(); },
+                async arrange() {
+                    await openSet(); await scrollSet('#setRows');
+                    const up = () => $(`#setRows [data-kind="ram"] [data-act="up"]`);
+                    for (let i = 0; i < 2 && !up().classList.contains('dis'); i++) { await M.press(up()); await wait(350); }
+                    await wait(800); M.ghostHide();
+                },
+                async calm() { await openSet(); await scrollSet('#setRate'); await M.press($('#setRate [data-v="5"]')); await wait(900); M.ghostHide(); }
+            },
+            onReset() {
+                SET = defaults(); store.set('lsSim.set', SET); applyOpts(); expanded = 'cpu';
+                stopBuild(); stopExport(); WORK.tabs = 1; activeTab = 0; renderTabs();
+                if (quit) setQuit(false);
+                M.closePops(); M.closeMenus(); M.closeWin('settings'); M.closeWin('about');
+                ['safari', 'term', 'exp'].forEach(id => M.openWin(id)); placeAll(); M.focusWin('safari');
+                syncGallery(); lastKey = ''; draw(true); lsItem.classList.add('hint');
+            }
         });
 
-        document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('click', () => {
-            opts.colored = b.dataset.color === 'colored';
-            document.querySelectorAll('[data-color]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-            renderAll(true);
-        }));
-        document.querySelectorAll('[data-labels]').forEach(b => b.addEventListener('click', () => {
-            opts.labels = b.dataset.labels === '1';
-            document.querySelectorAll('[data-labels]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-            renderAll(true);
-        }));
+        // ---------- Start ----------
+        if (!Q.has('open')) lsItem.classList.add('hint');
+        lsItem.hidden = quit; $('[data-work="relaunch"]').hidden = !quit;
+        syncGallery();
+        placeAll();
+        draw(true);
+        paintGallery();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { Object.keys(widthCache).forEach(k => delete widthCache[k]); lastKey = ''; draw(true); paintGallery(); });
+        schedule();
 
-        // Theme changes swap the ink colour
-        new MutationObserver(() => { readInk(); renderAll(true); })
-            .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-        function renderAll(force) { bars.forEach(b => renderBar(b, shown, force)); }
-
-        // ---- Popover ------------------------------------------------------------------
-        const $ = id => document.getElementById(id);
-        const coreEls = [];
-        [[$('pCores'), P_CORES], [$('eCores'), E_CORES]].forEach(([el, n]) => {
-            for (let i = 0; i < n; i++) { const b = document.createElement('i'); el.appendChild(b); coreEls.push(b); }
-        });
-        const graphs = [...document.querySelectorAll('.pop-graph')].map(g => ({
-            metric: g.dataset.metric, value: g.querySelector('.pop-graph-top span:last-child'),
-            area: g.querySelector('.area'), line: g.querySelector('.line'),
-            color: { cpu: '#3B82F6', gpu: '#A855F7', ram: '#FF8A1F' }[g.dataset.metric]
-        }));
-        graphs.forEach(g => { g.area.setAttribute('fill', g.color); g.line.setAttribute('stroke', g.color); });
-
-        function updatePopover(t) {
-            $('tCpu').textContent = pct(t.cpu) + '%';
-            $('tGpu').textContent = pct(t.gpu) + '%';
-            $('tRam').textContent = (t.ram * 16).toFixed(1) + '/16 GB';
-            [['cCpu', t.cpu], ['cGpu', t.gpu], ['cRam', t.ram]].forEach(([id, v]) => {
-                const el = $(id); el.style.width = Math.max(4, pct(v)) + '%'; el.style.backgroundColor = loadColor(v);
-            });
-            t.cores.forEach((v, i) => { coreEls[i].style.setProperty('--v', v.toFixed(3)); coreEls[i].style.setProperty('--c', loadColor(v)); });
-            graphs.forEach(g => {
-                const s = history[g.metric], step = 100 / (HISTORY - 1);
-                const pts = s.map((v, i) => `${(i * step).toFixed(2)},${(29 - 28 * v).toFixed(2)}`);
-                g.line.setAttribute('d', 'M' + pts.join('L'));
-                g.area.setAttribute('d', `M0,30L${pts.join('L')}L100,30Z`);
-                g.value.textContent = pct(s[s.length - 1]) + '%';
-            });
-        }
-
-        // ---- Loop -------------------------------------------------------------------------
-        let gliding = false, sampleTimer = 0;
-        const heroVisible = { v: true };
-        new IntersectionObserver(es => { heroVisible.v = es[0].isIntersecting; }).observe(document.querySelector('.mock'));
-
-        function sample() {
-            const next = nextReading();
-            ['cpu', 'gpu', 'ram'].forEach(k => { history[k].push(next[k]); if (history[k].length > HISTORY) history[k].shift(); });
-            from = structuredClone(shown);
-            Object.assign(target, next);
-            if (heroVisible.v) updatePopover(next);
-            const big = ['cpu', 'gpu', 'ram'].some(k => Math.abs(next[k] - shown[k]) >= 0.02) ||
-                        next.cores.some((v, i) => Math.abs(v - shown.cores[i]) >= 0.02);
-            if (reduced || !big) { shown = structuredClone(target); renderAll(false); return; }
-            glideStart = performance.now();
-            if (!gliding) { gliding = true; requestAnimationFrame(glide); }
-        }
-        function glide(now) {
-            const p = Math.min(1, (now - glideStart) / GLIDE_MS);
-            shown = lerpState(from, target, 1 - Math.pow(1 - p, 3));
-            renderAll(false);
-            if (p < 1) requestAnimationFrame(glide); else gliding = false;
-        }
-        function start() { if (!sampleTimer) sampleTimer = setInterval(sample, SAMPLE_MS); }
-        function stop() { clearInterval(sampleTimer); sampleTimer = 0; }
-        // Like the app: stop when nobody's looking
-        document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
-
-        updatePopover(target);
-        renderAll(true);
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderAll(true));
-        window.addEventListener('resize', () => renderAll(true), { passive: true });
-        start();
-
-        // Live clock in the fake menu bar
-        const clock = $('clock');
-        const setClock = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
-        setClock(); setInterval(setClock, 15000);
+        // Test hooks: ?sim=pop | settings | build | export | tabs | colored
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'pop') M.openPop(lsItem, pop);
+            if (s === 'settings') openSettings();
+            if (s === 'build') startBuild();
+            if (s === 'export') startExport();
+            if (s === 'tabs') for (let i = 0; i < 9; i++) addTab();
+            if (s === 'colored') { SET.color = 'colored'; saved(); }
+        })); });
+        window.__ls = { M, SET: () => SET, WORK, shown: () => shown, redraws: () => redraws, Q };
 
         // ---- Redraw timeline --------------------------------------------------------------
         // Busy: a few frames per reading. Lean: one redraw per visibly-changed reading.
@@ -1257,8 +2239,8 @@
             for (let f = 0; f < 6; f++) busy.push(base + f * 0.006);
             if (s % 3 !== 1) lean.push(base);
         }
-        ticks($('rdBusy'), busy, 12);
-        ticks($('rdLean'), lean, 12);
+        ticks($('#rdBusy'), busy, 12);
+        ticks($('#rdLean'), lean, 12);
     })();
     </script>
     <script src="/studio-wheel.js" defer></script>

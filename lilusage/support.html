@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilUsage — Support</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilUsage colours (same as its main page) */
+        :root { --primary: #FFB020; --secondary: #A98BFF; }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilUsage</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilUsage</a></li>
+                <li><a href="support.html" aria-current="page">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>LilUsage Support</h1>
+<p class="lede">Your Claude usage, in the menu bar.</p>
+
+<div class="note">
+  Stuck, or the meter looks wrong? Email
+  <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>. We read every message.
+</div>
+
+<h2>Getting started</h2>
+<ul>
+  <li>Open the DMG and drag <strong>LilUsage</strong> to Applications, then open it. It has no Dock icon.</li>
+  <li>Click the meter in the menu bar and read the short intro, then <strong>Get started</strong>.</li>
+  <li>macOS asks to let LilUsage use "Claude Code-credentials". Click <strong>Always Allow</strong> and enter your Mac password.</li>
+</ul>
+
+<h2>Common questions</h2>
+
+<h3>macOS keeps asking for my password.</h3>
+<p>You clicked <em>Allow</em> instead of <em>Always Allow</em>. Wait for the next prompt and choose <em>Always Allow</em>. LilUsage 1.1 reads the credentials in a way that keeps that choice, even when Claude Code refreshes its login.</p>
+
+<h3>The menu bar says "Sign in".</h3>
+<p>Your Claude Code login expired or you logged out. Run <code>claude</code> in Terminal, type <code>/login</code> and finish in your browser. The meter comes back within seconds.</p>
+
+<h3>The meter shows only a dot.</h3>
+<p>LilUsage doesn't have numbers yet: it's still loading, or it can't read the credentials. Click it to see why.</p>
+
+<h3>Can I see the number instead of just the bar?</h3>
+<p>Click the meter, then <strong>•••</strong> › <em>Show percentage in menu bar</em>.</p>
+
+<h3>"Rate limited — retrying in a few minutes".</h3>
+<p>The usage service asked LilUsage to slow down. It backs off by itself and recovers without you doing anything.</p>
+
+<h3>Does it see my conversations?</h3>
+<p>No. It asks Anthropic for your usage percentages and nothing else. See the <a href="privacy.html">privacy policy</a>.</p>
+
+<h3>How do I uninstall it?</h3>
+<p>Click the meter, choose <em>Quit LilUsage</em>, then drag the app from Applications to the Trash.</p>
+
+<h2>System requirements</h2>
+<p>macOS 14.6 or later, Apple silicon or Intel, with Claude Code installed and signed in.</p>
+
+<p>LilUsage is an independent utility, not affiliated with or endorsed by Anthropic.</p>
+
+<footer>
+  LilUsage is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+    </main>
+
+    <script src="/studio-wheel.js" defer></script>
+</body>
+</html>

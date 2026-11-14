@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex"><!-- hidden until the iOS app ships -->
+    <script src="/assets/theme.js"></script>
     <title>LilPad &ndash; Your iPhone as a Mac Trackpad</title>
 
     <link rel="icon" href="/favicon/favicon.ico" sizes="any">
@@ -1662,6 +1664,307 @@
             .pd-cursor { left: 33%; top: 22%; }
         }
 
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilPad, running on the iPhone model and driving the Mac ========== */
+        @media (min-width: 1101px) { .hero-grid { grid-template-columns: minmax(320px, 0.62fr) minmax(0, 1.6fr); gap: 2.4rem; } }
+        .lq-stage { display: flex; align-items: center; gap: 2rem; }
+        .lq-mac { flex: 1; min-width: 0; }
+        .lq-phone { width: 230px; flex-shrink: 0; background: #111; border: var(--border-width) solid var(--border); border-radius: 40px; padding: 8px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); animation: fadeIn 0.9s ease 0.3s backwards; }
+        .lq-screen { position: relative; aspect-ratio: 390 / 844; border-radius: 32px; overflow: hidden; background: #F8F0D8; touch-action: none; }
+        [data-theme="dark"] .lq-screen { background: #1A1814; }
+        .lq-world { position: absolute; left: 0; top: 0; width: 390px; height: 844px; transform-origin: 0 0; font: 17px/1.35 -apple-system, BlinkMacSystemFont, sans-serif; --c-bg: #F8F0D8; --c-card: #FFFBEF; --c-ink: #14130F; --c-muted: rgba(20,19,15,0.6); color: var(--c-ink); background: var(--c-bg) radial-gradient(circle, rgba(20,19,15,0.13) 1.3px, transparent 1.6px) 0 0 / 26px 26px; user-select: none; -webkit-user-select: none; }
+        [data-theme="dark"] .lq-world { --c-bg: #1A1814; --c-card: #27251F; --c-ink: #FBF3D5; --c-muted: rgba(251,243,213,0.6); background-image: radial-gradient(circle, rgba(251,243,213,0.12) 1.3px, transparent 1.6px); }
+        .lq-status { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 6px 34px 0 46px; font-size: 16px; z-index: 30; pointer-events: none; }
+        .lq-status span { font-size: 12px; letter-spacing: 1px; }
+        .lq-island { position: absolute; top: 11px; left: 50%; width: 120px; height: 35px; margin-left: -60px; border-radius: 20px; background: #000; z-index: 31; }
+        .lq-v { position: absolute; inset: 0; }
+        .lq-v[hidden], .lq-sheet[hidden] { display: none; }
+        .lq-connect { padding: 120px 22px 0; text-align: center; }
+        .lq-icon { width: 92px; height: 92px; margin: 0 auto 14px; border-radius: 24px; background: #FFE135; border: 3.5px solid #14130F; box-shadow: 5px 5px 0 #14130F; display: flex; align-items: center; justify-content: center; font-size: 44px; }
+        .lq-connect h2 { font-size: 46px; font-weight: 900; letter-spacing: -0.02em; }
+        .lq-sub { color: var(--c-muted); margin-bottom: 26px; }
+        .lq-box { text-align: left; background: var(--c-card); border: 3px solid var(--c-ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--c-ink); margin-bottom: 22px; overflow: hidden; }
+        .lq-bh { display: flex; justify-content: space-between; padding: 12px 18px; font-size: 13px; font-weight: 700; color: var(--c-muted); letter-spacing: 0.04em; }
+        .lq-spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--c-muted); border-right-color: transparent; animation: luSpin 0.9s linear infinite; }
+        @keyframes luSpin { to { transform: rotate(360deg); } }
+        .lq-row { display: flex; align-items: center; gap: 14px; padding: 13px 18px; border-top: 3px solid var(--c-ink); font-size: 18px; }
+        .lq-row b { flex: 1; font-weight: 600; }
+        .lq-row.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .lq-ti { width: 40px; height: 40px; border-radius: 11px; border: 3px solid #14130F; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .lq-ti.b { background: #5BA3F5; } .lq-ti.g { background: #3CE38B; }
+        .lq-chev { color: var(--c-muted); font-size: 24px; }
+        .lq-steps { padding: 16px 18px; font-size: 15px; }
+        .lq-steps > b { display: block; font-size: 18px; margin-bottom: 8px; }
+        .lq-steps p { display: flex; gap: 10px; margin-bottom: 8px; color: var(--c-muted); }
+        .lq-steps p b { color: var(--c-ink); }
+        .lq-steps i { font-style: normal; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: #FFE135; border: 2.5px solid #14130F; color: #14130F; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+        .lq-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--c-card); border-top: 3px solid var(--c-ink); border-radius: 30px 30px 0 0; padding: 26px 24px 36px; animation: lpUp 0.35s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        @keyframes lpUp { from { transform: translateY(100%); } }
+        .lq-sheet h3 { font-size: 22px; margin-bottom: 16px; }
+        .lq-sheet label { display: flex; justify-content: space-between; padding: 12px 14px; border: 2.5px solid var(--c-ink); border-radius: 14px; margin-bottom: 10px; font-weight: 600; }
+        .lq-sheet label span { color: var(--c-muted); font-weight: 400; }
+        .lq-sheet p { color: var(--c-muted); font-size: 14px; margin-bottom: 14px; }
+        .lq-btn { display: block; text-align: center; height: 54px; line-height: 50px; border-radius: 16px; background: #FFE135; color: #14130F; border: 3px solid #14130F; box-shadow: 4px 4px 0 #14130F; font-weight: 800; margin-top: 10px; }
+        .lq-btn.g { background: var(--c-card); color: var(--c-ink); border-color: var(--c-ink); box-shadow: none; }
+        .lq-btn.red { background: #FF6B5E; }
+        .lq-pad { background: inherit; }
+        .lq-controls { position: absolute; top: 62px; right: 18px; display: flex; gap: 10px; z-index: 5; }
+        .lq-pill { width: 50px; height: 50px; border-radius: 16px; background: var(--c-card); border: 3px solid var(--c-ink); box-shadow: 3px 3px 0 var(--c-ink); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .lq-pad.locked .lq-pill:first-child { display: none; }
+        .lq-pad.locked .lq-pill { opacity: 0.4; box-shadow: none; }
+        .lq-surface { position: absolute; inset: 0; touch-action: none; }
+        .lq-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 22px; opacity: 0.18; pointer-events: none; }
+        .lq-drop { position: absolute; width: 74px; height: 74px; margin: -37px 0 0 -37px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.8), rgba(255,225,53,0.55)); border: 3px solid var(--c-ink); pointer-events: none; animation: lqPop 0.25s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes lqPop { from { transform: scale(0.3); } }
+        .lq-ring { position: absolute; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; border: 4px solid var(--c-ink); pointer-events: none; animation: lqRing 0.45s ease-out forwards; }
+        @keyframes lqRing { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+        .lq-hold { position: absolute; top: 8px; left: 10px; right: 10px; height: 44px; border-radius: 22px; background: var(--c-card); border: 3px solid var(--c-ink); overflow: hidden; display: none; z-index: 32; align-items: center; justify-content: center; font-size: 15px; }
+        .lq-hold span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #FFE135; }
+        .lq-hold b { position: relative; }
+        .lq-hold.on { display: flex; }
+        .lq-toast { position: absolute; left: 50%; top: 140px; transform: translateX(-50%); padding: 10px 18px; border-radius: 16px; background: var(--c-card); border: 3px solid var(--c-ink); box-shadow: 4px 4px 0 var(--c-ink); font-weight: 800; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
+        .lq-toast.show { opacity: 1; }
+        .lq-settings .lq-grab { width: 44px; height: 5px; border-radius: 3px; background: var(--c-muted); margin: -12px auto 14px; }
+        .lq-set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 2px solid color-mix(in srgb, var(--c-ink) 12%, transparent); font-weight: 600; font-size: 16px; }
+        .lq-set input { width: 150px; accent-color: #14130F; }
+        .lq-seg { display: flex; border: 2.5px solid var(--c-ink); border-radius: 12px; overflow: hidden; }
+        .lq-seg b { padding: 5px 14px; font-size: 14px; }
+        .lq-seg b.on { background: #FFE135; color: #14130F; }
+        .lq-sw { width: 50px; height: 30px; border-radius: 15px; border: 2.5px solid var(--c-ink); background: var(--c-bg); position: relative; }
+        .lq-sw::after { content: ''; position: absolute; left: 2px; top: 2px; width: 21px; height: 21px; border-radius: 50%; background: var(--c-ink); transition: transform 0.2s; }
+        .lq-sw.on { background: #3CE38B; }
+        .lq-sw.on::after { transform: translateX(20px); }
+        /* Mac side */
+        .lq-cursor { position: absolute; left: 0; top: 0; z-index: 90; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+        .lq-cursor.off { opacity: 0; }
+        .lq-ss[hidden] { display: none; }
+        .lq-ss { color: #fff; background: #2F7CF6 !important; border-radius: 6px; }
+        .mk-wins.mc .mk-win { transition: transform 0.45s cubic-bezier(0.3, 1.2, 0.5, 1); }
+        .mk-world.mc-on .mk-wall { filter: brightness(0.55); }
+        .mk-wins.spaces { transition: transform 0.5s cubic-bezier(0.3, 1.1, 0.5, 1); }
+        .lq-look { position: absolute; width: 260px; padding: 12px 14px; border-radius: 12px; background: rgba(248,246,242,0.97); color: #1D1D1F; font-size: 12.5px; line-height: 1.45; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 14px 34px rgba(0,0,0,0.35); z-index: 45; }
+        .lq-look[hidden] { display: none; }
+        .lq-page { position: absolute; left: 0; right: 0; top: 0; padding: 12px 14px; transition: transform 0.25s ease-out; transform-origin: 50% 0; }
+        .lq-page h4 { font-size: 16px; margin-bottom: 6px; }
+        .lq-page p { font-size: 12px; color: var(--win-muted); margin-bottom: 8px; line-height: 1.5; }
+        .lq-page .blk { height: 60px; border-radius: 8px; margin-bottom: 8px; }
+        .lq-gest { max-width: 1240px; margin: 1.4rem auto 0; }
+        .lq-gest .chip.lit { background: var(--primary); }
+        @media (max-width: 1100px) { .lq-stage { width: 100%; max-width: 900px; margin: 0 auto; } }
+        @media (max-width: 700px) {
+            .lq-stage { flex-direction: column; align-items: stretch; gap: 1.6rem; }
+            .lq-mac { width: 100%; flex: none; align-self: stretch; order: -1; }
+            .lq-phone { width: min(210px, 58vw); align-self: center; }
+        }
     </style>
 </head>
 <body>
@@ -1669,9 +1972,10 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilPad</div>
+            <a class="logo" href="./">LilPad</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#gestures">Gestures</a></li>
                 <li><a href="#how">Setup</a></li>
                 <li><a href="#faq">FAQ</a></li>
@@ -1686,46 +1990,118 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-                <div class="hero-device">
-                    <img src="screenshots/app-icon.png" alt="LilPad app icon" class="hero-appicon">
+    <!-- ===================== HERO: copy · an iPhone running LilPad · the Mac it drives ===================== -->
+    <section class="hero" id="try" aria-label="LilPad, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilPad app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>iPhone App for Your Mac</div>
                 </div>
-
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        iPhone App for Your Mac
+                <h1>The trackpad you <span class="highlight">already own</span>.</h1>
+                <p class="hero-subtitle">LilPad turns your iPhone into a Mac trackpad. Click, scroll, pinch, drag windows, swipe into Mission Control &mdash; every gesture, with nothing to install on your Mac.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="#how" class="btn btn-primary" data-appstore><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Download on the App Store</a>
+                            <span class="system-req">iPhone &middot; iOS 17.6+ &middot; Any Mac with Screen Sharing</span>
+                        </div>
                     </div>
-                    <h1>The trackpad you <span class="highlight">already own</span>.</h1>
-                    <p class="hero-subtitle">LilPad turns your iPhone into a Mac trackpad. Click, scroll, pinch, drag windows, swipe into Mission Control &mdash; every gesture, with nothing to install on your Mac.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="#how" data-appstore class="btn btn-primary">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    Download on the App Store
-                                </a>
-                                <span class="system-req">iPhone &middot; iOS 17+ &middot; Any Mac with Screen Sharing</span>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>Talks only to your Mac. Sends taps and swipes, never receives your screen. No accounts, no analytics. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
+                </div>
+                <p class="live-line"><span class="live-tag">LIVE</span><b>Tap the Mac</b> on the iPhone to connect, then <b>drag on the phone</b> to move the Mac's pointer. Tap to click. On a phone, use real fingers.</p>
+            </div>
+            <div class="hero-stage lq-stage" id="stage">
+                <div class="lq-phone" id="phone">
+                    <div class="lq-screen" id="pScreen"><div class="lq-world" id="pWorld">
+                        <div class="lq-status"><b>9:41</b><span>▂▄▆ ᯤ ▭</span></div>
+                        <div class="lq-island"></div>
+                        <div class="lq-v lq-connect" id="vConnect">
+                            <div class="lq-icon">👆</div><h2>LilPad</h2><p class="lq-sub">Your iPhone, now a Mac trackpad.</p>
+                            <div class="lq-box"><div class="lq-bh">MACS NEARBY <span class="lq-spin"></span></div><div class="lq-row" id="pickMac"><span class="lq-ti b">💻</span><b>Studio MacBook Pro</b><span class="lq-chev">›</span></div><div class="lq-row"><span class="lq-ti g">🌐</span><b>Enter address manually</b><span class="lq-chev">›</span></div></div>
+                            <div class="lq-box lq-steps"><b>One-time Mac setup</b><p><i>1</i>Open <b>System Settings → General → Sharing</b></p><p><i>2</i>Turn on <b>Screen Sharing</b></p><p><i>3</i>Pick your Mac above and sign in with your Mac password. Nothing to install.</p></div>
+                        </div>
+                        <div class="lq-sheet" id="vSign" hidden><h3>Sign in to Studio MacBook Pro</h3><label>Username<span>studio</span></label><label>Password<span>••••••••••</span></label><p>Saved in your iPhone’s Keychain.</p><span class="lq-btn" id="signIn">Connect</span><span class="lq-btn g" id="signCancel">Cancel</span></div>
+                        <div class="lq-v lq-pad" id="vPad" hidden>
+                            <div class="lq-controls"><span class="lq-pill" id="padSet">⚙︎</span><span class="lq-pill" id="padLock">🔓</span></div>
+                            <div class="lq-surface" id="surface"><span class="lq-hint">Trackpad</span></div>
+                            <div class="lq-hold" id="hold"><span></span><b>Keep holding to unlock</b></div>
+                            <div class="lq-toast" id="pToast"></div>
+                        </div>
+                        <div class="lq-sheet lq-settings" id="vSettings" hidden>
+                            <div class="lq-grab"></div><h3>Settings</h3>
+                            <div class="lq-set"><span>Theme</span><div class="lq-seg"><b data-th="light">Day</b><b data-th="dark">Night</b></div></div>
+                            <div class="lq-set"><span>Tracking speed</span><input type="range" id="spd" min="0.3" max="1.5" step="0.05" value="0.7"></div>
+                            <div class="lq-set"><span>Scroll speed</span><input type="range" id="sspd" min="0.3" max="1.8" step="0.05" value="1"></div>
+                            <div class="lq-set"><span>Tap to click</span><i class="lq-sw on" data-t="tap"></i></div>
+                            <div class="lq-set"><span>Natural scrolling</span><i class="lq-sw on" data-t="natural"></i></div>
+                            <div class="lq-set"><span>Haptics</span><i class="lq-sw on" data-t="haptics"></i></div>
+                            <span class="lq-btn red" id="disconnect">Disconnect</span><span class="lq-btn g" id="setDone">Done</span>
+                        </div>
+                    </div></div>
+                </div>
+                <div class="lq-mac">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac controlled from the iPhone running LilPad">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
+
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi lq-ss" id="ssInd" hidden aria-label="Screen Sharing"><svg viewBox="0 0 20 14" width="19" height="13"><rect x="1" y="1" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 5l3-2.5L13 5M10 3v6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="lq-cursor" id="cursor"><svg viewBox="0 0 18 26" width="18" height="26"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+                                    <div class="lq-look" id="look" hidden><b>serendipity</b> <i>noun</i><br>the occurrence of events by chance in a happy or beneficial way.</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Talks only to your Mac. Sends taps and swipes, never receives your screen. No accounts, no analytics. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
                     </div>
+                    <div class="mk-base"></div>
                 </div>
-
-                <div class="hero-shot">
-                    <picture>
-                        <source srcset="screenshots/App.webp" type="image/webp">
-                        <img src="screenshots/App.png" alt="LilPad on iPhone, showing nearby Macs and the one-time setup" class="hero-phone" width="1077" height="2201">
-                    </picture>
                 </div>
             </div>
         </div>
+        <div class="desk-bar lq-gest" id="gest">
+            <span class="bar-label">Gestures:</span>
+            <button class="chip g" type="button" data-g="right">2-finger tap</button>
+            <button class="chip g" type="button" data-g="scroll">2-finger scroll</button>
+            <button class="chip g" type="button" data-g="zoom">Pinch</button>
+            <button class="chip g" type="button" data-g="mc">3 fingers ↑</button>
+            <button class="chip g" type="button" data-g="space">3 fingers →</button>
+            <button class="chip g" type="button" data-g="look">3-finger tap</button>
+            <button class="chip g" type="button" data-g="desktop">4-finger spread</button>
+        </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Seven things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 7</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilPad. Nothing to install on your Mac.</b><br>Just turn on Screen Sharing once.</div>
+                <a href="#how" class="btn btn-primary" data-appstore>Download on the App Store</a>
+            </div>
+        </div>
     </section>
+
 
     <section class="stats-bar">
         <div class="stats-grid">
@@ -1911,6 +2287,668 @@
         document.addEventListener('visibilitychange', () => {
             document.documentElement.style.setProperty('--play', document.hidden ? 'paused' : 'running');
         });
+    </script>
+    <script>
+    (function () {
+        'use strict';
+
+        // The page script below sets the App Store links (APP_STORE_URL).
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0) }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilPad, live: the iPhone pad drives this Mac's pointer (TrackpadSurface.swift) ----------
+        const M = MacKit($('#mac'));
+        const pScreen = $('#pScreen'), pWorld = $('#pWorld'), surface = $('#surface'), cursorEl = $('#cursor');
+        let pScale = 1;
+        new ResizeObserver(() => { pScale = pScreen.clientWidth / 390; pWorld.style.transform = `scale(${pScale})`; }).observe(pScreen);
+        const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+        const S = Object.assign({ speed: 0.7, scroll: 1, tap: true, natural: true, haptics: true }, store.get('lqSim.prefs', {}));
+        const saveS = () => store.set('lqSim.prefs', S);
+        let connected = false, locked = false, cur = { x: 500, y: 300 }, space = 0, mcOn = false, deskOn = false;
+
+        // ---------- The Mac ----------
+        const PAGE = '<div class="lq-page" id="page"><h4>The trackpad you already own</h4><p>Your iPhone has a better touch screen than most trackpads. LilPad sends your fingers to the Mac over Screen Sharing.</p>' + ['#FF7AC6', '#FFB020', '#7CC4F0', '#7ED48A', '#B68CFF', '#FF6B5E', '#F7DC3C', '#3FD98A'].map(c => `<div class="blk" style="background:${c}"></div><p>Scroll with two fingers. Momentum keeps it going, like a real trackpad.</p>`).join('') + '</div>';
+        const WINS = [
+            { id: 'safari', title: 'Safari', html: PAGE, space: 0 },
+            { id: 'notes', title: 'Notes', html: '<div style="position:absolute;inset:0;padding:12px 14px;background:#FFFDF4;color:#222;font-size:12.5px;line-height:1.5"><b style="font-size:14px">Couch setup</b><br>☑ Mac on the TV<br>☑ iPhone as the trackpad<br>☐ Popcorn</div>', space: 0 },
+            { id: 'music', title: 'Music', html: '<div style="position:absolute;inset:0;display:flex;gap:14px;align-items:center;padding:14px"><div style="width:80px;height:80px;border-radius:10px;background:conic-gradient(from 200deg,#FF61D8,#FFE135,#00FF88,#00CCFF,#B68CFF,#FF61D8)"></div><div><b>Golden Hour</b><br><small style="color:var(--win-muted)">Lil Band</small></div></div>', space: 1 },
+            { id: 'photos', title: 'Photos', html: '<div style="position:absolute;inset:0;padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px">' + ['#7DB8E4', '#F3D2B0', '#7ED48A', '#FF7AC6', '#FFB020', '#6C8CFF'].map(c => `<i style="border-radius:6px;background:${c}"></i>`).join('') + '</div>', space: 1 }
+        ];
+        WINS.forEach(w => M.win({ id: w.id, title: w.title, x: 0, y: 0, w: 10, h: 10, html: w.html }));
+        const L = { 1024: { safari: [280, 50, 460, 360], notes: [40, 90, 260, 200], music: [120, 90, 360, 140], photos: [520, 120, 360, 260] }, 760: { safari: [200, 36, 360, 280], notes: [20, 60, 210, 170], music: [60, 60, 300, 120], photos: [380, 90, 300, 220] } };
+        function placeAll() { const P = L[M.W] || L[1024]; WINS.forEach(w => { const x = M.wins.get(w.id); [x.x, x.y, x.w, x.h] = P[w.id]; x.saved = null; M.place(x); x.el.hidden = w.space !== space; }); cur = { x: M.W * 0.5, y: M.H * 0.5 }; drawCursor(); }
+        M.on('layout', c => { if (c) placeAll(); });
+        M.focusWin('safari');
+        M.on('focus', w => { $('#mbApp').textContent = WINS.find(x => x.id === w.id)?.title || 'Finder'; });
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }],
+            app: () => [{ t: 'About ' + $('#mbApp').textContent, dis: true }], file: () => [{ t: 'New Window', k: '⌘N', dis: true }],
+            edit: () => [{ t: 'Copy', k: '⌘C', dis: true }], view: () => [{ t: 'Zoom In', k: '⌘+', act: () => zoom(1) }, { t: 'Zoom Out', k: '⌘−', act: () => zoom(-1) }],
+            window: () => [{ t: 'Mission Control', k: '⌃↑', act: () => missionControl(true) }], help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'safari', name: 'Safari', bg: 'radial-gradient(circle,#fff 0 46%,#2F7CF6 47%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M27 15l-4 10-8 2 4-10z" fill="#FF453A"/></svg>', act: () => openApp('safari') },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFE27A 0 28%, #FFFDF4 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M10 22h22M10 28h22M10 34h14" stroke="#C9C3A8" stroke-width="2"/></svg>', act: () => openApp('notes') },
+            { id: 'music', name: 'Music', bg: 'linear-gradient(160deg,#FF6F91,#FA2D48)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M25 11v15.5a4 4 0 11-3-3.9V15l-6 1.5v12a4 4 0 11-3-3.9V13z" fill="#fff"/></svg>', act: () => openApp('music') },
+            { id: 'photos', name: 'Photos', bg: '#fff', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><g transform="translate(21 21)">' + ['#FFCC00', '#FF9500', '#FF3B30', '#AF52DE', '#5856D6', '#007AFF', '#34C759', '#A2D729'].map((c, i) => `<ellipse rx="4.5" ry="9" cy="-7" fill="${c}" opacity=".85" transform="rotate(${i * 45})"/>`).join('') + '</g></svg>', act: () => openApp('photos') }
+        ]);
+        function openApp(id) { const w = WINS.find(x => x.id === id); if (w.space !== space) switchSpace(w.space); M.openWin(id); M.hud(w.title, 600); Q.done('click'); }
+
+        // ---------- Pointer, clicks and gestures on the Mac ----------
+        function drawCursor() { cursorEl.style.transform = `translate(${cur.x}px, ${cur.y}px)`; cursorEl.classList.toggle('off', !connected); }
+        function clientAt() { const r = M.screen.getBoundingClientRect(); return { x: r.left + cur.x * M.s + 1, y: r.top + cur.y * M.s + 1 }; }
+        function targetAt() { const c = clientAt(); return document.elementFromPoint(c.x, c.y); }
+        function click() {
+            if (mcOn) { missionControl(false); return; }
+            if (deskOn) { showDesktop(false); return; }
+            const t = targetAt(), c = clientAt();
+            if (!t || !M.screen.contains(t)) return;
+            const o = { bubbles: true, cancelable: true, clientX: c.x, clientY: c.y, pointerId: 77, pointerType: 'mouse', isPrimary: true, button: 0 };
+            t.dispatchEvent(new PointerEvent('pointerdown', o)); t.dispatchEvent(new PointerEvent('pointerup', o)); t.dispatchEvent(new MouseEvent('click', o));
+            if (t.closest('.mk-win, .mk-dock')) Q.done('click');
+        }
+        let dragWin = null;
+        function dragStart() { const t = targetAt(); const bar = t && t.closest('.mk-bar'); if (bar) { const w = M.wins.get(bar.parentElement.dataset.win); M.focusWin(w.id); dragWin = w; w.el.classList.add('drag'); } }
+        function moveBy(dx, dy) {
+            cur.x = clampN(cur.x + dx, 0, M.W - 2); cur.y = clampN(cur.y + dy, 0, M.H - 2);
+            if (dragWin) { dragWin.x += dx; dragWin.y = Math.max(M.MB, dragWin.y + dy); M.place(dragWin); }
+            drawCursor();
+        }
+        function dragEnd() { if (dragWin) { dragWin.el.classList.remove('drag'); dragWin = null; Q.done('drag'); } }
+        function frontWin() { return [...M.wins.values()].filter(w => w.open && !w.el.hidden && !w.min).sort((a, b) => b.z - a.z)[0]; }
+        let pageY = 0, pageZ = 1;
+        function scrollBy(dy) {
+            Q.done('scroll');
+            const page = $('#page'), sw = M.wins.get('safari');
+            if (!page || sw.el.hidden || !sw.open) return;
+            const max = page.scrollHeight - sw.body.clientHeight + 20;
+            pageY = clampN(pageY + dy, 0, Math.max(0, max));
+            page.style.transform = `translateY(${-pageY}px) scale(${pageZ})`;
+            Q.done('scroll');
+        }
+        function zoom(dir) { pageZ = clampN(pageZ + dir * 0.15, 0.7, 1.6); const p = $('#page'); if (p) p.style.transform = `translateY(${-pageY}px) scale(${pageZ})`; toast(dir > 0 ? '⌘ +' : '⌘ −'); }
+        function rightClick() {
+            const a = document.createElement('div');
+            a.style.cssText = `position:absolute;left:${cur.x}px;top:${cur.y - 28}px;width:1px;height:1px`;
+            M.ui.appendChild(a);
+            M.openMenu(a, () => [{ t: 'New Folder', dis: true }, '-', { t: 'Get Info', dis: true }, { t: 'Change Wallpaper…', dis: true }, '-', { t: 'Use Stacks', dis: true }, { t: 'Show View Options', dis: true }]);
+            a.remove();
+            Q.done('right');
+        }
+        function missionControl(on) {
+            mcOn = on;
+            M.world.classList.toggle('mc-on', on);
+            const ws = [...M.wins.values()].filter(w => w.open && !w.el.hidden);
+            const cols = Math.ceil(Math.sqrt(ws.length)), cw = M.W / cols, rows = Math.ceil(ws.length / cols), ch = (M.H - 80) / rows;
+            ws.forEach((w, i) => {
+                const s = Math.min((cw - 40) / w.w, (ch - 40) / w.h, 0.8);
+                const tx = (i % cols) * cw + cw / 2 - (w.x + w.w / 2), ty = 60 + Math.floor(i / cols) * ch + ch / 2 - (w.y + w.h / 2);
+                w.el.style.transition = 'transform 0.45s cubic-bezier(0.3, 1.2, 0.5, 1)';
+                w.el.style.transform = on ? `translate(${tx}px, ${ty}px) scale(${s})` : '';
+            });
+            if (on) { toast('Mission Control'); Q.done('mc'); }
+        }
+        function showDesktop(on) {
+            deskOn = on;
+            [...M.wins.values()].filter(w => w.open && !w.el.hidden).forEach(w => {
+                const left = w.x + w.w / 2 < M.W / 2;
+                w.el.style.transition = 'transform 0.4s ease';
+                w.el.style.transform = on ? `translate(${left ? -w.x - w.w + 40 : M.W - w.x - 40}px, 0)` : '';
+            });
+            if (on) toast('Show Desktop');
+        }
+        function switchSpace(to) {
+            if (to === space || to < 0 || to > 1) { toast(to < 0 ? 'Desktop 1' : 'Desktop 2'); return; }
+            const wins = M.world.querySelector('.mk-wins'), dir = to > space ? -1 : 1;
+            wins.classList.add('spaces'); wins.style.transform = `translateX(${dir * 100}%)`;
+            setTimeout(() => {
+                space = to;
+                WINS.forEach(w => { M.wins.get(w.id).el.hidden = w.space !== space || !M.wins.get(w.id).open; });
+                wins.classList.remove('spaces'); wins.style.transform = `translateX(${-dir * 100}%)`;
+                requestAnimationFrame(() => { wins.classList.add('spaces'); wins.style.transform = ''; });
+                const f = frontWin(); if (f) M.focusWin(f.id);
+            }, REDUCED ? 0 : 280);
+            toast('Desktop ' + (to + 1)); Q.done('space');
+        }
+        function lookUp() { const l = $('#look'); l.style.left = clampN(cur.x - 120, 6, M.W - 270) + 'px'; l.style.top = clampN(cur.y + 18, 30, M.H - 120) + 'px'; l.hidden = false; setTimeout(() => { l.hidden = true; }, 2200); toast('Look Up'); }
+        M.screen.addEventListener('pointerdown', () => { $('#look').hidden = true; });
+
+        // ---------- The pad: raw touches (one finger moves, two scroll, three switch) ----------
+        function toast(t) { const e = $('#pToast'); if (!e) return; e.textContent = t; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 900); }
+        function drop(x, y) { const d = document.createElement('div'); d.className = 'lq-drop'; d.style.left = x + 'px'; d.style.top = y + 'px'; surface.appendChild(d); return d; }
+        function ring(x, y) { const r = document.createElement('div'); r.className = 'lq-ring'; r.style.left = x + 'px'; r.style.top = y + 'px'; surface.appendChild(r); setTimeout(() => r.remove(), 500); if (S.haptics && navigator.vibrate) try { navigator.vibrate(8); } catch (e) { /* no haptics */ } }
+        const pts = new Map();
+        let g = null;     // current gesture
+        const toPad = e => { const r = surface.getBoundingClientRect(); return { x: (e.clientX - r.left) / pScale, y: (e.clientY - r.top) / pScale }; };
+        surface.addEventListener('pointerdown', e => {
+            if (!connected || locked) return;
+            if (e.pointerType === 'mouse') e.preventDefault();
+            try { surface.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointer */ }
+            const p = toPad(e);
+            pts.set(e.pointerId, { x: p.x, y: p.y, x0: p.x, y0: p.y, el: drop(p.x, p.y) });
+            const n = pts.size;
+            if (!g || n > g.n) g = { n, t0: performance.now(), moved: 0, mode: null, d0: spread(), hold: setTimeout(() => { if (g && g.n === 1 && g.moved < 6) { g.mode = 'drag'; dragStart(); toast('Drag'); } }, 350) };
+            $('.lq-hint', surface).style.opacity = '0';
+        });
+        function spread() { const a = [...pts.values()]; if (a.length < 2) return 0; return Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
+        surface.addEventListener('pointermove', e => {
+            const p0 = pts.get(e.pointerId);
+            if (!p0 || !g) return;
+            const p = toPad(e), dx = p.x - p0.x, dy = p.y - p0.y;
+            p0.x = p.x; p0.y = p.y; p0.el.style.left = p.x + 'px'; p0.el.style.top = p.y + 'px';
+            g.moved += Math.hypot(dx, dy);
+            const gain = S.speed * 2.2;
+            if (pts.size === 1 && g.n === 1) { moveBy(dx * gain, dy * gain); if (g.moved > 40) Q.done('move'); return; }
+            if (pts.size === 2 && g.n === 2) {
+                const d = spread();
+                if (!g.mode && Math.abs(d - g.d0) > 40) g.mode = 'pinch';
+                if (g.mode === 'pinch') { if (Math.abs(d - g.d0) > 40) { zoom(d > g.d0 ? 1 : -1); g.d0 = d; } return; }
+                if (e.pointerId === [...pts.keys()][0]) { g.mode = 'scroll'; scrollBy((S.natural ? -dy : dy) * S.scroll * 2.2); }
+                return;
+            }
+            if (g.n >= 3 && !g.mode) {
+                const a = [...pts.values()], mx = a.reduce((s, q) => s + q.x - q.x0, 0) / a.length, my = a.reduce((s, q) => s + q.y - q.y0, 0) / a.length;
+                if (g.n === 4 && Math.abs(spread() - g.d0) > 60) { g.mode = 'done'; showDesktop(!deskOn); return; }
+                if (Math.abs(my) > 50 && Math.abs(my) > Math.abs(mx)) { g.mode = 'done'; missionControl(my < 0); }
+                else if (Math.abs(mx) > 50) { g.mode = 'done'; switchSpace(space + (mx < 0 ? 1 : -1)); }
+            }
+        });
+        const up = e => {
+            const p = pts.get(e.pointerId);
+            if (!p) return;
+            p.el.remove(); pts.delete(e.pointerId);
+            if (pts.size || !g) return;
+            clearTimeout(g.hold);
+            const quick = performance.now() - g.t0 < 260 && g.moved < 8 * g.n;
+            if (g.mode === 'drag') dragEnd();
+            else if (quick && g.n === 1 && S.tap) { ring(p.x, p.y); click(); }
+            else if (quick && g.n === 2) { ring(p.x, p.y); rightClick(); }
+            else if (quick && g.n === 3) lookUp();
+            g = null;
+        };
+        surface.addEventListener('pointerup', up);
+        surface.addEventListener('pointercancel', up);
+        surface.addEventListener('wheel', e => { if (!connected || locked) return; e.preventDefault(); scrollBy(e.deltaY * 0.6 * S.scroll); }, { passive: false });
+
+        // ---------- Connect, settings, lock ----------
+        function view(id) { ['vConnect', 'vPad'].forEach(v => { $('#' + v).hidden = v !== id; }); }
+        $('#pickMac').addEventListener('click', () => { $('#vSign').hidden = false; });
+        $('#signCancel').addEventListener('click', () => { $('#vSign').hidden = true; });
+        $('#signIn').addEventListener('click', connect);
+        function connect() { $('#vSign').hidden = true; connected = true; view('vPad'); $('#ssInd').hidden = false; drawCursor(); M.hud('Connected<br><small style="font-weight:500;opacity:.7">over Screen Sharing</small>', 1100); Q.done('connect'); $('#pickMac').classList.remove('hint'); }
+        function disconnect() { connected = false; $('#vSettings').hidden = true; view('vConnect'); $('#ssInd').hidden = true; drawCursor(); missionControl(false); showDesktop(false); }
+        $('#padSet').addEventListener('click', () => { if (!locked) { $('#vSettings').hidden = false; syncSet(); } });
+        $('#setDone').addEventListener('click', () => { $('#vSettings').hidden = true; });
+        $('#disconnect').addEventListener('click', disconnect);
+        function syncSet() {
+            $$('.lq-seg b').forEach(b => b.classList.toggle('on', b.dataset.th === document.documentElement.dataset.theme));
+            $('#spd').value = S.speed; $('#sspd').value = S.scroll;
+            $$('.lq-sw').forEach(s => s.classList.toggle('on', !!S[s.dataset.t]));
+        }
+        $$('.lq-seg b').forEach(b => b.addEventListener('click', () => { if (document.documentElement.dataset.theme !== b.dataset.th) toggleTheme(); syncSet(); }));
+        $('#spd').addEventListener('input', e => { S.speed = +e.target.value; saveS(); });
+        $('#sspd').addEventListener('input', e => { S.scroll = +e.target.value; saveS(); });
+        $$('.lq-sw').forEach(s => s.addEventListener('click', () => { S[s.dataset.t] = !S[s.dataset.t]; saveS(); syncSet(); }));
+        // Lock: one tap locks; keep holding 0.7 s to unlock
+        let holdT = 0, holdA = 0;
+        const lockBtn = $('#padLock');
+        lockBtn.addEventListener('pointerdown', e => {
+            e.stopPropagation();
+            if (!locked) { locked = true; $('#vPad').classList.add('locked'); lockBtn.textContent = '🔒'; toast('Locked'); return; }
+            const bar = $('#hold'), fill = bar.querySelector('span'), t0 = performance.now();
+            bar.classList.add('on');
+            clearInterval(holdA);
+            holdA = setInterval(() => { const t = Math.min(1, (performance.now() - t0) / 700); fill.style.width = t * 100 + '%'; if (t >= 1) unlock(); }, 16);
+        });
+        const cancelHold = () => { clearInterval(holdA); clearTimeout(holdT); $('#hold').classList.remove('on'); $('#hold span').style.width = '0'; };
+        lockBtn.addEventListener('pointerup', cancelHold);
+        lockBtn.addEventListener('pointerleave', cancelHold);
+        function unlock() { cancelHold(); locked = false; $('#vPad').classList.remove('locked'); lockBtn.textContent = '🔓'; toast('Unlocked'); Q.done('lock'); }
+        new MutationObserver(syncSet).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        // ---------- Gesture buttons: show the fingers on the pad, then do it ----------
+        async function fingers(list, dx, dy, ms) {
+            const els = list.map(([x, y]) => drop(x, y));
+            await M.tween(ms, t => els.forEach((el, i) => { el.style.left = (list[i][0] + dx * t) + 'px'; el.style.top = (list[i][1] + dy * t) + 'px'; }));
+            await wait(80); els.forEach(el => el.remove());
+        }
+        async function ensureConnected() { if (!connected) { view('vConnect'); $('#vSign').hidden = false; await wait(500); connect(); await wait(400); } if (locked) unlock(); $('#vSettings').hidden = true; }
+        const GEST = {
+            async right() { await fingers([[170, 420], [220, 420]], 0, 0, 150); ring(195, 420); rightClick(); },
+            async scroll() { await fingers([[170, 560], [220, 560]], 0, -200, 600); for (let i = 0; i < 12; i++) { scrollBy(28); await wait(30); } },
+            async zoom() { await fingers([[175, 420], [215, 420]], 0, 0, 1); const a = drop(175, 420), b = drop(215, 420); await M.tween(500, t => { a.style.left = (175 - 70 * t) + 'px'; b.style.left = (215 + 70 * t) + 'px'; }); a.remove(); b.remove(); zoom(1); Q.done('zoom'); },
+            async mc() { await fingers([[140, 600], [195, 590], [250, 600]], 0, -220, 500); missionControl(!mcOn); },
+            async space() { await fingers([[140, 420], [195, 410], [250, 420]], space === 0 ? -150 : 150, 0, 450); switchSpace(space === 0 ? 1 : 0); },
+            async look() { await fingers([[140, 420], [195, 410], [250, 420]], 0, 0, 160); lookUp(); },
+            async desktop() { const c = [[175, 400], [215, 400], [175, 450], [215, 450]]; const els = c.map(([x, y]) => drop(x, y)); await M.tween(500, t => els.forEach((el, i) => { el.style.left = (195 + (c[i][0] - 195) * (1 + 1.8 * t)) + 'px'; el.style.top = (425 + (c[i][1] - 425) * (1 + 1.8 * t)) + 'px'; })); els.forEach(el => el.remove()); showDesktop(!deskOn); }
+        };
+        $('#gest').addEventListener('click', async e => {
+            const b = e.target.closest('[data-g]');
+            if (!b || Q.busy) return;
+            Q.busy = true; b.classList.add('lit');
+            try { await ensureConnected(); await GEST[b.dataset.g](); } finally { Q.busy = false; b.classList.remove('lit'); }
+        });
+
+        // ---------- Things to try ----------
+        const Q = Quests({
+            key: 'lqSim.quests',
+            items: [
+                { id: 'connect', t: 'Connect to the Mac', d: 'On the iPhone, tap Studio MacBook Pro, then Connect. Nothing to install on the Mac.' },
+                { id: 'move', t: 'Move the pointer', d: 'Drag one finger (or your mouse) on the iPhone. The Mac’s pointer follows.' },
+                { id: 'click', t: 'Tap to click', d: 'Glide to the Music icon in the Dock and tap the pad to open it.' },
+                { id: 'scroll', t: 'Scroll with two fingers', d: 'Two fingers on the pad, or your mouse wheel over it. Safari scrolls.' },
+                { id: 'right', t: 'Right-click', d: 'Tap with two fingers (or the yellow button).' },
+                { id: 'mc', t: 'Mission Control', d: 'Three fingers up. Tap the pad to come back.' },
+                { id: 'lock', t: 'Lock the pad', d: 'Tap 🔓 so a stray swipe never opens a menu, then keep holding it to unlock.' }
+            ],
+            show: {
+                async connect() { await ensureConnected(); },
+                async move() { await ensureConnected(); await fingers([[120, 600]], 140, -260, 900); for (let i = 0; i < 20; i++) { moveBy(10, -6); await wait(25); } Q.done('move'); },
+                async click() {
+                    await ensureConnected();
+                    const d = M.box(M.dockEl.querySelector('[data-dk="music"]')), tx = d.x + d.w / 2, ty = d.y + d.h / 2, a = { ...cur };
+                    const el = drop(195, 500);
+                    await M.tween(900, t => { cur.x = a.x + (tx - a.x) * t; cur.y = a.y + (ty - a.y) * t; drawCursor(); el.style.top = (500 + 80 * t) + 'px'; });
+                    el.remove(); ring(195, 580); click(); await wait(600);
+                },
+                async scroll() { await ensureConnected(); if (space !== 0) switchSpace(0); M.openWin('safari'); await GEST.scroll(); },
+                async right() { await ensureConnected(); await GEST.right(); await wait(900); M.closeMenus(); },
+                async mc() { await ensureConnected(); if (!mcOn) await GEST.mc(); await wait(1400); missionControl(false); },
+                async lock() { await ensureConnected(); lockBtn.dispatchEvent(new PointerEvent('pointerdown')); await wait(700); lockBtn.dispatchEvent(new PointerEvent('pointerdown')); await wait(900); }
+            },
+            onReset() { disconnect(); locked = false; $('#vPad').classList.remove('locked'); lockBtn.textContent = '🔓'; if (space) switchSpace(0); pageY = 0; pageZ = 1; const p = $('#page'); if (p) p.style.transform = ''; $('#pickMac').classList.add('hint'); }
+        });
+        if (!Q.has('connect')) $('#pickMac').classList.add('hint');
+        drawCursor();
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => { if (s === 'connect') connect(); if (s === 'mc') missionControl(true); if (s === 'settings') { $('#vSettings').hidden = false; syncSet(); } if (s === 'sign') $('#vSign').hidden = false; })); });
+        window.__lq = { M, cur: () => cur, connected: () => connected, Q, click, moveBy, space: () => space, locked: () => locked };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

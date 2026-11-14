@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/theme.js"></script>
     <title>LilSnap &ndash; Snap Every Window Into Place</title>
 
     <link rel="icon" href="/favicon/favicon.ico" sizes="any">
@@ -10,9 +11,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilSnap snaps Mac windows into halves, quarters, thirds and your own layouts with ⌃⌥ and the arrow keys, or by dragging to an edge. Tile 2, 3 or 4 windows at once. No Accessibility access, nothing collected. $0.99 once.">
+    <meta name="description" content="LilSnap snaps Mac windows into halves, quarters, thirds and your own layouts with ⌃⌥ and the arrow keys, or by dragging to an edge. Tile 2, 3 or 4 windows at once. No Accessibility access, nothing collected. Free download for Mac.">
     <meta property="og:title" content="LilSnap &ndash; Snap Every Window Into Place">
-    <meta property="og:description" content="Hold ⌃⌥, tap an arrow, done. Halves, quarters, thirds, tiling and custom layouts for your Mac. $0.99 once.">
+    <meta property="og:description" content="Hold ⌃⌥, tap an arrow, done. Halves, quarters, thirds, tiling and custom layouts for your Mac. Free download for Mac.">
     <meta property="og:url" content="https://lilstudio.app/lilsnap/">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lilstudio.app/lilsnap/screenshots/app-icon.png">
@@ -805,7 +806,7 @@
         }
 
         .pricing-card::before {
-            content: 'ONE PRICE';
+            content: 'ALWAYS FREE';
             position: absolute;
             top: -12px;
             right: 20px;
@@ -1482,6 +1483,284 @@
         }
 
         .feature-card code, .faq-item code { background: var(--primary); padding: 0.1rem 0.35rem; font-family: "Space Mono", monospace; font-size: 0.8rem; color: #000; border: 2px solid var(--border); }
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilSnap, running inside the model ========== */
+        .mk-win { transition: left 0.28s cubic-bezier(0.3, 1.1, 0.5, 1), top 0.28s cubic-bezier(0.3, 1.1, 0.5, 1), width 0.28s cubic-bezier(0.3, 1.1, 0.5, 1), height 0.28s cubic-bezier(0.3, 1.1, 0.5, 1), transform 0.36s, opacity 0.28s, box-shadow 0.2s; }
+        .mk-win.drag { transition: width 0.2s, height 0.2s; }
+        .ls-item.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .ls-item svg rect + rect { transition: x 0.25s, y 0.25s, width 0.25s, height 0.25s, opacity 0.2s; }
+        /* Preview that appears behind a window while dragging to an edge */
+        .sn-preview { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 12px; background: rgba(47, 124, 246, 0.22); box-shadow: inset 0 0 0 2px rgba(47, 124, 246, 0.75); opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.15s, left 0.18s ease-out, top 0.18s ease-out, width 0.18s ease-out, height 0.18s ease-out; }
+        .sn-preview.show { opacity: 1; }
+        .mk-ui > .sn-preview { z-index: 0; }
+        /* The Snap Bar: top centre, six layouts to drop onto */
+        .sn-bar { position: absolute; top: 32px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; border-radius: 14px; background: rgba(246, 244, 240, 0.9); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 14px 34px rgba(0,0,0,0.3); z-index: 30; animation: mkMenuIn 0.16s ease-out; pointer-events: none; }
+        [data-theme="dark"] .sn-bar { background: rgba(40, 40, 44, 0.9); }
+        .sn-bar[hidden] { display: none; }
+        .sn-lay { position: relative; width: 62px; height: 40px; border-radius: 6px; background: rgba(0,0,0,0.08); }
+        [data-theme="dark"] .sn-lay { background: rgba(255,255,255,0.1); }
+        .sn-lay i { position: absolute; border-radius: 3px; background: rgba(0,0,0,0.28); }
+        [data-theme="dark"] .sn-lay i { background: rgba(255,255,255,0.35); }
+        .sn-lay i.on { background: #2F7CF6; }
+        /* Status menu: the tile grid with every shortcut printed on its tile */
+        .sn-pop { width: 252px; padding: 12px; }
+        .sn-pop h5 { font-size: 13px; font-weight: 700; margin: 0 2px 8px; }
+        .sn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .sn-t { border-radius: 8px; background: rgba(0,0,0,0.06); padding: 6px 4px 3px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; opacity: 0.9; }
+        [data-theme="dark"] .sn-t { background: rgba(255,255,255,0.08); }
+        .sn-t:hover { background: rgba(47,124,246,0.18); }
+        .sn-t.cur { box-shadow: inset 0 0 0 2px #2F7CF6; }
+        .sn-t b { position: relative; width: 38px; height: 24px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px currentColor; opacity: 0.85; }
+        .sn-t b i { position: absolute; border-radius: 2px; background: currentColor; }
+        .sn-t span { opacity: 0.6; font-weight: 600; }
+        .sn-tile { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-top: 6px; align-items: center; }
+        .sn-tile > em { font-style: normal; font-weight: 700; font-size: 12px; padding-left: 2px; }
+        .sn-pop .mk-sep { margin: 8px 2px; }
+        .sn-pop .mk-mi { padding: 0 6px; }
+        .sn-pop .sn-dim { font-size: 11.5px; opacity: 0.5; margin: 6px 2px 0; }
+        /* Window content */
+        .sn-pg { position: absolute; inset: 0; padding: 12px 14px; overflow: hidden; font-size: 12px; line-height: 1.5; }
+        .sn-pg h4 { font-size: 14px; margin-bottom: 4px; }
+        .sn-lines i { display: block; height: 7px; border-radius: 4px; background: var(--win-line); margin-bottom: 7px; }
+        .sn-banner { height: 56px; border-radius: 8px; margin-bottom: 9px; background: linear-gradient(120deg, #3FD98A, #7CC4F0); }
+        .sn-term { position: absolute; inset: 0; background: #1C1C1E; color: #D7D7DB; padding: 8px 10px; font: 10.5px/1.5 'Space Mono', ui-monospace, monospace; white-space: pre; overflow: hidden; }
+        .sn-term .g { color: #5AD16A; }
+        .mk-win.dark .mk-bar { background: #2B2B2E; border-bottom-color: #000; }
+        .mk-win.dark .mk-bar span { color: #A9A9AE; }
+        .sn-mail { position: absolute; inset: 0; display: flex; font-size: 11.5px; }
+        .sn-mail ul { list-style: none; width: 42%; min-width: 0; border-right: 1px solid var(--win-line); }
+        .sn-mail li { padding: 6px 9px; border-bottom: 1px solid var(--win-line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sn-mail li:first-child { background: rgba(47,124,246,0.14); }
+        .sn-mail div { flex: 1; padding: 10px; min-width: 0; }
+        .sn-cheat { position: absolute; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; }
+        .sn-cheat img { max-width: 100%; max-height: 100%; display: block; }
+        .sn-set { position: absolute; inset: 0; padding: 12px 14px; background: var(--set-bg); font-size: 12.5px; }
+        .sn-set .row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--set-box); border-radius: 8px; margin-bottom: 8px; }
+        .sn-set input[type="range"] { flex: 1; accent-color: #2F7CF6; }
+        .sn-set output { width: 40px; text-align: right; color: var(--win-muted); }
+        .sn-sw { width: 30px; height: 18px; border-radius: 9px; background: rgba(0,0,0,0.13); margin-left: auto; position: relative; }
+        .sn-sw::after { content: ''; position: absolute; left: 1.5px; top: 1.5px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .sn-sw.on { background: #2F7CF6; }
+        .sn-sw.on::after { transform: translateX(12px); }
+
+        /* On-screen keys under the Mac */
+        .sn-keys { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; align-items: center; margin-top: 1.5rem; }
+        .sn-keys button, .sn-mod { font: 700 0.8rem 'Space Mono', monospace; min-width: 2.3rem; height: 2.1rem; padding: 0 0.45rem; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--border); background: var(--bg-elevated); color: var(--text); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.1s, box-shadow 0.1s, background 0.15s; }
+        .sn-mod { background: var(--yellow); color: #000; cursor: default; }
+        .sn-keys button:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .sn-keys button.hit { background: var(--primary); color: #000; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .sn-cap { text-align: center; margin-top: 0.9rem; font-size: 0.9rem; color: var(--text-muted); min-height: 1.6em; }
+        .sn-cap b { color: var(--text); }
+        .sn-cap kbd { font-family: 'Space Mono', monospace; font-size: 0.78em; font-weight: 700; border: 2px solid var(--border); padding: 0 0.35em; background: var(--bg); color: var(--text); }
     </style>
 </head>
 <body>
@@ -1489,15 +1768,16 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilSnap</div>
+            <a class="logo" href="./">LilSnap</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#shortcuts">Shortcuts</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#pricing" class="btn btn-primary" data-appstore>Get It &mdash; $0.99</a>
+                <a href="LilSnap.dmg" class="btn btn-primary" download>Download</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1506,107 +1786,89 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-                <div class="hero-device">
-                    <img src="screenshots/app-icon.png" alt="LilSnap app icon" class="hero-appicon" width="140" height="140">
+    <!-- ===================== HERO: copy · a Mac running LilSnap ===================== -->
+    <section class="hero" id="try" aria-label="LilSnap, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilSnap app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Window Manager for macOS</div>
                 </div>
-
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        Window Manager for macOS
-                    </div>
-                    <h1>Snap every window <span class="highlight">into place.</span></h1>
-                    <p class="hero-subtitle">Hold <kbd>&#8963;&#8997;</kbd> and tap an arrow. LilSnap puts the window exactly where you want it: halves, quarters, thirds or your own layouts. Or just drag it to an edge.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="#pricing" class="btn btn-primary" data-appstore>
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    <span data-appstore-label>Coming Soon to the Mac App Store</span>
-                                </a>
-                                <span class="system-req">$0.99 once &middot; macOS 14+ &middot; No subscription</span>
-                            </div>
-                        </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>No Accessibility access, no network, nothing collected. LilSnap only moves the windows you ask it to. <a href="privacy.html">Privacy Policy</a></p>
+                <h1>Snap every window <span class="highlight">into place</span>.</h1>
+                <p class="hero-subtitle">Hold <kbd>&#8963;&#8997;</kbd> and tap an arrow. LilSnap puts the window exactly where you want it: halves, quarters, thirds or your own layouts. Or just drag it to an edge.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="LilSnap.dmg" class="btn btn-primary" download><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Download for Mac</a>
+                            <span class="system-req">Free &middot; v1.0 &middot; macOS 14+ &middot; Apple silicon &amp; Intel</span>
                         </div>
                     </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>No Accessibility access, no network, nothing collected. LilSnap only moves the windows you ask it to. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
                 </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>Click a window, then <b>hold ⌃⌥ and press an arrow</b> on your keyboard. Or <b>drag a window to an edge</b>, or to the top middle for the Snap Bar.</p>
+            </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac running LilSnap, with four windows to snap">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
 
-                <div class="hero-demo">
-                    <div class="snapdesk" id="snapdesk" tabindex="0" role="group" aria-label="Interactive demo: click a window, then press a key below or use the arrow keys">
-                        <div class="sd-wall"></div>
-                        <div class="sd-menubar" aria-hidden="true">
-                            <span>&#63743;</span>
-                            <span class="mb-app" id="sdApp">Notes</span>
-                            <span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">Window</span>
-                            <span class="mb-spacer"></span>
-                            <svg viewBox="0 0 20 14" id="sdIcon"><rect x="0.75" y="0.75" width="18.5" height="12.5" rx="3" fill="none" stroke="#17150F" stroke-width="1.4"/><rect id="sdIconFill" x="3" y="3" width="7" height="8" rx="1" fill="#17150F"/></svg>
-                            <span>9:41</span>
-                        </div>
-                        <div class="sd-area" id="sdArea">
-                            <div class="sd-preview" id="sdPreview"></div>
-                            <div class="sd-win notes focused" data-app="Notes" style="--x:6;--y:9;--w:44;--h:56;z-index:3">
-                                <div class="sd-bar"><i></i><i></i><i></i><b>Notes</b></div>
-                                <div class="sd-body">
-                                    <span class="sk" style="left:10%;top:10%;width:50%;height:8%;opacity:.5"></span>
-                                    <span class="sk" style="left:10%;top:28%;width:78%;height:6%"></span>
-                                    <span class="sk" style="left:10%;top:42%;width:70%;height:6%"></span>
-                                    <span class="sk" style="left:10%;top:56%;width:74%;height:6%"></span>
-                                    <span class="sk" style="left:10%;top:70%;width:48%;height:6%"></span>
-                                </div>
-                            </div>
-                            <div class="sd-win safari" data-app="Safari" style="--x:38;--y:18;--w:52;--h:60;z-index:2">
-                                <div class="sd-bar"><i></i><i></i><i></i><b>Safari</b></div>
-                                <div class="sd-body">
-                                    <span class="sk" style="left:6%;right:6%;top:8%;height:36%;border-radius:5px;opacity:1;background:linear-gradient(135deg,#7CC4F0,#3FD98A)"></span>
-                                    <span class="sk" style="left:6%;top:52%;width:60%;height:6%"></span>
-                                    <span class="sk" style="left:6%;top:64%;width:80%;height:4%"></span>
-                                    <span class="sk" style="left:6%;top:73%;width:70%;height:4%"></span>
-                                </div>
-                            </div>
-                            <div class="sd-win mail" data-app="Mail" style="--x:20;--y:44;--w:42;--h:48;z-index:1">
-                                <div class="sd-bar"><i></i><i></i><i></i><b>Mail</b></div>
-                                <div class="sd-body">
-                                    <span class="sk" style="left:5%;right:5%;top:8%;height:16%"></span>
-                                    <span class="sk" style="left:5%;right:5%;top:30%;height:16%"></span>
-                                    <span class="sk" style="left:5%;right:5%;top:52%;height:16%"></span>
-                                    <span class="sk" style="left:5%;right:5%;top:74%;height:16%"></span>
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi ls-item" id="snItem" role="button" aria-label="LilSnap"><svg viewBox="0 0 20 14" width="20" height="14" aria-hidden="true"><rect x="0.75" y="0.75" width="18.5" height="12.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><rect id="snIconFill" x="2.6" y="2.6" width="7" height="8.8" rx="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="sn-preview" id="snPreview"></div>
+                                    <div class="sn-bar" id="snBar" hidden></div>
+                                    <div class="mk-pop sn-pop" id="snPop" hidden></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <p class="sd-caption" id="sdCaption" aria-live="polite">Click a window, then press a key</p>
-
-                    <div class="keypad" role="group" aria-label="Shortcut keys">
-                        <div class="keypad-head"><span>Hold <kbd>&#8963;&#8997;</kbd> and press</span><span>or use your arrow keys</span></div>
-                        <div class="keypad-grid">
-                            <button type="button" class="kc" data-act="left" aria-label="Left half">&larr;</button>
-                            <button type="button" class="kc" data-act="right" aria-label="Right half">&rarr;</button>
-                            <button type="button" class="kc" data-act="top" aria-label="Top half">&uarr;</button>
-                            <button type="button" class="kc" data-act="bottom" aria-label="Bottom half">&darr;</button>
-                            <button type="button" class="kc wide" data-act="max" aria-label="Maximize">&#8617;</button>
-                            <button type="button" class="kc" data-act="tl" aria-label="Top left quarter">&larr;&uarr;</button>
-                            <button type="button" class="kc" data-act="tr" aria-label="Top right quarter">&rarr;&uarr;</button>
-                            <button type="button" class="kc" data-act="bl" aria-label="Bottom left quarter">&larr;&darr;</button>
-                            <button type="button" class="kc" data-act="br" aria-label="Bottom right quarter">&rarr;&darr;</button>
-                            <button type="button" class="kc wide" data-act="tile3" aria-label="Tile three windows">&#8984;3</button>
-                            <button type="button" class="kc" data-act="t1" aria-label="Left third">1</button>
-                            <button type="button" class="kc" data-act="t2" aria-label="Middle third">2</button>
-                            <button type="button" class="kc" data-act="t3" aria-label="Right third">3</button>
-                            <button type="button" class="kc" data-act="center" aria-label="Center">C</button>
-                            <button type="button" class="kc wide" data-act="restore" aria-label="Restore">&#9003;</button>
-                        </div>
-                    </div>
+                    <div class="mk-base"></div>
                 </div>
+                <div class="sn-keys" id="snKeys" aria-label="LilSnap shortcuts: hold Control and Option, then">
+                    <span class="sn-mod">⌃⌥</span>
+                    <button type="button" data-a="left">←</button><button type="button" data-a="right">→</button><button type="button" data-a="top">↑</button><button type="button" data-a="bottom">↓</button>
+                    <button type="button" data-a="tl">←↑</button><button type="button" data-a="tr">→↑</button><button type="button" data-a="bl">←↓</button><button type="button" data-a="br">→↓</button>
+                    <button type="button" data-a="t1">1</button><button type="button" data-a="t2">2</button><button type="button" data-a="t3">3</button>
+                    <button type="button" data-a="max">↩</button><button type="button" data-a="center">C</button>
+                    <button type="button" data-a="tile2">⌘2</button><button type="button" data-a="tile3">⌘3</button><button type="button" data-a="tile4">⌘4</button>
+                    <button type="button" data-a="restore">⌫</button>
+                </div>
+                <p class="sn-cap" id="snCap" aria-live="polite">Click a window, then press a key</p>
+            </div>
+        </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Eight things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 8</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilSnap. Free to download.</b><br>Every layout, drag to snap and tiling. No subscription.</div>
+                <a href="LilSnap.dmg" class="btn btn-primary" download>Download for Mac</a>
             </div>
         </div>
     </section>
+
 
     <section class="stats-bar">
         <div class="stats-grid">
@@ -1833,7 +2095,7 @@
                     </div>
                 </div>
                 <div class="setup-why fade-in stagger-3">
-                    <strong>Why Shortcuts?</strong> Mac App Store apps can't move other apps' windows on their own. Apple's Shortcuts app can, so LilSnap works out the exact spot and asks its shortcut to put the window there. No Accessibility access needed.
+                    <strong>Why Shortcuts?</strong> Sandboxed apps can't move other apps' windows on their own. Apple's Shortcuts app can, so LilSnap works out the exact spot and asks its shortcut to put the window there. No Accessibility access needed.
                 </div>
             </div>
             <div class="setup-shot fade-in stagger-2">
@@ -1848,23 +2110,23 @@
     <section class="pricing" id="pricing">
         <div class="section-header fade-in">
             <h2>Price</h2>
-            <p>Less than a coffee. Once.</p>
+            <p>There isn't one.</p>
         </div>
         <div class="pricing-card scale-in">
-            <div class="price-tag"><span class="currency">$</span>0<sup>.99</sup></div>
-            <div class="price-period">Once. Yours forever.</div>
+            <div class="price-tag"><span class="currency">$</span>0</div>
+            <div class="price-period">Free Download</div>
             <ul class="pricing-features">
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Every layout and feature, no Pro tier</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Keyboard, drag to snap and tiling</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No account, no telemetry</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Family Sharing &amp; future updates</li>
             </ul>
-            <a href="#pricing" class="btn btn-primary pricing-cta" data-appstore>
+            <a href="LilSnap.dmg" class="btn btn-primary pricing-cta" download>
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                <span data-appstore-label>Coming Soon to the Mac App Store</span>
+                Download for Mac
             </a>
             <p class="trial-note">macOS 14+ &middot; Apple silicon &amp; Intel</p>
-            <p class="price-note">No subscription. No in-app purchases.</p>
+            <p class="price-note">Notarized by Apple. Open the DMG and drag it into Applications.</p>
         </div>
     </section>
 
@@ -1883,7 +2145,7 @@
             </div>
             <div class="faq-item fade-in stagger-3">
                 <h3>Why does a Shortcuts icon appear in the menu bar when I snap?</h3>
-                <p>That's macOS showing that LilSnap's shortcut just ran. It shows a check mark and goes away by itself. It's how every Mac App Store app that works with Shortcuts behaves.</p>
+                <p>That's macOS showing that LilSnap's shortcut just ran. It shows a check mark and goes away by itself. It's how every sandboxed app that works with Shortcuts behaves.</p>
             </div>
             <div class="faq-item fade-in stagger-1">
                 <h3>Coming from Rectangle or Magnet?</h3>
@@ -2133,6 +2395,711 @@
                 startAuto();
             }
         })();
+    </script>
+    <script>
+    (function () {
+        'use strict';
+
+        // Set once LilSnap is live: https://apps.apple.com/app/id<AppleID>
+        const APP_STORE_URL = '';
+        if (APP_STORE_URL) document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0) }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilSnap, live (the same rules as the app: ActionRunner, DragTracker, SnapBarPanel) ----------
+        const M = MacKit($('#mac'));
+        const item = $('#snItem'), pop = $('#snPop'), preview = $('#snPreview'), bar = $('#snBar'), cap = $('#snCap');
+        M.world.querySelector('.mk-wins').appendChild(preview);
+        const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+        // Layouts are fractions of the work area [x, y, w, h]; a half pressed again steps to ⅔ then ⅓
+        const L = {
+            left: { f: [[0, 0, .5, 1], [0, 0, 2 / 3, 1], [0, 0, 1 / 3, 1]], name: 'Left Half', key: '←' },
+            right: { f: [[.5, 0, .5, 1], [1 / 3, 0, 2 / 3, 1], [2 / 3, 0, 1 / 3, 1]], name: 'Right Half', key: '→' },
+            top: { f: [[0, 0, 1, .5], [0, 0, 1, 2 / 3], [0, 0, 1, 1 / 3]], name: 'Top Half', key: '↑' },
+            bottom: { f: [[0, .5, 1, .5], [0, 1 / 3, 1, 2 / 3], [0, 2 / 3, 1, 1 / 3]], name: 'Bottom Half', key: '↓' },
+            tl: { f: [[0, 0, .5, .5]], name: 'Top Left', key: '← + ↑' }, tr: { f: [[.5, 0, .5, .5]], name: 'Top Right', key: '→ + ↑' },
+            bl: { f: [[0, .5, .5, .5]], name: 'Bottom Left', key: '← + ↓' }, br: { f: [[.5, .5, .5, .5]], name: 'Bottom Right', key: '→ + ↓' },
+            t1: { f: [[0, 0, 1 / 3, 1]], name: 'Left Third', key: '1' }, t2: { f: [[1 / 3, 0, 1 / 3, 1]], name: 'Center Third', key: '2' }, t3: { f: [[2 / 3, 0, 1 / 3, 1]], name: 'Right Third', key: '3' },
+            l23: { f: [[0, 0, 2 / 3, 1]], name: 'Left Two-Thirds', key: '4' }, r23: { f: [[1 / 3, 0, 2 / 3, 1]], name: 'Right Two-Thirds', key: '5' },
+            max: { f: [[0, 0, 1, 1]], name: 'Maximize', key: '↩' }
+        };
+        const CHORDS = { 'left+top': 'tl', 'right+top': 'tr', 'left+bottom': 'bl', 'right+bottom': 'br' };
+        const P = Object.assign({ gaps: 8, drag: true, bar: true }, store.get('snSim.prefs', {}));
+        const saveP = () => store.set('snSim.prefs', P);
+
+        // Work area: below the menu bar, above the Dock (both stay visible)
+        const area = () => ({ x: 0, y: M.MB, w: M.W, h: M.H - M.MB - 62 });
+        function toRect(f) {
+            const a = area(), g = P.gaps;
+            // Outer gap g, inner gap g: thirds stay exactly equal
+            const x = a.x + g + f[0] * (a.w - g), y = a.y + g + f[1] * (a.h - g);
+            return { x, y, w: f[2] * (a.w - g) - g, h: f[3] * (a.h - g) - g };
+        }
+
+        // ---------- Windows ----------
+        const WIN = {
+            notes: { title: 'Notes', html: '<div class="sn-pg" style="background:#FFFDF4;color:#222"><h4>Launch plan</h4>☑ Screenshots<br>☑ Privacy page<br>☐ Press kit<br>☐ Tweet thread</div>' },
+            safari: { title: 'Safari', html: '<div class="sn-pg"><div class="sn-banner"></div><div class="sn-lines"><i style="width:84%"></i><i style="width:66%"></i><i style="width:74%"></i><i style="width:52%"></i></div></div>' },
+            mail: { title: 'Mail', html: '<div class="sn-mail"><ul><li><b>Studio</b> · Launch plan</li><li>Receipt #1042</li><li>Weekend?</li><li>Design review</li></ul><div><b>Launch plan</b><br><span style="color:var(--win-muted)">Can you check the screenshots before Friday?</span></div></div>' },
+            terminal: { title: 'Terminal — zsh', cls: 'dark', html: '<div class="sn-term"><span class="g">~</span> % swift build\nBuilding for debugging...\n[8/8] Linking lilsnap\n<span class="g">Build complete!</span>\n<span class="g">~</span> % </div>' }
+        };
+        const START = { 1024: { notes: [60, 70, 300, 230], safari: [250, 120, 470, 320], mail: [520, 60, 420, 260], terminal: [140, 330, 380, 200] }, 760: { notes: [30, 50, 230, 180], safari: [160, 80, 360, 240], mail: [380, 46, 330, 200], terminal: [90, 250, 300, 150] } };
+        Object.entries(WIN).forEach(([id, o]) => M.win({ id, title: o.title, cls: o.cls || '', x: 0, y: 0, w: 10, h: 10, html: o.html }));
+        const memory = new Map();          // id → { act, step, before }
+        function resetWins() {
+            const S = START[M.W] || START[1024];
+            Object.keys(WIN).forEach(id => { const w = M.wins.get(id); [w.x, w.y, w.w, w.h] = S[id]; w.saved = null; M.place(w); memory.set(id, { act: null, step: 0, before: null }); M.openWin(id); });
+            M.focusWin('safari'); setIcon();
+        }
+        M.on('layout', c => { if (c) resetWins(); });
+        const front = () => (M.focus && WIN[M.focus] && M.wins.get(M.focus).open && !M.wins.get(M.focus).min) ? M.wins.get(M.focus) : [...M.wins.values()].filter(w => w.open && !w.min && WIN[w.id]).sort((a, b) => b.z - a.z)[0];
+        const stack = () => [...M.wins.values()].filter(w => w.open && !w.min && WIN[w.id]).sort((a, b) => b.z - a.z);
+        M.on('focus', w => { $('#mbApp').textContent = { notes: 'Notes', safari: 'Safari', mail: 'Mail', terminal: 'Terminal', cheat: 'LilSnap', settings: 'LilSnap' }[w.id] || 'Finder'; setIcon(); });
+
+        // The menu bar icon draws the front window's layout
+        function setIcon() {
+            const w = front(), fill = $('#snIconFill'), m = w && memory.get(w.id);
+            const f = m && m.act ? (m.f || L[m.act].f[m.step]) : null;
+            if (!f) { fill.setAttribute('opacity', '0'); return; }
+            fill.setAttribute('opacity', '1');
+            fill.setAttribute('x', (2.6 + f[0] * 14.8).toFixed(2)); fill.setAttribute('y', (2.6 + f[1] * 8.8).toFixed(2));
+            fill.setAttribute('width', Math.max(f[2] * 14.8, 1.5).toFixed(2)); fill.setAttribute('height', Math.max(f[3] * 8.8, 1.5).toFixed(2));
+        }
+        function say(key, name) { cap.innerHTML = key ? `<kbd>⌃⌥</kbd> <kbd>${key}</kbd> <b>${name}</b>` : name; }
+        function flash(f) {
+            const r = toRect(f);
+            Object.assign(preview.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
+        }
+        function snapWin(w, f, act, step) {
+            const m = memory.get(w.id);
+            if (!m.act) m.before = { x: w.x, y: w.y, w: w.w, h: w.h };
+            m.act = act; m.step = step; m.f = f;
+            Object.assign(w, toRect(f)); w.saved = null;
+            M.place(w);
+            if (w === front()) setIcon();
+        }
+        let last = null;
+        function perform(act, how) {
+            const w = front();
+            if (!w) return;
+            pressKey(act);
+            if (act.startsWith('tile')) return tile(+act.slice(4));
+            if (act === 'restore') {
+                const m = memory.get(w.id);
+                if (!m.before) { say('⌫', 'Nothing to undo'); return; }
+                Object.assign(w, m.before); M.place(w); m.act = null; m.before = null; setIcon();
+                say('⌫', 'Restored'); Q.done('undo'); return;
+            }
+            if (act === 'center') {
+                const a = area();
+                const m = memory.get(w.id); if (!m.act) m.before = { x: w.x, y: w.y, w: w.w, h: w.h };
+                w.x = a.x + (a.w - w.w) / 2; w.y = a.y + (a.h - w.h) / 2; M.place(w); m.act = null; setIcon();
+                say('C', 'Center'); return;
+            }
+            const m = memory.get(w.id), lay = L[act];
+            const step = m.act === act && last === w.id + act ? (m.step + 1) % lay.f.length : 0;
+            snapWin(w, lay.f[step], act, step);
+            last = w.id + act;
+            const frac = ['', ' (⅔)', ' (⅓)'][step];
+            say(lay.key, lay.name + frac);
+            if (['left', 'right', 'top', 'bottom'].includes(act)) Q.done('half');
+            if (step > 0) Q.done('cycle');
+            if (['tl', 'tr', 'bl', 'br'].includes(act)) Q.done('quarter');
+            item.classList.remove('hint');
+        }
+        function tile(n) {
+            const s = stack().slice(0, n);
+            if (s.length < 2) { say('⌘' + n, 'Open more windows to tile'); return; }
+            const F = {
+                2: [[0, 0, .5, 1], [.5, 0, .5, 1]],
+                3: [[0, 0, .5, 1], [.5, 0, .5, .5], [.5, .5, .5, .5]],
+                4: [[0, 0, .5, .5], [.5, 0, .5, .5], [0, .5, .5, .5], [.5, .5, .5, .5]]
+            }[s.length];
+            s.forEach((w, i) => snapWin(w, F[i], 'tile', 0));
+            say('⌘' + n, ['', '', 'Side by side', 'One big, two stacked', 'Quarters'][s.length]);
+            Q.done('tile');
+        }
+        // Key feedback on the on-screen keys
+        function pressKey(act) {
+            const b = $(`#snKeys [data-a="${act}"]`);
+            if (!b) return;
+            b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 220);
+        }
+        $('#snKeys').addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) perform(b.dataset.a, 'button'); });
+
+        // Real keyboard: ⌃⌥ + arrows / 1 2 3 4 5 / C / ↩ / ⌫ / ⌘2 3 4, while the Mac is on screen
+        const down = new Set();
+        const ARROW = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'top', ArrowDown: 'bottom' };
+        document.addEventListener('keydown', e => {
+            if (!(e.ctrlKey && e.altKey)) return;
+            const r = $('#stage').getBoundingClientRect();
+            if (r.bottom < 80 || r.top > innerHeight - 80) return;
+            const k = e.code;
+            let act = null, how = 'key';
+            if (ARROW[k]) {
+                const other = [...down].find(d => d !== ARROW[k]);
+                down.add(ARROW[k]);
+                if (other) { act = CHORDS[[other, ARROW[k]].filter(x => x === 'left' || x === 'right').concat([other, ARROW[k]].filter(x => x === 'top' || x === 'bottom')).join('+')]; how = 'chord'; }
+                if (!act) act = ARROW[k];
+            }
+            else if (e.metaKey && /Digit[234]/.test(k)) act = 'tile' + k.slice(-1);
+            else if (k === 'Digit1') act = 't1'; else if (k === 'Digit2') act = 't2'; else if (k === 'Digit3') act = 't3';
+            else if (k === 'Digit4') act = 'l23'; else if (k === 'Digit5') act = 'r23';
+            else if (k === 'KeyC') act = 'center'; else if (k === 'Enter' || k === 'Digit0') act = 'max'; else if (k === 'Backspace') act = 'restore';
+            if (!act) return;
+            e.preventDefault();
+            perform(act, how);
+        });
+        document.addEventListener('keyup', e => { if (ARROW[e.code]) down.delete(ARROW[e.code]); if (e.key === 'Control' || e.key === 'Alt') down.clear(); });
+
+        // ---------- Drag to snap (DragTracker): edges, corners, Snap Bar ----------
+        const BAR = [   // six ready layouts, each a set of zones
+            [[0, 0, .5, 1], [.5, 0, .5, 1]],
+            [[0, 0, 1 / 3, 1], [1 / 3, 0, 1 / 3, 1], [2 / 3, 0, 1 / 3, 1]],
+            [[0, 0, 2 / 3, 1], [2 / 3, 0, 1 / 3, 1]],
+            [[0, 0, .5, .5], [.5, 0, .5, .5], [0, .5, .5, .5], [.5, .5, .5, .5]],
+            [[0, 0, .5, 1], [.5, 0, .5, .5], [.5, .5, .5, .5]],
+            [[0, 0, 1, 1]]
+        ];
+        bar.innerHTML = BAR.map((lay, i) => `<div class="sn-lay" data-l="${i}">${lay.map((z, j) => `<i data-z="${j}" style="left:${z[0] * 100 + 3}%;top:${z[1] * 100 + 5}%;width:${z[2] * 100 - 6}%;height:${z[3] * 100 - 10}%"></i>`).join('')}</div>`).join('');
+        let dragZone = null, dragStart = null;
+        function zoneAt(p) {
+            const a = area(), E = 10, C = 120;
+            if (P.bar && p.y < a.y + 14 && Math.abs(p.x - M.W / 2) < M.W / 6) return { bar: true };
+            if (p.y < a.y + 6) return { f: [0, 0, 1, 1], act: 'max' };
+            const nearL = p.x < E, nearR = p.x > M.W - E, nearB = p.y > a.y + a.h - E;
+            if ((nearL || nearR) && p.y < a.y + C) return { f: L[nearL ? 'tl' : 'tr'].f[0], act: nearL ? 'tl' : 'tr' };
+            if ((nearL || nearR) && p.y > a.y + a.h - C) return { f: L[nearL ? 'bl' : 'br'].f[0], act: nearL ? 'bl' : 'br' };
+            if (nearL) return { f: L.left.f[0], act: 'left' };
+            if (nearR) return { f: L.right.f[0], act: 'right' };
+            if (nearB) { const t = Math.min(2, Math.floor(p.x / (M.W / 3))); return { f: L['t' + (t + 1)].f[0], act: 't' + (t + 1) }; }
+            return null;
+        }
+        let pointer = { x: 0, y: 0 };
+        M.screen.addEventListener('pointermove', e => { pointer = M.pt(e); }, true);
+        M.on('move', w => {
+            if (!P.drag || !WIN[w.id]) return;
+            const m = memory.get(w.id);
+            // Unsnap: dragging a snapped window away gives it back its size
+            if (!dragStart) {
+                dragStart = true;
+                if (m.act && m.before) { const fx = (pointer.x - w.x) / w.w; w.w = m.before.w; w.h = m.before.h; w.x = pointer.x - fx * w.w; m.act = null; M.place(w); setIcon(); }
+                w.z = M.z += 2; M.place(w); preview.style.zIndex = w.z - 1;
+            }
+            const z = zoneAt(pointer);
+            bar.hidden = !(z && z.bar);
+            $$('.sn-lay i', bar).forEach(i => i.classList.remove('on'));
+            dragZone = null;
+            if (z && z.bar) {
+                const lay = $$('.sn-lay', bar).find(l => { const b = M.box(l); return pointer.x >= b.x && pointer.x <= b.x + b.w && pointer.y <= b.y + b.h + 30; });
+                if (lay) {
+                    const b = M.box(lay), zones = BAR[+lay.dataset.l];
+                    const fx = (pointer.x - b.x) / b.w, fy = clampN((pointer.y - b.y) / b.h, 0, 0.999);
+                    const j = zones.findIndex(q => fx >= q[0] && fx <= q[0] + q[2] && fy >= q[1] && fy <= q[1] + q[3]);
+                    if (j >= 0) { lay.querySelector(`[data-z="${j}"]`).classList.add('on'); dragZone = { f: zones[j], act: 'bar' }; }
+                }
+            } else if (z) dragZone = z;
+            if (dragZone) { flash(dragZone.f); preview.classList.add('show'); } else preview.classList.remove('show');
+        });
+        M.on('drop', w => {
+            dragStart = null; bar.hidden = true; preview.classList.remove('show');
+            if (!dragZone || !WIN[w.id]) return;
+            snapWin(w, dragZone.f, dragZone.act === 'bar' ? 'bar' : dragZone.act, 0);
+            say('', dragZone.act === 'bar' ? '<b>Snap Bar</b>' : '<b>Dragged to ' + (L[dragZone.act] ? L[dragZone.act].name : 'edge') + '</b>');
+            Q.done(dragZone.act === 'bar' ? 'snapbar' : 'drag');
+            dragZone = null;
+        });
+
+        // ---------- Status menu: the tile grid, Cheat Sheet, Settings ----------
+        const tileHTML = (act, key) => { const f = L[act].f[0], m = front() && memory.get(front().id); return `<div class="sn-t${m && m.act === act ? ' cur' : ''}" data-a="${act}"><b><i style="left:${f[0] * 100 + 8}%;top:${f[1] * 100 + 12}%;width:${f[2] * 100 - 16}%;height:${f[3] * 100 - 24}%"></i></b><span>${key}</span></div>`; };
+        const tileN = n => { const F = { 2: [[0, 0, .5, 1], [.5, 0, .5, 1]], 3: [[0, 0, .5, 1], [.5, 0, .5, .5], [.5, .5, .5, .5]], 4: [[0, 0, .5, .5], [.5, 0, .5, .5], [0, .5, .5, .5], [.5, .5, .5, .5]] }[n]; return `<div class="sn-t" data-a="tile${n}"><b>${F.map(f => `<i style="left:${f[0] * 100 + 8}%;top:${f[1] * 100 + 12}%;width:${f[2] * 100 - 13}%;height:${f[3] * 100 - 19}%"></i>`).join('')}</b><span>⌘${n}</span></div>`; };
+        function renderPop() {
+            pop.innerHTML = `<h5>Hold ⌃⌥ and press</h5><div class="sn-grid">${tileHTML('left', '←')}${tileHTML('right', '→')}${tileHTML('top', '↑')}${tileHTML('bottom', '↓')}${tileHTML('tl', '←↑')}${tileHTML('tr', '→↑')}${tileHTML('bl', '←↓')}${tileHTML('br', '→↓')}${tileHTML('t1', '1')}${tileHTML('t2', '2')}${tileHTML('t3', '3')}${tileHTML('max', '↩')}</div>
+                <div class="sn-tile"><em>Tile</em>${tileN(2)}${tileN(3)}${tileN(4)}</div><p class="sn-dim">Choose a layout</p><div class="mk-sep"></div>
+                <div class="mk-mi" data-m="cheat"><span class="ck"></span><span>Cheat Sheet…</span></div><div class="mk-mi" data-m="settings"><span class="ck"></span><span>Settings…</span><span class="k">⌘,</span></div><div class="mk-sep"></div><div class="mk-mi" data-m="quit"><span class="ck"></span><span>Quit LilSnap</span><span class="k">⌘Q</span></div>`;
+        }
+        M.popItem(item, pop);
+        M.on('pop', (p, open) => { if (p === pop && open) { renderPop(); Q.done('menu'); item.classList.remove('hint'); } });
+        pop.addEventListener('click', e => {
+            const t = e.target.closest('[data-a]'), m = e.target.closest('[data-m]');
+            if (t) { M.closePops(); perform(t.dataset.a, 'menu'); return; }
+            if (!m) return;
+            M.closePops();
+            if (m.dataset.m === 'cheat') { M.openWin('cheat'); }
+            if (m.dataset.m === 'settings') { M.openWin('settings'); renderSet(); }
+            if (m.dataset.m === 'quit') { item.hidden = true; M.hud('LilSnap quit', 900); setTimeout(() => { item.hidden = false; M.hud('LilSnap opens again at login', 1300); }, 1600); }
+        });
+        M.win({ id: 'cheat', title: 'LilSnap Cheat Sheet', open: false, x: 230, y: 40, w: 420, h: 300, html: '<div class="sn-cheat"><picture><source srcset="screenshots/cheatsheet.webp" type="image/webp"><img src="screenshots/cheatsheet.png" alt="The LilSnap cheat sheet" loading="lazy"></picture></div>' });
+        M.win({ id: 'settings', title: 'LilSnap Settings', open: false, x: 300, y: 80, w: 340, h: 190, html: '<div class="sn-set" id="snSet"></div>' });
+        function renderSet() {
+            $('#snSet').innerHTML = `<div class="row"><span>Gaps</span><input type="range" min="0" max="20" step="2" value="${P.gaps}" data-p="gaps"><output>${P.gaps} pt</output></div>
+                <div class="row"><span>Drag to snap</span><span class="sn-sw${P.drag ? ' on' : ''}" data-p="drag" role="switch"></span></div>
+                <div class="row"><span>Snap Bar at the top</span><span class="sn-sw${P.bar ? ' on' : ''}" data-p="bar" role="switch"></span></div>`;
+        }
+        $('#snSet').addEventListener('input', e => {
+            if (e.target.dataset.p !== 'gaps') return;
+            P.gaps = +e.target.value; saveP(); e.target.nextElementSibling.textContent = P.gaps + ' pt';
+            M.wins.forEach(w => { const m = memory.get(w.id); if (m && m.f) { Object.assign(w, toRect(m.f)); M.place(w); } });
+            Q.done('gaps');
+        });
+        $('#snSet').addEventListener('click', e => { const s = e.target.closest('.sn-sw'); if (!s) return; P[s.dataset.p] = !P[s.dataset.p]; saveP(); renderSet(); });
+
+        // ---------- Menus, dock ----------
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }],
+            app: () => [{ t: 'About ' + $('#mbApp').textContent, dis: true }, '-', { t: 'Hide', k: '⌘H', dis: true }],
+            file: () => [{ t: 'New Window', k: '⌘N', dis: true }, { t: 'Close Window', k: '⌘W', act: () => { const w = front(); if (w) M.closeWin(w.id); } }],
+            edit: () => [{ t: 'Copy', k: '⌘C', dis: true }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Minimize', k: '⌘M', act: () => { const w = front(); if (w) M.minWin(w.id); } }, '-', ...stack().map(w => ({ t: WIN[w.id].title, act: () => M.focusWin(w.id) }))],
+            help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'safari', name: 'Safari', bg: 'radial-gradient(circle,#fff 0 46%,#2F7CF6 47%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M27 15l-4 10-8 2 4-10z" fill="#FF453A"/></svg>' },
+            { id: 'mail', name: 'Mail', bg: 'linear-gradient(#53B8FF,#1A7CF5)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><rect x="9" y="13" width="24" height="17" rx="2" fill="#fff"/><path d="M9.5 14l11.5 9 11.5-9" fill="none" stroke="#1A7CF5" stroke-width="2"/></svg>' },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFE27A 0 28%, #FFFDF4 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M10 22h22M10 28h22M10 34h14" stroke="#C9C3A8" stroke-width="2"/></svg>' },
+            { id: 'terminal', name: 'Terminal', bg: '#1C1C1E', icon: '<span style="font:700 15px Space Mono,monospace;color:#5AD16A">&gt;_</span>' }
+        ]);
+
+        // ---------- Things to try ----------
+        const Q = Quests({
+            key: 'snSim.quests',
+            items: [
+                { id: 'half', t: 'Snap a half', d: 'Click a window, then hold ⌃⌥ and press ← on your keyboard (or the ← key below).' },
+                { id: 'cycle', t: 'Press it again', d: 'Same shortcut again: the half steps to ⅔, then ⅓.' },
+                { id: 'quarter', t: 'Two arrows, one quarter', d: 'Hold ⌃⌥ and press → and ↑ together for the top-right quarter.' },
+                { id: 'drag', t: 'Drag to an edge', d: 'Drag a window by its title bar to the left or right edge, or a corner. A preview shows where it lands.' },
+                { id: 'snapbar', t: 'Use the Snap Bar', d: 'Drag a window to the top middle of the screen and drop it on one of the six layouts.' },
+                { id: 'tile', t: 'Tile three windows', d: 'Press ⌃⌥⌘3: one big, two stacked. ⌘2 and ⌘4 work too.' },
+                { id: 'menu', t: 'Open the menu', d: 'Click the LilSnap icon: it draws the front window’s layout. Every tile has its key on it.' },
+                { id: 'undo', t: 'Undo a snap', d: '⌃⌥⌫ puts the window back where it was before you snapped it.' }
+            ],
+            show: {
+                async half() { const w = front(); await M.ghostTo({ x: w.x + w.w / 2, y: w.y + 14 }); await M.ghostTap(); await M.press($('#snKeys [data-a="left"]'), 0); perform('left', 'key'); await wait(900); M.ghostHide(); },
+                async cycle() { const w = front(); if (!memory.get(w.id).act || memory.get(w.id).act !== 'left') { perform('left', 'key'); await wait(600); } perform('left', 'key'); await wait(700); perform('left', 'key'); await wait(800); },
+                async quarter() { say('', 'Holding <kbd>⌃⌥</kbd> <kbd>→</kbd> …'); pressKey('right'); await wait(500); pressKey('top'); perform('tr', 'chord'); await wait(900); },
+                async drag() {
+                    const w = stack()[1] || front(); M.focusWin(w.id);
+                    const bar0 = w.el.querySelector('.mk-bar'); const b = M.box(bar0);
+                    await M.ghostTo({ x: b.x + b.w / 2, y: b.y + 14 });
+                    const a = { x: w.x, y: w.y }, tx = -w.w / 2 + 4, ty = M.H / 2 - 40;
+                    w.el.classList.add('drag');
+                    await M.tween(800, t => { w.x = a.x + (tx - a.x) * t; w.y = a.y + (ty - a.y) * t; M.place(w); pointer = { x: w.x + w.w / 2 > 2 ? Math.max(2, w.x + w.w / 2) : 2, y: w.y + 14 }; M.ghostTo(pointer, 0); });
+                    pointer = { x: 3, y: w.y + 14 }; await M.ghostTo(pointer, 120);
+                    dragStart = true; const z = zoneAt(pointer); dragZone = z; if (z) { flash(z.f); preview.classList.add('show'); }
+                    await wait(600); w.el.classList.remove('drag');
+                    preview.classList.remove('show'); if (dragZone) { snapWin(w, dragZone.f, dragZone.act, 0); Q.done('drag'); say('', '<b>Dragged to the left edge</b>'); } dragZone = null; dragStart = null;
+                    await wait(600); M.ghostHide();
+                },
+                async snapbar() {
+                    const w = front(); bar.hidden = false; await M.ghostTo({ x: M.W / 2, y: M.MB + 8 }, 700);
+                    const lay = $$('.sn-lay', bar)[1]; const z = lay.querySelector('[data-z="2"]'); await M.ghostTo(z, 500); z.classList.add('on'); flash(BAR[1][2]); preview.classList.add('show');
+                    await wait(700); bar.hidden = true; preview.classList.remove('show'); z.classList.remove('on');
+                    snapWin(w, BAR[1][2], 'bar', 0); Q.done('snapbar'); say('', '<b>Snap Bar</b>'); await wait(700); M.ghostHide();
+                },
+                async tile() { await M.press($('#snKeys [data-a="tile3"]')); await wait(900); M.ghostHide(); },
+                async menu() { if (!M.popOpen(pop)) await M.press(item); await wait(1300); M.ghostHide(); },
+                async undo() { const w = front(); if (!memory.get(w.id).before) { perform('right', 'key'); await wait(700); } await M.press($('#snKeys [data-a="restore"]')); await wait(900); M.ghostHide(); }
+            },
+            onReset() { M.closePops(); M.closeWin('cheat'); M.closeWin('settings'); resetWins(); say('', 'Click a window, then press a key'); item.classList.add('hint'); }
+        });
+        if (!Q.has('menu')) item.classList.add('hint');
+
+        // Test hooks: ?sim=snapped | menu | bar
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'snapped') { tile(3); }
+            if (s === 'menu') M.openPop(item, pop);
+            if (s === 'bar') { bar.hidden = false; flash(BAR[3][1]); preview.classList.add('show'); $$('.sn-lay', bar)[3].querySelector('[data-z="1"]').classList.add('on'); }
+        })); });
+        window.__sn = { M, memory, front, Q, perform };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

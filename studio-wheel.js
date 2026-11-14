@@ -3,7 +3,8 @@
  *
  * Include once per page:  <script src="/studio-wheel.js" defer></script>
  * To add a product: add it to PRODUCTS (and an icon in /assets/wheel/). Its slot
- * in the honeycomb is worked out automatically.
+ * in the honeycomb is worked out automatically. `hidden: true` keeps a product off the
+ * wheel (unreleased apps) except on its own page.
  *
  * - An Apple Watch: a rounded case with a black display, a Digital Crown and side
  *   button, and straps in the current app's colour (studio yellow on the homepage),
@@ -25,9 +26,9 @@
     'use strict';
 
     // Bump when an icon in /assets/wheel/ changes, so browsers don't keep the old one cached.
-    const ICON_VERSION = '4';
+    const ICON_VERSION = '6';
 
-    const PRODUCTS = [
+    const ALL_PRODUCTS = [
         { id: 'studio',     name: 'LilStudio',  tag: 'All apps',                       href: '/',            color: '#FFE135', icon: null },
         { id: 'lildisplay', name: 'LilDisplay', tag: 'iPhone & iPad as a Mac display', href: '/lildisplay/', color: '#00FF88', icon: '/assets/wheel/lildisplay.png' },
         { id: 'lildock',    name: 'LilDock',    tag: 'Your Dock, in the menu bar',     href: '/lildock/',    color: '#FF6B5E', icon: '/assets/wheel/lildock.png' },
@@ -36,12 +37,14 @@
         { id: 'lilhide',    name: 'LilHide',    tag: 'Hide desktop icons in a click',  href: '/lilhide/',    color: '#6C8CFF', icon: '/assets/wheel/lilhide.png' },
         { id: 'lilmirror',  name: 'LilMirror',  tag: 'A mirror before your call',      href: '/lilmirror/',  color: '#F7DC3C', icon: '/assets/wheel/lilmirror.png' },
         { id: 'lilstats',   name: 'LilStats',   tag: 'CPU, GPU & RAM in the menu bar', href: '/lilstats/',   color: '#7ED48A', icon: '/assets/wheel/lilstats.png' },
-        { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png' },
-        { id: 'lilpass',    name: 'LilPass',    tag: 'Every card, one tap away',       href: '/lilpass/',    color: '#7CC4F0', icon: '/assets/wheel/lilpass.png' },
-        { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png' },
+        { id: 'lilpad',     name: 'LilPad',     tag: 'Your iPhone as a Mac trackpad',  href: '/lilpad/',     color: '#FF7AC6', icon: '/assets/wheel/lilpad.png', hidden: true },
+        { id: 'lilpass',    name: 'LilPass',    tag: 'Every card, one tap away',       href: '/lilpass/',    color: '#7CC4F0', icon: '/assets/wheel/lilpass.png', hidden: true },
+        { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png', hidden: true },
         { id: 'lildim',     name: 'LilDim',     tag: 'Dim all but the front window',   href: '/lildim/',     color: '#B68CFF', icon: '/assets/wheel/lildim.png' },
         { id: 'lilsnap',    name: 'LilSnap',    tag: 'Snap windows into place',        href: '/lilsnap/',    color: '#3FD98A', icon: '/assets/wheel/lilsnap.png' },
     ];
+    const first = location.pathname.split('/').filter(Boolean)[0] || '';
+    const PRODUCTS = ALL_PRODUCTS.filter(p => !p.hidden || p.id === first);
 
     // Honeycomb (in tile widths, around the middle icon; screen axes, y down)
     const GAP = 1.08;                         // centre-to-centre: neighbours nearly touch
@@ -94,6 +97,9 @@
     const SLOTS = LAYOUT.slots, SCREEN = LAYOUT.screen, BODY = LAYOUT.body;
     const BODY_W = BODY.x1 - BODY.x0, BODY_H = BODY.y1 - BODY.y0;
     const BODY_R = BODY_W * 0.25, BAND_W = BODY_W * 0.6;
+    // Dock-style auto-hide: resting, the watch slides down until only the top third of its case shows.
+    const PEEK_FRACTION = 1 / 3;
+    const PEEK_DROP = -BODY.y0 - BODY_H * PEEK_FRACTION;   // tile widths, plus the edge gap and half the button
     /** CSS length for k tile widths. */
     const tw = (k) => `calc(var(--lsw-tile) * ${(+k).toFixed(3)})`;
     /** CSS offset from the corner button's centre for k tile widths. */
@@ -101,7 +107,6 @@
 
     const STORAGE_KEY = 'lsw-collapsed';
 
-    const first = location.pathname.split('/').filter(Boolean)[0] || '';
     const current = PRODUCTS.find(p => p.id === first) ? first : (first === '' || first === 'index.html' ? 'studio' : '');
 
     const css = `
@@ -120,7 +125,8 @@
        straps, crown, side button, case (with the display inside). */
     .lsw-watch { position: absolute; inset: 0; z-index: 1; pointer-events: none;
                  transform: scale(0.12) rotate(-24deg); opacity: 0; visibility: hidden;
-                 transition: transform .55s cubic-bezier(.2,.9,.25,1.12), opacity .25s ease, visibility 0s .55s; }
+                 transition: transform .55s cubic-bezier(.2,.9,.25,1.12), opacity .25s ease, visibility 0s .55s,
+                             translate .45s cubic-bezier(.25,1,.35,1.08); }
     .lsw.open .lsw-watch { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
     .lsw.open .lsw-watch > * { pointer-events: auto; }
     .lsw-watch > * { position: absolute; border: var(--lsw-bw) solid var(--lsw-ink); }
@@ -183,8 +189,11 @@
        (--dx, --dy, --m) on top of their slots. */
     .lsw-list, .lsw-item { list-style: none; margin: 0; padding: 0; background: none; border: 0; }
     .lsw-list { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2;
-                transform: rotate(-40deg); transition: transform .6s cubic-bezier(.2,.9,.25,1.1); }
+                transform: rotate(-40deg); transition: transform .6s cubic-bezier(.2,.9,.25,1.1), translate .45s cubic-bezier(.25,1,.35,1.08); }
     .lsw.open .lsw-list { transform: rotate(0); }
+    /* Peeking (like the Dock when hidden): the watch and its icons slide down together, the button stays. */
+    .lsw.peek .lsw-watch, .lsw.peek .lsw-list {
+        translate: 0 calc(var(--lsw-edge) + var(--lsw-trigger) / 2 + var(--lsw-tile) * ${PEEK_DROP.toFixed(3)}); }
     .lsw-item { --x: calc(var(--ux) * var(--lsw-tile)); --y: calc(var(--uy) * var(--lsw-tile));
                 position: absolute; left: 0; top: 0; width: 0; height: 0;
                 transform: translate(0, 0) rotate(40deg) scale(.2); opacity: 0; visibility: hidden;
@@ -325,9 +334,10 @@
         function corner() { const b = root.getBoundingClientRect(); return { ox: b.left + b.width / 2, oy: b.top + b.height / 2 }; }
 
         // ---- open / collapse --------------------------------------------------
-        let open = false;
+        let open = false, peek = false, hideTimer = 0;
         function setOpen(next, remember) {
             open = next;
+            if (!open) setPeek(false);
             root.classList.toggle('open', open);
             trigger.setAttribute('aria-expanded', String(open));
             trigger.setAttribute('aria-label', open ? 'Hide LilStudio apps' : 'Show LilStudio apps');
@@ -346,6 +356,51 @@
             if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); all[(idx + 1) % all.length].focus(); }
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); all[(idx - 1 + all.length) % all.length].focus(); }
         });
+
+        // ---- Dock-style auto-hide ------------------------------------------------------
+        // Open, the watch rests peeking out of the bottom-right corner. Pointing at the part that shows
+        // (or the button) brings it all the way up; it slides back down shortly after the pointer leaves.
+        // Touch screens: a tap on the peeking watch brings it up, a tap anywhere else sends it back.
+        function setPeek(v) {
+            clearTimeout(hideTimer); hideTimer = 0;
+            if (peek === v) return;
+            peek = v;
+            root.classList.toggle('peek', peek);
+            if (peek) { px = py = -1e4; forced = false; }
+            if (typeof kick === 'function' && tiles.length) kick();
+        }
+        function zones() {
+            const { ox, oy } = corner(), size = tileSize(), W = window.innerWidth, H = window.innerHeight;
+            const left = ox + (BODY.x0 - 0.2) * size;
+            return {
+                peek: { x0: left - 8, y0: H - BODY_H * PEEK_FRACTION * size - 10, x1: W, y1: H },
+                full: { x0: left - 28, y0: oy + (BODY.y0 - 1.6) * size - 28, x1: W, y1: H },
+                btn: root.getBoundingClientRect()
+            };
+        }
+        const inside = (r, x, y) => x >= (r.x0 ?? r.left) && x <= (r.x1 ?? r.right) && y >= (r.y0 ?? r.top) && y <= (r.y1 ?? r.bottom);
+        function scheduleHide() {
+            if (hideTimer || peek || !open) return;
+            hideTimer = setTimeout(() => { hideTimer = 0; if (open && !root.contains(document.activeElement)) setPeek(true); }, 380);
+        }
+        if (canHover) {
+            window.addEventListener('pointermove', (e) => {
+                if (!open || e.pointerType === 'touch' || forced) return;
+                const z = zones(), x = e.clientX, y = e.clientY;
+                if (peek) { if (inside(z.peek, x, y) || inside(z.btn, x, y)) setPeek(false); }
+                else if (inside(z.full, x, y)) { clearTimeout(hideTimer); hideTimer = 0; }
+                else scheduleHide();
+            }, { passive: true });
+            document.documentElement.addEventListener('pointerleave', scheduleHide);
+        }
+        root.addEventListener('click', (e) => {
+            if (!open || !peek || trigger.contains(e.target)) return;
+            e.preventDefault(); e.stopPropagation();
+            setPeek(false);
+        }, true);
+        document.addEventListener('pointerdown', (e) => { if (open && !peek && !root.contains(e.target)) setPeek(true); }, true);
+        root.addEventListener('focusin', () => { if (open) setPeek(false); });
+        root.addEventListener('focusout', (e) => { if (open && !root.contains(e.relatedTarget)) setPeek(true); });
 
         // ---- the clock on the display (updates on the minute, only while it can be seen) ----------
         let clockTimer = 0;
@@ -402,7 +457,7 @@
             const size = tileSize();
             const { ox, oy } = corner();
             const fx = (px - ox) / size, fy = (py - oy) / size;   // pointer in tile widths
-            const engaged = open && !reduced && (canHover || forced);
+            const engaged = open && !peek && !reduced && (canHover || forced);
             for (let i = 0; i < n; i++) {
                 goal[i].m = engaged ? 1 + (MAG - 1) * weight(Math.hypot(tiles[i].ux - fx, tiles[i].uy - fy)) : 1;
             }
@@ -475,8 +530,9 @@
         // Open by default (after the page has settled, so the swirl is visible),
         // unless the visitor tucked it away earlier in this visit.
         setOpen(false, false);
-        const startOpen = /[?&]wheel=open\b/.test(location.search) || storageGet() !== '1';
-        if (startOpen) setTimeout(() => setOpen(true, false), 650);
+        const forceOpen = /[?&]wheel=open\b/.test(location.search);   // test hook: fully up, no auto-hide
+        const startOpen = forceOpen || /[?&]wheel=peek\b/.test(location.search) || storageGet() !== '1';
+        if (startOpen) setTimeout(() => { setOpen(true, false); if (!forceOpen) setPeek(true); }, 650);
 
         // Test hook for screenshots: ?wheelhover=<product id> simulates the pointer on that icon.
         const hov = location.search.match(/[?&]wheelhover=([a-z]+)/);

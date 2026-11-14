@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex"><!-- hidden until the iOS app ships -->
+    <script src="/assets/theme.js"></script>
     <title>LilBounce &ndash; A Cartoon Ball in Your Phone</title>
 
     <link rel="icon" href="/favicon/favicon.ico" sizes="any">
@@ -1530,6 +1532,34 @@
         @media (prefers-reduced-motion: reduce) {
             .play-phone, .gallery-item img { transform: none !important; }
         }
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        .quests-wrap { padding: 0 2rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        @media (max-width: 600px) { .quests-wrap { padding: 0 1rem; } .quests .quest { min-width: 0; flex-basis: 100%; } .q-meter { width: 110px; } }
     </style>
 </head>
 <body>
@@ -1558,7 +1588,7 @@
         <div class="hero-content">
             <div class="hero-top">
                 <div class="hero-device">
-                    <img src="screenshots/app-icon.png" alt="LilBounce app icon" class="hero-appicon">
+                    <img src="screenshots/app-icon.png" alt="LilBounce app icon" class="hero-appicon" width="140" height="140">
                 </div>
 
                 <div class="hero-center">
@@ -1588,15 +1618,30 @@
                 <div class="hero-shot">
                     <div class="play-stage">
                         <div class="play-phone">
-                            <div class="play-screen"><canvas id="playfield" aria-label="Playable LilBounce demo: three cartoon balls you can flick, drag and tap"></canvas></div>
+                            <div class="play-screen"><canvas id="playfield" aria-label="Playable LilBounce demo: a mix of cartoon balls you can flick, drag, tap and feed to the Dynamic Island"></canvas></div>
                         </div>
                         <div class="play-buttons">
                             <button class="btn-small" id="play-drop" type="button">Drop them again</button>
+                            <button class="btn-small" id="play-shake" type="button">Shake</button>
                             <button class="btn-small" id="play-tilt" type="button" hidden>Use tilt</button>
                         </div>
-                        <p class="play-hint">Have a go: tap a ball, drag it, or swipe into one</p>
+                        <p class="play-hint">Have a go: tap a ball, drag it, or swipe into one. Then pick one up and push it into the island&hellip;</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lb-quests" aria-label="Things to try in the demo" style="padding:0 0 4rem">
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Six things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 6</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's the toy. The real one thumps in your hand.</b><br>Seven balls, five rooms, night mode and strong haptics. No ads, no data.</div>
+                <a href="#features" class="btn btn-primary" data-appstore>Coming to the App Store</a>
             </div>
         </div>
     </section>
@@ -1747,7 +1792,14 @@
             const ctx = canvas.getContext('2d');
             const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const INK = '#1B1918', CREAM = '#FAF2DE', DOTS = '#EADDBB', SPOT = '#FFF4DC';
-            const SKINS = [['#FF6B35', SPOT], ['#F6D65D', '#E7584B'], ['#2F6BFF', SPOT]];
+            // The seven balls: [name, base, detail, size, bounce, mass, pattern]
+            const KINDS = [
+                ['rubber', '#FF6B35', SPOT, 1, 0.62, 1, 'spots'], ['tennis', '#D7E84A', '#FFFFFF', 0.8, 0.55, 0.8, 'seam'],
+                ['beach', '#FFFFFF', '#2F6BFF', 1.25, 0.5, 0.5, 'beach'], ['pingpong', '#FFF6E8', '#FF8A3D', 0.6, 0.75, 0.3, 'plain'],
+                ['basketball', '#F28A2E', INK, 1.15, 0.6, 1.4, 'basket'], ['superball', '#B68CFF', '#FFE135', 0.7, 0.86, 0.8, 'stripes'],
+                ['bowling', '#2B3A67', '#11182F', 1.1, 0.18, 4, 'bowl']
+            ];
+            const MIX = [0, 1, 2, 3, 4, 5, 6, 0, 1, 3, 5, 4];
             let W = 0, H = 0, R = 0, dpr = 1, balls = [], gravity = { x: 0, y: 1 };
             let visible = false, running = false, last = 0, clock = 0;
             const pointer = { down: false, x: 0, y: 0, vx: 0, vy: 0, t: 0, t0: 0, moved: false, startX: 0, startY: 0, held: null, ox: 0, oy: 0 };
@@ -1758,21 +1810,37 @@
                 W = rect.width; H = rect.height;
                 canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
                 ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                R = W * 0.15;
-                balls.forEach(b => { b.r = R; });
+                R = W * 0.085;
+                balls.forEach(b => { b.r = R * b.k[3]; });
             }
 
             function drop() {
-                balls = SKINS.map((s, i) => ({
-                    x: W * (0.28 + 0.22 * i), y: R * 1.4 + i * R * 0.8, vx: (i - 1) * 40, vy: 0, r: R,
-                    a: Math.random() * 6, w: (Math.random() - 0.5) * 6, base: s[0], spot: s[1],
-                    squash: 0, blink: 2 + Math.random() * 4, blinkT: 0, look: { x: 0, y: 0 }
-                }));
+                balls = MIX.map((ki, i) => {
+                    const k = KINDS[ki];
+                    return { k, x: W * (0.15 + 0.7 * ((i * 0.37) % 1)), y: H * 0.2 + (i % 4) * R * 1.6, vx: (Math.random() - 0.5) * 200, vy: 0, r: R * k[3],
+                        a: Math.random() * 6, w: (Math.random() - 0.5) * 6, base: k[1], spot: k[2],
+                        squash: 0, blink: 2 + Math.random() * 4, blinkT: 0, look: { x: 0, y: 0 }, fear: 0, eaten: 0 };
+                });
+                if (eatenCount) Q.done('drop');
+                eatenCount = 0;
+            }
+            // The Dynamic Island: a wall the balls bounce off, and a dog's mouth when you hold one
+            let eatenCount = 0;
+            const island = { lean: 0, pant: 0, chomp: 0 };
+            function islandBox() { const w = W * 0.32, h = W * 0.095; return { cx: W / 2 + island.lean, cy: W * 0.035 + h / 2, w, h }; }
+            function islandPush(b) {
+                const I = islandBox(), rr = I.h / 2, x1 = I.cx - I.w / 2 + rr, x2 = I.cx + I.w / 2 - rr;
+                const px = Math.max(x1, Math.min(x2, b.x)), dx = b.x - px, dy = b.y - I.cy, d = Math.hypot(dx, dy), min = rr + b.r;
+                if (d >= min || d < 1e-6) return;
+                const nx = dx / d, ny = dy / d;
+                b.x += nx * (min - d); b.y += ny * (min - d);
+                const vn = b.vx * nx + b.vy * ny;
+                if (vn < 0) { const e = b.k[4]; b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny; b.squash = Math.max(b.squash, Math.min(-vn / 2500, 0.28)); }
             }
 
             function step(dt) {
                 const g = 2600 * (W / 300);
-                const top = 34;   // under the island
+                const top = 0;    // edge to edge; the island is a wall of its own
                 for (const b of balls) {
                     b.vx += gravity.x * g * dt; b.vy += gravity.y * g * dt;
                     b.vx *= Math.pow(0.995, dt * 60);
@@ -1787,7 +1855,7 @@
                         b.x += nx * pen; b.y += ny * pen;
                         const vn = b.vx * nx + b.vy * ny;
                         if (vn < 0) {
-                            const e = -vn > 120 ? 0.62 : 0;
+                            const e = -vn > 120 ? b.k[4] : 0;
                             b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny;
                             b.squash = Math.max(b.squash, Math.min(-vn / 2500, 0.28));
                             const vt = b.vx * -ny + b.vy * nx;
@@ -1796,17 +1864,18 @@
                         }
                     }
                 }
-                // Ball against ball: equal masses.
+                for (const b of balls) islandPush(b);
+                // Ball against ball, by mass (a bowling ball shoves a ping-pong ball aside).
                 for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) {
                     const p = balls[i], q = balls[j];
                     const dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy), min = p.r + q.r;
                     if (d >= min || d < 1e-6) continue;
-                    const nx = dx / d, ny = dy / d, pen = (min - d) / 2;
-                    p.x -= nx * pen; p.y -= ny * pen; q.x += nx * pen; q.y += ny * pen;
+                    const nx = dx / d, ny = dy / d, mp = p.k[5], mq = q.k[5], pen = min - d;
+                    p.x -= nx * pen * mq / (mp + mq); p.y -= ny * pen * mq / (mp + mq); q.x += nx * pen * mp / (mp + mq); q.y += ny * pen * mp / (mp + mq);
                     const vn = (q.vx - p.vx) * nx + (q.vy - p.vy) * ny;
                     if (vn < 0) {
-                        const j2 = -(1 + 0.6) * vn / 2;
-                        p.vx -= j2 * nx; p.vy -= j2 * ny; q.vx += j2 * nx; q.vy += j2 * ny;
+                        const j2 = -(1 + 0.6) * vn / (1 / mp + 1 / mq);
+                        p.vx -= j2 * nx / mp; p.vy -= j2 * ny / mp; q.vx += j2 * nx / mq; q.vy += j2 * ny / mq;
                     }
                 }
                 // A held ball follows the finger on a stiff spring (as in the app), and is thrown when let go.
@@ -1828,6 +1897,21 @@
                         if (vn < 0) { b.vx -= 1.55 * vn * nx; b.vy -= 1.55 * vn * ny; b.squash = Math.min(-vn / 2500, 0.28); }
                     }
                 }
+                // The mouth: hungry while you hold a ball, leaning toward it; push the ball in and it's eaten
+                const hb = pointer.down && pointer.held, I = islandBox();
+                island.pant += dt * (hb ? 9 : 0);
+                island.lean += (((hb ? Math.max(-1, Math.min(1, (hb.x - W / 2) / (W / 2))) * W * 0.03 : 0)) - island.lean) * Math.min(dt * 6, 1);
+                island.chomp = Math.max(0, island.chomp - dt * 2.5);
+                if (hb && Math.abs(pointer.x - I.cx) < I.w / 2 && pointer.y < I.cy + I.h * 0.6) {
+                    hb.eaten = 0.001; pointer.held = null; island.chomp = 1; eatenCount++;
+                    Q.done('feed'); if (eatenCount >= 3) Q.done('three');
+                    if (navigator.vibrate) try { navigator.vibrate([20, 40, 20]); } catch (_) { /* no haptics */ }
+                }
+                for (const b of balls) {
+                    if (b.eaten) { b.eaten += dt * 3; b.x += (I.cx - b.x) * Math.min(dt * 12, 1); b.y += (I.cy - b.y) * Math.min(dt * 12, 1); b.vx = b.vy = 0; }
+                    b.fear += ((hb && b !== hb && Math.hypot(b.x - I.cx, b.y - I.cy) < R * 5 ? 1 : 0) - b.fear) * Math.min(dt * 6, 1);
+                }
+                balls = balls.filter(b => !b.eaten || b.eaten < 1);
                 for (const b of balls) {
                     const sp = Math.hypot(b.vx, b.vy), max = 5000 * (W / 300);
                     if (sp > max) { b.vx *= max / sp; b.vy *= max / sp; }
@@ -1848,7 +1932,7 @@
             }
 
             function drawBall(b) {
-                const r = b.r, lw = Math.max(2.5, r * 0.1);
+                const r = b.r * (b.eaten ? Math.max(0.05, 1 - b.eaten) : 1), lw = Math.max(2, r * 0.1);
                 const sx = 1 + b.squash, sy = 1 - b.squash;
                 ctx.save();
                 ctx.translate(b.x, b.y + r * b.squash * 0.9);
@@ -1857,10 +1941,16 @@
                 ellipse(0, 0, r, r, b.base);
                 ctx.save();
                 ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.clip();
-                for (let k = 0; k < 6; k++) {                                  // spots turn with the spin
-                    const t = b.a + k * Math.PI / 3, rr = k % 2 ? r * 0.92 : r * 0.62;
-                    ellipse(Math.cos(t) * rr, Math.sin(t) * rr, r * 0.27, r * 0.21, b.spot, INK, lw * 0.8);
-                }
+                const pat = b.k[6];                                            // each ball's pattern turns with the spin
+                ctx.save(); ctx.rotate(b.a);
+                if (pat === 'spots') for (let k = 0; k < 6; k++) { const t = k * Math.PI / 3, rr = k % 2 ? r * 0.92 : r * 0.62; ellipse(Math.cos(t) * rr, Math.sin(t) * rr, r * 0.27, r * 0.21, b.spot, INK, lw * 0.8); }
+                if (pat === 'seam') for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(s * r * 1.25, 0, r * 0.85, 0, Math.PI * 2); ctx.lineWidth = lw * 1.1; ctx.strokeStyle = b.spot; ctx.stroke(); }
+                if (pat === 'beach') ['#FF6B35', '#FFE135', '#2F6BFF', '#3FD98A', '#FF7AC6', '#FFFFFF'].forEach((c, k) => { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, k * Math.PI / 3, (k + 1) * Math.PI / 3); ctx.fillStyle = c; ctx.fill(); ctx.lineWidth = lw * 0.6; ctx.strokeStyle = INK; ctx.stroke(); });
+                if (pat === 'plain') ellipse(-r * 0.2, r * 0.45, r * 0.3, r * 0.12, b.spot);
+                if (pat === 'basket') { ctx.lineWidth = lw * 0.8; ctx.strokeStyle = INK; ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke(); for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(s * r * 1.3, 0, r * 0.9, 0, Math.PI * 2); ctx.stroke(); } }
+                if (pat === 'stripes') for (let k = -3; k <= 3; k += 2) { ctx.fillStyle = b.spot; ctx.fillRect(-r, k * r * 0.25, r * 2, r * 0.25); }
+                if (pat === 'bowl') for (const [x, y] of [[-0.25, -0.45], [0.05, -0.55], [-0.05, -0.25]]) ellipse(x * r, y * r, r * 0.09, r * 0.09, b.spot);
+                ctx.restore();
                 ellipse(r * 0.12, r * 0.12, r * 1.02, r * 1.02, null, 'rgba(0,0,0,0.16)', r * 0.22);
                 ctx.restore();
                 ellipse(0, 0, r - lw / 2, r - lw / 2, null, INK, lw);
@@ -1868,18 +1958,19 @@
                 ellipse(0, -r * 0.7, r * 0.26, r * 0.09, 'rgba(255,255,255,0.9)');
                 ctx.restore();
                 // Face: upright, big eyes with catchlights, a smile.
-                const ex = r * 0.29, ey = -r * 0.12, ew = r * 0.23, eh = r * 0.29 * (b.blinkT > 0 ? 0.15 : 1);
+                const scared = b.fear > 0.5;
+                const ex = r * 0.29, ey = -r * 0.12, ew = r * 0.23 * (scared ? 1.15 : 1), eh = r * 0.29 * (scared ? 1.25 : (b.blinkT > 0 ? 0.15 : 1));
                 for (const s of [-1, 1]) {
                     ellipse(s * ex, ey, ew, eh, '#FFFFFF', INK, lw * 0.75);
                     if (b.blinkT <= 0) {
                         const px = s * ex + b.look.x * ew * 0.35, py = ey + b.look.y * eh * 0.35;
-                        ellipse(px, py, r * 0.14, r * 0.14, INK);
+                        ellipse(px, py, r * (scared ? 0.08 : 0.14), r * (scared ? 0.08 : 0.14), INK);
                         ellipse(px + r * 0.05, py - r * 0.05, r * 0.05, r * 0.05, '#FFFFFF');
                         ellipse(px - r * 0.04, py + r * 0.05, r * 0.022, r * 0.022, '#FFFFFF');
                     }
                 }
-                ctx.beginPath(); ctx.arc(0, r * 0.2, r * 0.17, 0.15 * Math.PI, 0.85 * Math.PI);
-                ctx.lineWidth = lw * 0.8; ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.stroke();
+                if (scared) ellipse(0, r * 0.32, r * 0.1, r * 0.13, INK);
+                else { ctx.beginPath(); ctx.arc(0, r * 0.2, r * 0.17, 0.15 * Math.PI, 0.85 * Math.PI); ctx.lineWidth = lw * 0.8; ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.stroke(); }
                 ctx.restore();
             }
 
@@ -1891,6 +1982,20 @@
                     ctx.beginPath(); ctx.arc(x, y, Math.max(1.2, W * 0.006), 0, Math.PI * 2); ctx.fill();
                 }
                 balls.forEach(drawBall);
+                drawIsland();
+            }
+            function drawIsland() {
+                const I = islandBox(), hungry = pointer.down && pointer.held;
+                const sy = 1 + (hungry ? Math.sin(island.pant) * 0.08 : 0) + island.chomp * 0.25, sx = 1 + island.chomp * 0.06;
+                ctx.save(); ctx.translate(I.cx, I.cy); ctx.scale(sx, sy);
+                if (hungry || island.chomp > 0) {                                // a pink tongue, panting
+                    const t = hungry ? 0.6 + Math.sin(island.pant) * 0.2 : island.chomp;
+                    ctx.beginPath(); ctx.ellipse(I.w * 0.12, I.h * 0.45, I.h * 0.32, I.h * (0.35 + t * 0.45), 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#FF6F91'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = INK; ctx.stroke();
+                }
+                ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-I.w / 2, -I.h / 2, I.w, I.h, I.h / 2) : ctx.rect(-I.w / 2, -I.h / 2, I.w, I.h);
+                ctx.fillStyle = '#000'; ctx.fill();
+                ctx.restore();
             }
 
             function frame(t) {
@@ -1939,7 +2044,8 @@
                     // A quick tap kicks the ball up, away from where it was touched.
                     const dx = -pointer.ox;
                     b.vx += dx * 9; b.vy = Math.min(b.vy, 0) - 1300 * (W / 300); b.w += dx * 0.05;
-                }
+                    Q.done('kick');
+                } else if (pointer.down && b && Math.hypot(pointer.vx, pointer.vy) > 1500 * (W / 300)) Q.done('throw');
                 pointer.down = false;
                 pointer.held = null;
             };
@@ -1947,6 +2053,37 @@
             canvas.addEventListener('pointercancel', release);
 
             document.getElementById('play-drop').addEventListener('click', () => { drop(); if (reduced) draw(); });
+            document.getElementById('play-shake').addEventListener('click', () => {
+                balls.forEach(b => { b.vx += (Math.random() - 0.5) * 3200 * (W / 300); b.vy -= (0.4 + Math.random()) * 1800 * (W / 300); b.w += (Math.random() - 0.5) * 20; });
+                Q.done('shake'); if (reduced) { for (let i = 0; i < 240; i++) step(1 / 120); draw(); }
+            });
+
+            // Things to try (the same panel as the other app pages)
+            const store = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } } };
+            const Q = (function () {
+                const items = [
+                    { id: 'kick', t: 'Kick a ball', d: 'A quick tap on a ball kicks it up, away from your finger.' },
+                    { id: 'throw', t: 'Throw one', d: 'Pick a ball up, swing, and let go. Then swipe through the pile.' },
+                    { id: 'shake', t: 'Shake it', d: 'Press Shake (on your iPhone, really shake it).' },
+                    { id: 'feed', t: 'Feed the island', d: 'Pick a ball up: the island pants and leans in. Push the ball into it.' },
+                    { id: 'three', t: 'Feed it three', d: 'Watch the others look terrified while it eats.' },
+                    { id: 'drop', t: 'Bring them back', d: 'Eaten balls come back with Drop them again (Settings › Drop the balls in the app).' }
+                ];
+                const list = document.getElementById('quests');
+                let done = new Set(store.get('lbSim.quests', []));
+                list.innerHTML = items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p></li>`).join('');
+                const render = () => {
+                    const next = items.find(q => !done.has(q.id));
+                    list.querySelectorAll('.quest').forEach(li => { li.classList.toggle('done', done.has(li.dataset.q)); li.classList.toggle('next', !!next && li.dataset.q === next.id); });
+                    document.getElementById('qCount').textContent = `${done.size} / ${items.length}`;
+                    document.getElementById('qMeter').style.transform = `scaleX(${done.size / items.length})`;
+                    document.getElementById('qWin').classList.toggle('show', done.size === items.length);
+                };
+                document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set('lbSim.quests', []); render(); drop(); });
+                render();
+                return { done(id) { if (done.has(id)) return; done.add(id); store.set('lbSim.quests', [...done]); render(); }, has: id => done.has(id) };
+            })();
+            window.__lb = { balls: () => balls, Q, islandBox, pointer, step };
 
             // Phones and tablets: let gravity follow the device after a tap (iOS asks first).
             const tiltButton = document.getElementById('play-tilt');

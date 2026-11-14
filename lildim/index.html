@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/theme.js"></script>
     <title>LilDim &ndash; Dim Everything But the Window You're In</title>
 
     <link rel="icon" href="/favicon/favicon.ico" sizes="any">
@@ -10,9 +11,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilDim dims or blurs every window except the one you're working in, on every display. Focus ring, pause rules, Shortcuts, Focus Filters, AppleScript. No permissions needed, nothing collected. $0.99 once.">
+    <meta name="description" content="LilDim dims or blurs every window except the one you're working in, on every display. Focus ring, pause rules, Shortcuts, Focus Filters, AppleScript. No permissions needed, nothing collected. Free download for Mac.">
     <meta property="og:title" content="LilDim &ndash; Everything Else Fades Away">
-    <meta property="og:description" content="Dim or blur everything but your current window. Every display, no permissions, $0.99 once.">
+    <meta property="og:description" content="Dim or blur everything but your current window. Every display, no permissions, Free download for Mac.">
     <meta property="og:url" content="https://lilstudio.app/lildim/">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lilstudio.app/lildim/screenshots/popover.png">
@@ -805,7 +806,7 @@
         }
 
         .pricing-card::before {
-            content: 'ONE PRICE';
+            content: 'ALWAYS FREE';
             position: absolute;
             top: -12px;
             right: 20px;
@@ -1464,6 +1465,295 @@
         }
 
         .feature-card code { background: var(--primary); padding: 0.1rem 0.35rem; font-family: "Space Mono", monospace; font-size: 0.8rem; color: #000; border: 2px solid var(--border); }
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        :root { --win-bg: #262628; --win-bar: #333336; --win-text: #F2F2F2; --win-muted: #9A9AA0; --win-line: rgba(255,255,255,0.08); --set-bg: #1F1F21; --set-box: #2C2C2F; }
+        [data-theme="light"] { --win-bg: #FFFFFF; --win-bar: #ECEAE4; --win-text: #1D1D1F; --win-muted: #77736A; --win-line: rgba(0,0,0,0.07); --set-bg: #F2F1EE; --set-box: #FFFFFF; }
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% - 2px); top: -5px; display: none; animation: none; }
+        .mk-menu.flip .mk-sub { left: auto; right: calc(100% - 2px); }
+        .mk-mi .ck svg { width: 13px; height: 13px; display: block; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub, [data-theme="dark"] .mk-mi.has-sub.open > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== Live hero: overrides for this page's older hero styles ========== */
+        .hero { display: block; min-height: 0; padding: 7rem 2rem 2.5rem; }
+        .hero-copy { text-align: left; }
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-subtitle { max-width: 560px; }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .hero-buttons-row { justify-content: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .hero-copy .privacy-notice { justify-content: flex-start; margin: 0; }
+        .logo { text-decoration: none; }
+        @media (max-width: 1100px) {
+            .hero-copy { text-align: center; }
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+            .hero-copy .hero-buttons-row { justify-content: center; }
+            .hero-copy .privacy-notice { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .hero-copy h1 { font-size: 2rem; }
+        }
+
+        /* ========== LilDim, running inside the model ========== */
+        .dm-item.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        .dm-item[hidden] { display: none; }
+        .dm-item.off svg path { opacity: 0.3; }
+        /* The dim sits directly behind the focused window, so it never chases it */
+        .dm-dim { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity var(--fade, 0.35s) ease; }
+        .dm-dim.on { opacity: 1; }
+        .dm-uidim { position: absolute; left: 0; right: 0; pointer-events: none; opacity: 0; transition: opacity var(--fade, 0.35s) ease; z-index: 16; }
+        .dm-uidim.on { opacity: 1; }
+        #dimBar { top: 0; height: 26px; z-index: 21; }
+        #dimDock { bottom: 0; height: 62px; }
+        .mk-win.dm-ring { box-shadow: 0 0 0 3px var(--ring, #B68CFF), 0 14px 34px rgba(0,0,0,0.35); }
+        /* Popover (from the real one) */
+        .dm-pop { width: 270px; padding: 12px 0 8px; }
+        .dm-ph { display: flex; align-items: center; gap: 10px; padding: 0 14px 10px; }
+        .dm-pi { width: 30px; height: 30px; border-radius: 7px; background: rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: center; }
+        [data-theme="dark"] .dm-pi { background: rgba(255,255,255,0.1); }
+        .dm-ph b { display: block; font-size: 14px; }
+        .dm-ph small { display: block; font-size: 11.5px; opacity: 0.6; }
+        .dm-sw { width: 38px; height: 22px; border-radius: 11px; background: rgba(0,0,0,0.15); margin-left: auto; position: relative; flex-shrink: 0; transition: background 0.2s; }
+        [data-theme="dark"] .dm-sw { background: rgba(255,255,255,0.18); }
+        .dm-sw::after { content: ''; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .dm-sw.on { background: #2F7CF6; }
+        .dm-sw.on::after { transform: translateX(16px); }
+        .dm-sw.sm { width: 30px; height: 18px; }
+        .dm-sw.sm::after { width: 14px; height: 14px; }
+        .dm-sw.sm.on::after { transform: translateX(12px); }
+        .dm-hr { height: 1px; background: rgba(0,0,0,0.1); margin: 4px 0 8px; }
+        [data-theme="dark"] .dm-hr { background: rgba(255,255,255,0.12); }
+        .dm-sl { display: flex; align-items: center; gap: 8px; padding: 2px 14px 8px; font-size: 12px; }
+        .dm-sl span { opacity: 0.55; }
+        .dm-sl input { flex: 1; min-width: 0; accent-color: #8E8E93; }
+        .dm-sl output { width: 34px; text-align: right; font-variant-numeric: tabular-nums; opacity: 0.75; }
+        .dm-r { display: flex; align-items: center; justify-content: space-between; padding: 4px 14px; font-size: 12.5px; }
+        .dm-r > span { opacity: 0.6; }
+        .dm-seg { display: flex; width: 150px; padding: 2px; border-radius: 7px; background: rgba(0,0,0,0.07); }
+        [data-theme="dark"] .dm-seg { background: rgba(255,255,255,0.08); }
+        .dm-seg button { flex: 1; height: 22px; border: 0; background: none; border-radius: 5px; font: 600 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; cursor: default; }
+        .dm-seg button.on { background: #fff; box-shadow: 0 0.5px 2px rgba(0,0,0,0.2); }
+        [data-theme="dark"] .dm-seg button.on { background: #636366; }
+        .dm-foot { display: flex; align-items: center; gap: 12px; padding: 0 14px; font-size: 13px; }
+        .dm-sp { flex: 1; }
+        .dm-pause, .dm-ib { padding: 2px 4px; border-radius: 5px; }
+        .dm-pause:hover, .dm-ib:hover { background: rgba(0,0,0,0.07); }
+        .dm-ib { font-size: 15px; }
+        /* Settings window (tabs like the app) */
+        .dm-set { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--set-bg); font-size: 12.5px; }
+        .dm-tabs { display: flex; justify-content: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid var(--win-line); }
+        .dm-tab { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 8px; border-radius: 7px; font-size: 10.5px; color: var(--win-muted); }
+        .dm-tab i { font-style: normal; font-size: 16px; line-height: 1.1; }
+        .dm-tab.on { background: rgba(0,0,0,0.07); color: var(--win-text); }
+        [data-theme="dark"] .dm-tab.on { background: rgba(255,255,255,0.08); }
+        .dm-sb { flex: 1; overflow-y: auto; padding: 10px 14px 14px; overscroll-behavior: contain; scrollbar-width: thin; }
+        .dm-box { background: var(--set-box); border-radius: 9px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.12); margin-bottom: 10px; }
+        .dm-box > * + * { border-top: 1px solid var(--win-line); }
+        .dm-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; min-height: 32px; }
+        .dm-row input[type="range"] { flex: 1; max-width: 160px; margin-left: auto; accent-color: #8E8E93; }
+        .dm-row output { width: 34px; text-align: right; color: var(--win-muted); font-variant-numeric: tabular-nums; }
+        .dm-row .dm-seg { margin-left: auto; width: 130px; }
+        .dm-row .dm-sw { margin-left: auto; }
+        .dm-gh { font-weight: 700; margin: 12px 4px 6px; }
+        .dm-note { font-size: 11px; color: var(--win-muted); margin: -4px 4px 10px; }
+        .dm-colors { display: flex; gap: 6px; margin-left: auto; }
+        .dm-colors i { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3), 0 0 0 1px rgba(0,0,0,0.2); }
+        .dm-colors i.on { box-shadow: 0 0 0 2px var(--set-box), 0 0 0 4px #2F7CF6; }
+        .dm-anim { display: flex; align-items: center; gap: 6px; margin-left: auto; color: var(--win-muted); font-size: 11px; }
+        .dm-anim input { width: 110px; accent-color: #8E8E93; }
+        /* Window content */
+        .dm-pg { position: absolute; inset: 0; padding: 12px 14px; overflow: hidden; font-size: 12px; line-height: 1.5; }
+        .dm-pg h4 { font-size: 14px; margin-bottom: 4px; }
+        .dm-lines i { display: block; height: 7px; border-radius: 4px; background: var(--win-line); margin-bottom: 7px; }
+        .dm-key { position: absolute; inset: 0; display: flex; }
+        .dm-key aside { width: 26%; background: rgba(0,0,0,0.05); padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+        .dm-key aside i { height: 26px; border-radius: 3px; background: linear-gradient(135deg, #FF9466, #FFB020); }
+        .dm-key div { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #FF9466, #FFB020); color: #fff; margin: 10px; border-radius: 6px; }
+        .dm-term { position: absolute; inset: 0; background: #1C1C1E; color: #D7D7DB; padding: 8px 10px; font: 10.5px/1.5 'Space Mono', ui-monospace, monospace; white-space: pre; overflow: hidden; }
+        .dm-term .g { color: #5AD16A; }
+        .mk-win.dark .mk-bar { background: #2B2B2E; border-bottom-color: #000; }
+        .mk-win.dark .mk-bar span { color: #A9A9AE; }
     </style>
 </head>
 <body>
@@ -1471,15 +1761,16 @@
 
     <nav>
         <div class="nav-inner">
-            <div class="logo">LilDim</div>
+            <a class="logo" href="./">LilDim</a>
             <ul class="nav-links">
                 <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#automation">Automation</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
             <div class="nav-right">
-                <a href="#pricing" class="btn btn-primary" data-appstore>Get It &mdash; $0.99</a>
+                <a href="LilDim.dmg" class="btn btn-primary" download>Download</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1488,103 +1779,94 @@
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-top">
-                <div class="hero-device">
-                    <img src="screenshots/app-icon.png" alt="LilDim app icon" class="hero-appicon" width="140" height="140">
+    <!-- ===================== HERO: copy · a Mac running LilDim ===================== -->
+    <section class="hero" id="try" aria-label="LilDim, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilDim app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Menu Bar Utility for macOS</div>
                 </div>
-
-                <div class="hero-center">
-                    <div class="badge">
-                        <div class="badge-dot"></div>
-                        Menu Bar Utility for macOS
+                <h1>Everything else <span class="highlight">fades away</span>.</h1>
+                <p class="hero-subtitle">LilDim gently dims, or blurs, every window except the one you're working in. Switch apps and the focus follows you with a soft crossfade. Sheets, menus and popovers always stay bright.</p>
+                <div class="hero-buttons">
+                    <div class="hero-buttons-row">
+                        <div class="download-btn-wrapper">
+                            <a href="LilDim.dmg" class="btn btn-primary" download><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Download for Mac</a>
+                            <span class="system-req">Free &middot; v1.0 &middot; macOS 14.6+ &middot; Apple silicon &amp; Intel</span>
+                        </div>
                     </div>
-                    <h1>Everything else <span class="highlight">fades away.</span></h1>
-                    <p class="hero-subtitle">LilDim gently dims, or blurs, every window except the one you're working in. Switch apps and the focus follows you with a soft crossfade. Sheets, menus and popovers always stay bright.</p>
-                    <div class="hero-buttons">
-                        <div class="hero-buttons-row">
-                            <div class="download-btn-wrapper">
-                                <a href="#pricing" class="btn btn-primary" data-appstore>
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                                    Mac App Store
-                                </a>
-                                <span class="system-req">$0.99 once &middot; macOS 14.6+ &middot; No subscription</span>
-                            </div>
-                        </div>
-                        <div class="privacy-notice">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            <p>Works with no permission at all. No Screen Recording, no network access, nothing collected. Accessibility is optional, for instant tracking. <a href="privacy.html">Privacy Policy</a></p>
-                        </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>Works with no permission at all. No Screen Recording, no network access, nothing collected. Accessibility is optional, for instant tracking. <a href="privacy.html">Privacy Policy</a></p>
                     </div>
                 </div>
+                <p class="live-line"><span class="live-tag">LIVE</span><b>Click any window</b> on this Mac and the focus follows. Click the <b>◐ icon</b> in its menu bar for the controls, or scroll on it.</p>
+            </div>
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac running LilDim: everything but the front window is dimmed">
+                            <div class="mk-world">
+                                <div class="mk-wall sky" id="wall"></div>
 
-                <div class="hero-demo">
-                    <div class="desk ring" id="desk" role="group" aria-label="Interactive demo: click a window to focus it">
-                        <div class="desk-wall"></div>
-                        <div class="desk-shade"></div>
-                        <div class="desk-menubar" aria-hidden="true">
-                            <span>&#63743;</span>
-                            <span class="mb-app" id="mbApp">Notes</span>
-                            <span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">View</span>
-                            <span class="mb-spacer"></span>
-                            <span class="mb-icon"></span>
-                            <span>9:41</span>
-                        </div>
-                        <div class="win w1 notes focused" data-app="Notes" tabindex="0" aria-label="Notes window">
-                            <div class="win-bar"><i></i><i></i><i></i><b>Notes</b></div>
-                            <div class="win-body">
-                                <span class="sk" style="top:10%;width:55%;opacity:.5;height:8%"></span>
-                                <span class="sk" style="top:26%;width:78%"></span>
-                                <span class="sk" style="top:38%;width:70%"></span>
-                                <span class="sk" style="top:50%;width:74%"></span>
-                                <span class="sk" style="top:62%;width:48%"></span>
-                                <span class="sk" style="top:76%;width:66%"></span>
-                            </div>
-                        </div>
-                        <div class="win w2 safari" data-app="Safari" tabindex="0" aria-label="Safari window">
-                            <div class="win-bar"><i></i><i></i><i></i><b>Safari</b></div>
-                            <div class="win-body">
-                                <span class="sk hero-block"></span>
-                                <span class="sk" style="left:6%;top:52%;width:60%;height:6%"></span>
-                                <span class="sk" style="left:6%;top:63%;width:80%;height:4%"></span>
-                                <span class="sk" style="left:6%;top:71%;width:72%;height:4%"></span>
-                                <span class="sk" style="left:6%;top:79%;width:52%;height:4%"></span>
-                            </div>
-                        </div>
-                        <div class="win w3 mail" data-app="Mail" tabindex="0" aria-label="Mail window">
-                            <div class="win-bar"><i></i><i></i><i></i><b>Mail</b></div>
-                            <div class="win-body">
-                                <span class="sk row" style="top:6%"></span>
-                                <span class="sk row" style="top:26%"></span>
-                                <span class="sk row" style="top:46%"></span>
-                                <span class="sk row" style="top:66%"></span>
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Finder</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <div class="mk-mbi dm-item" id="dmItem" role="button" aria-label="LilDim"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.7a6.3 6.3 0 010 12.6z" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+                                    <div class="dm-uidim" id="dimBar"></div>
+                                    <div class="dm-uidim" id="dimDock"></div>
+                                    <div class="mk-pop dm-pop" id="dmPop" hidden>
+                                        <div class="dm-ph"><span class="dm-pi"><svg viewBox="0 0 16 16" width="18" height="18"><circle cx="8" cy="8" r="6.3" fill="none" stroke="#2F7CF6" stroke-width="1.6"/><path d="M8 1.7a6.3 6.3 0 010 12.6z" fill="#2F7CF6"/></svg></span><div><b>LilDim</b><small id="dmStatus">Dimming 45%</small></div><span class="dm-sw on" id="dmOn" role="switch" aria-label="LilDim on"></span></div>
+                                        <div class="dm-hr"></div>
+                                        <div class="dm-sl"><span>☀︎</span><input type="range" id="dmInt" min="0" max="90" step="1" aria-label="Intensity"><span>☾</span><output id="dmIntV">45%</output></div>
+                                        <div class="dm-r"><span>Style</span><div class="dm-seg" data-k="style"><button type="button" data-v="dim">Dim</button><button type="button" data-v="blur">Blur</button></div></div>
+                                        <div class="dm-r"><span>Highlight</span><div class="dm-seg" data-k="highlight"><button type="button" data-v="window">Window</button><button type="button" data-v="app">App</button></div></div>
+                                        <div class="dm-hr"></div>
+                                        <div class="dm-foot"><span class="dm-pause" id="dmPause" role="button">❚❚ Pause ⌄</span><span class="dm-sp"></span><span class="dm-ib" id="dmGear" role="button" aria-label="Settings">⚙︎</span><span class="dm-ib" id="dmQuit" role="button" aria-label="Quit LilDim">⏻</span></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="demo-controls">
-                        <label>Style</label>
-                        <div class="seg" role="group" aria-label="Style">
-                            <button type="button" data-style="dim" aria-pressed="true">Dim</button>
-                            <button type="button" data-style="blur" aria-pressed="false">Blur</button>
-                        </div>
-                        <label for="demoIntensity">Intensity</label>
-                        <div class="range-row">
-                            <input id="demoIntensity" type="range" min="0" max="90" value="45">
-                            <output id="demoValue" for="demoIntensity">45%</output>
-                        </div>
-                        <div class="demo-buttons">
-                            <button type="button" class="chip-btn" id="demoRing" aria-pressed="true">Focus ring</button>
-                            <button type="button" class="chip-btn" id="demoPeek">Hold to peek</button>
-                            <button type="button" class="chip-btn" id="demoPower" aria-pressed="true">LilDim on</button>
-                        </div>
-                    </div>
-                    <p class="demo-hint">Click a window. That's the whole app.</p>
+                    <div class="mk-base"></div>
+                </div>
+                <div class="desk-bar">
+                    <button class="chip g" type="button" id="peek">Hold to peek</button>
+                    <button class="chip" type="button" data-do="toggle">⌃⌥⌘D Toggle</button>
+                    <button class="chip" type="button" data-do="keynote">Open Keynote</button>
+                    <button class="chip" type="button" data-do="theme">Switch to dark mode</button>
+                    <button class="chip on" type="button" data-do="relaunch" hidden>Open LilDim again</button>
                 </div>
             </div>
         </div>
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Eight things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 8</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilDim. Free to download.</b><br>Works with no permissions at all.</div>
+                <a href="LilDim.dmg" class="btn btn-primary" download>Download for Mac</a>
+            </div>
+        </div>
     </section>
+
 
     <section class="stats-bar">
         <div class="stats-grid">
@@ -1601,8 +1883,8 @@
                 <p>Your displays</p>
             </div>
             <div class="stat-item">
-                <h3>$0.99</h3>
-                <p>Once, forever</p>
+                <h3>Free</h3>
+                <p>Direct download</p>
             </div>
         </div>
     </section>
@@ -1767,23 +2049,23 @@ end tell</pre>
     <section class="pricing" id="pricing">
         <div class="section-header fade-in">
             <h2>Price</h2>
-            <p>Less than a coffee. Once.</p>
+            <p>There isn't one.</p>
         </div>
         <div class="pricing-card scale-in">
-            <div class="price-tag"><span class="currency">$</span>0<sup>.99</sup></div>
-            <div class="price-period">Once. Yours forever.</div>
+            <div class="price-tag"><span class="currency">$</span>0</div>
+            <div class="price-period">Free Download</div>
             <ul class="pricing-features">
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Every feature, no Pro tier</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dim, blur and focus ring</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No account, no telemetry</li>
                 <li><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Family Sharing &amp; future updates</li>
             </ul>
-            <a href="#pricing" class="btn btn-primary pricing-cta" data-appstore>
+            <a href="LilDim.dmg" class="btn btn-primary pricing-cta" download>
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                <span data-appstore-label>Coming Soon to the Mac App Store</span>
+                Download for Mac
             </a>
             <p class="trial-note">macOS 14.6+ &middot; Apple silicon &amp; Intel</p>
-            <p class="price-note">No subscription. No in-app purchases.</p>
+            <p class="price-note">Notarized by Apple. Open the DMG and drag it into Applications.</p>
         </div>
     </section>
 
@@ -1798,7 +2080,7 @@ end tell</pre>
             </div>
             <div class="faq-item fade-in stagger-2">
                 <h3>I can't find LilDim in the Accessibility list.</h3>
-                <p>macOS doesn't let App Store apps add themselves there. In System Settings &rarr; Privacy &amp; Security &rarr; Accessibility, click <code>+</code> and choose LilDim (or drag it in from Finder), then switch it on. LilDim's Settings walks you through it and turns green the moment it's done.</p>
+                <p>macOS doesn't let sandboxed apps add themselves there. In System Settings &rarr; Privacy &amp; Security &rarr; Accessibility, click <code>+</code> and choose LilDim (or drag it in from Finder), then switch it on. LilDim's Settings walks you through it and turns green the moment it's done.</p>
             </div>
             <div class="faq-item fade-in stagger-3">
                 <h3>Will it dim my menus, dialogs or Save sheets?</h3>
@@ -1810,7 +2092,7 @@ end tell</pre>
             </div>
             <div class="faq-item fade-in stagger-2">
                 <h3>Coming from HazeOver?</h3>
-                <p>Everything you used is here: intensity, color, fade speed, Light and Dark profiles, front window or all app windows, multi-display modes, Focus Filters, Shortcuts, AppleScript and hold fn. LilDim adds blur, a focus ring, per-app pause rules and a URL scheme, for $0.99.</p>
+                <p>Everything you used is here: intensity, color, fade speed, Light and Dark profiles, front window or all app windows, multi-display modes, Focus Filters, Shortcuts, AppleScript and hold fn. LilDim adds blur, a focus ring, per-app pause rules and a URL scheme, for free.</p>
             </div>
             <div class="faq-item fade-in stagger-3">
                 <h3>I hid the menu bar icon. How do I get back?</h3>
@@ -1964,6 +2246,644 @@ end tell</pre>
             focus(stack[0]);
             startAuto();
         })();
+    </script>
+    <script>
+    (function () {
+        'use strict';
+
+        // Set once LilDim is live: https://apps.apple.com/app/id<AppleID>
+        const APP_STORE_URL = '';
+        if (APP_STORE_URL) document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; });
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - (M.DOCK ? M.DOCK + 4 : 0) }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : (it.ic || '')}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) {
+                        const sub = d.appendChild(typeof it.sub === 'function' ? it.sub() : buildMenu(it.sub));
+                        sub.classList.add('mk-sub', 'mk-menu');
+                        // Like macOS: a submenu that would run off the bottom slides up
+                        const fitSub = () => { sub.style.top = '-5px'; requestAnimationFrame(() => { const b = M.box(sub); if (b.y + b.h > M.H - 4) sub.style.top = (-5 - (b.y + b.h - (M.H - 4))) + 'px'; }); };
+                        d.addEventListener('pointerenter', fitSub);
+                        d.addEventListener('click', fitSub);
+                    }
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.sub) { if (e.target.closest('.mk-sub') === null) d.classList.toggle('open'); return; }
+                        if (it.dis) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                const left = clampN(x, 4, M.W - w - 4);
+                el.style.left = left + 'px';
+                el.classList.toggle('flip', left + w * 2 > M.W);
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- LilDim, live (modelled on its popover and Settings) ----------
+        const M = MacKit($('#mac'));
+        const item = $('#dmItem'), pop = $('#dmPop'), winsEl = M.world.querySelector('.mk-wins');
+        const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+        // Settings: separate Light and Dark profiles (25% / 45% out of the box)
+        const defaults = () => ({ on: true, style: 'dim', highlight: 'window', light: { i: 25, c: '#000000' }, dark: { i: 45, c: '#000000' }, anim: 0.35, ring: false, ringColor: '#B68CFF', menubar: true, dock: false, pauseKeynote: true, emptyDesktop: 'bright' });
+        let P = Object.assign(defaults(), store.get('dmSim.prefs', {}));
+        const save = () => store.set('dmSim.prefs', P);
+        let paused = 0, peeking = false, quit = false, tab = 'look';
+        const mode = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        const prof = () => P[mode()];
+
+        // Two dim layers, so a focus change crossfades instead of jumping
+        const layers = [0, 1].map(() => { const d = document.createElement('div'); d.className = 'dm-dim'; winsEl.appendChild(d); return d; });
+        let cur = 0;
+
+        // ---------- Windows ----------
+        const APPS = { notes: 'Notes', safari: 'Safari', mail: 'Mail', mail2: 'Mail', terminal: 'Terminal', keynote: 'Keynote' };
+        const WIN = {
+            notes: { title: 'Notes', html: '<div class="dm-pg" style="background:#FFFDF4;color:#222"><h4>Essay draft</h4>The best tools disappear while you use them. You notice them only when they get in the way…</div>' },
+            safari: { title: 'Safari', html: '<div class="dm-pg"><div style="height:56px;border-radius:8px;margin-bottom:9px;background:linear-gradient(120deg,#B68CFF,#FFD166)"></div><div class="dm-lines"><i style="width:84%"></i><i style="width:66%"></i><i style="width:74%"></i><i style="width:52%"></i></div></div>' },
+            mail: { title: 'Inbox', html: '<div class="dm-pg"><h4>Inbox</h4><div class="dm-lines"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div></div>' },
+            mail2: { title: 'New Message', html: '<div class="dm-pg">To: <b>Studio</b><br>Subject: Draft is ready<br><br><span style="color:var(--win-muted)">Hey! The essay is ready for a read…</span></div>' },
+            terminal: { title: 'Terminal — zsh', cls: 'dark', html: '<div class="dm-term"><span class="g">~</span> % open "lildim://intensity?value=40"\n<span class="g">~</span> % </div>' },
+            keynote: { title: 'Keynote — Launch', open: false, html: '<div class="dm-key"><aside><i></i><i></i><i></i></aside><div>Launch Day</div></div>' }
+        };
+        Object.entries(WIN).forEach(([id, o]) => M.win({ id, title: o.title, cls: o.cls || '', open: o.open !== false, x: 0, y: 0, w: 10, h: 10, html: o.html, dock: id === 'mail2' ? 'mail' : id }));
+        const START = { 1024: { notes: [40, 60, 300, 250], safari: [300, 90, 440, 300], mail: [610, 50, 360, 220], mail2: [690, 300, 300, 200], terminal: [90, 350, 360, 180], keynote: [200, 70, 560, 380] },
+            760: { notes: [20, 40, 230, 190], safari: [200, 66, 330, 220], mail: [470, 36, 270, 170], mail2: [520, 220, 225, 150], terminal: [40, 250, 280, 140], keynote: [120, 46, 470, 300] } };
+        function placeAll() { const S = START[M.W] || START[1024]; Object.keys(WIN).forEach(id => { const w = M.wins.get(id); [w.x, w.y, w.w, w.h] = S[id]; M.place(w); }); }
+        let focusId = 'safari';
+
+        // ---------- Applying the dim ----------
+        const active = () => !quit && P.on && !paused && !peeking && !(P.pauseKeynote && focusId === 'keynote') && !(focusId === null && P.emptyDesktop === 'bright');
+        function bright() {
+            if (!focusId) return [];
+            return P.highlight === 'app' ? Object.keys(WIN).filter(id => APPS[id] === APPS[focusId] && M.wins.get(id).open && !M.wins.get(id).min) : [focusId];
+        }
+        function apply(fade = true) {
+            const pr = prof(), b = bright();
+            // Bright windows come to the top; the dim goes right behind them
+            b.slice().reverse().forEach(id => { const w = M.wins.get(id); if (id !== focusId) { w.z = M.z += 2; M.place(w); } });
+            if (focusId) { const w = M.wins.get(focusId); w.z = M.z += 2; M.place(w); }
+            const minZ = b.length ? Math.min(...b.map(id => M.wins.get(id).z)) : M.z + 2;
+            const old = layers[cur], next = layers[cur = 1 - cur];
+            const style = P.style === 'blur'
+                ? { background: hexA(pr.c, pr.i / 100 * 0.35), backdropFilter: `blur(${(pr.i / 90 * 9).toFixed(1)}px)`, webkitBackdropFilter: `blur(${(pr.i / 90 * 9).toFixed(1)}px)` }
+                : { background: hexA(pr.c, pr.i / 100), backdropFilter: 'none', webkitBackdropFilter: 'none' };
+            M.world.style.setProperty('--fade', (fade && !REDUCED ? P.anim : 0) + 's');
+            Object.assign(next.style, style, { zIndex: minZ - 1 });
+            const on = active();
+            next.classList.toggle('on', on);
+            if (old !== next) old.classList.remove('on');
+            ['dimBar', 'dimDock'].forEach(id => { const e = $('#' + id); Object.assign(e.style, style); e.classList.toggle('on', on && (id === 'dimBar' ? !P.menubar : !P.dock)); });
+            M.wins.forEach(w => { w.el.classList.toggle('dm-ring', on !== null && P.ring && !quit && P.on && w.id === focusId); w.el.style.setProperty('--ring', P.ringColor); });
+            renderPop(); item.classList.toggle('off', !active());
+        }
+        function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a.toFixed(3)})`; }
+
+        // Focus follows you (pointer down on a window, the Dock, or the desktop)
+        M.on('focus', w => {
+            if (w.id === 'settings') { $('#mbApp').textContent = 'LilDim'; return; }
+            if (focusId === w.id) return;
+            const was = focusId; focusId = w.id;
+            $('#mbApp').textContent = APPS[w.id];
+            apply();
+            if (was && APPS[was] !== APPS[w.id]) Q.done('focus');
+            if (w.id === 'keynote' && P.pauseKeynote) M.hud('Paused while Keynote is in front', 1300);
+        });
+        M.on('win', (w, what) => { if (what === 'close' || what === 'min') { if (w.id === focusId) { focusId = null; $('#mbApp').textContent = 'Finder'; } apply(); } });
+        $('.mk-wall', M.world).addEventListener('pointerdown', () => { focusId = null; M.focus = null; M.wins.forEach(w => w.el.classList.remove('focus')); $('#mbApp').textContent = 'Finder'; apply(); });
+
+        // ---------- Popover ----------
+        const intIn = $('#dmInt');
+        function statusText() {
+            if (quit) return 'Off';
+            if (!P.on) return 'Off';
+            if (paused) return 'Paused for ' + paused;
+            if (P.pauseKeynote && focusId === 'keynote') return 'Paused: Keynote';
+            return (P.style === 'blur' ? 'Blurring ' : 'Dimming ') + prof().i + '%';
+        }
+        function renderPop() {
+            $('#dmStatus').textContent = statusText();
+            $('#dmOn').classList.toggle('on', P.on);
+            intIn.value = prof().i; $('#dmIntV').textContent = prof().i + '%';
+            $$('.dm-seg', pop).forEach(s => $$('button', s).forEach(b => b.classList.toggle('on', P[s.dataset.k] === b.dataset.v)));
+            $('#dmPause').innerHTML = paused ? '▶ Resume' : '❚❚ Pause ⌄';
+            if (setWin.open) renderSet();
+        }
+        M.popItem(item, pop);
+        M.on('pop', (p, open) => { if (p === pop && open) { renderPop(); item.classList.remove('hint'); } });
+        // ⌥-click toggles; scrolling on the icon adjusts intensity
+        item.addEventListener('pointerdown', e => { if (e.altKey) { e.stopImmediatePropagation(); setOn(!P.on); } }, true);
+        item.addEventListener('wheel', e => { e.preventDefault(); prof().i = clampN(prof().i + (e.deltaY < 0 ? 2 : -2), 0, 90); save(); apply(false); M.hud((P.style === 'blur' ? 'Blur ' : 'Dim ') + prof().i + '%', 600); Q.done('intensity'); }, { passive: false });
+        intIn.addEventListener('input', () => { prof().i = +intIn.value; save(); apply(false); Q.done('intensity'); });
+        $('#dmOn').addEventListener('click', () => setOn(!P.on));
+        pop.addEventListener('click', e => {
+            const b = e.target.closest('.dm-seg button');
+            if (b) { setPref(b.parentElement.dataset.k, b.dataset.v); return; }
+            if (e.target.closest('#dmGear')) { M.closePops(); openSettings(); }
+            if (e.target.closest('#dmQuit')) { M.closePops(); setQuit(true); }
+        });
+        function setPref(k, v) {
+            P[k] = v; save(); apply();
+            if (k === 'style' && v === 'blur') Q.done('blur');
+            if (k === 'highlight' && v === 'app') { Q.done('app'); if (APPS[focusId] !== 'Mail') { M.focusWin('mail'); } }
+        }
+        $('#dmPause').addEventListener('pointerdown', e => {
+            e.stopPropagation();
+            if (paused) { resume(); return; }
+            M.openMenu($('#dmPause'), () => [{ t: 'For 15 Minutes', act: () => pause('15 min') }, { t: 'For 1 Hour', act: () => pause('1 hour') }, { t: 'Until Tomorrow', act: () => pause('the day') }], 'left');
+            const m = $('.mk-ui > .mk-menu'); if (m) { const b = M.box($('#dmPause')); m.style.top = (b.y + b.h + 4) + 'px'; }
+        });
+        function pause(label) { paused = label; apply(); Q.done('pause'); M.hud('Paused for ' + label, 1100); }
+        function resume() { paused = 0; apply(); }
+        function setOn(on) { P.on = on; save(); apply(); M.hud(on ? 'LilDim on' : 'LilDim off', 700); }
+        function setQuit(q) { quit = q; item.hidden = q; $('[data-do="relaunch"]').hidden = !q; if (q) M.closeWin('settings'); apply(); M.hud(q ? 'LilDim quit' : 'LilDim', 800); }
+
+        // ⌃⌥⌘D from anywhere
+        document.addEventListener('keydown', e => { if (e.ctrlKey && e.altKey && e.metaKey && e.code === 'KeyD' && !quit) { e.preventDefault(); setOn(!P.on); } });
+
+        // Hold to peek (fn on a real Mac)
+        const peekBtn = $('#peek');
+        const peek = on => { peeking = on; peekBtn.classList.toggle('on', on); apply(); if (on) Q.done('peek'); };
+        peekBtn.addEventListener('pointerdown', e => { e.preventDefault(); peekBtn.setPointerCapture(e.pointerId); peek(true); });
+        ['pointerup', 'pointercancel'].forEach(t => peekBtn.addEventListener(t, () => peek(false)));
+        peekBtn.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !peeking) { e.preventDefault(); peek(true); } });
+        peekBtn.addEventListener('keyup', () => peek(false));
+
+        // ---------- Settings (General · Look · Behavior · Apps · Shortcuts · About) ----------
+        const setWin = M.win({ id: 'settings', title: 'Look', open: false, x: 0, y: 0, w: 10, h: 10, html: '<div class="dm-set"><div class="dm-tabs" id="dmTabs"></div><div class="dm-sb" id="dmSB"></div></div>' });
+        const TABS = [['general', '⚙︎', 'General'], ['look', '◐', 'Look'], ['behavior', '❐', 'Behavior'], ['apps', '▦', 'Apps'], ['shortcuts', '⌨︎', 'Shortcuts'], ['about', 'ⓘ', 'About']];
+        const COLORS = ['#000000', '#1B2440', '#3A2350', '#4A2A12'];
+        function openSettings() { if (quit) setQuit(false); const s = M.W / 1024; [setWin.x, setWin.y, setWin.w, setWin.h] = [M.W - 420 * s - 20, M.MB + 8, Math.max(330, 380 * s), M.H - M.MB - 70 * s]; M.place(setWin); M.openWin('settings'); renderSet(); }
+        const sw = (k, on) => `<span class="dm-sw sm${on ? ' on' : ''}" data-t="${k}" role="switch"></span>`;
+        const seg = (k, opts) => `<div class="dm-seg" data-k="${k}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" class="${P[k] === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+        const profBox = m => `<div class="dm-gh">${m === 'light' ? 'Light' : 'Dark'} appearance</div><div class="dm-box"><div class="dm-row"><span>Intensity</span><input type="range" min="0" max="90" value="${P[m].i}" data-int="${m}"><output>${P[m].i}%</output></div><div class="dm-row"><span>Color</span><span class="dm-colors">${COLORS.map(c => `<i style="background:${c}" class="${P[m].c === c ? 'on' : ''}" data-col="${m}" data-c="${c}"></i>`).join('')}</span></div></div>`;
+        function renderSet() {
+            setWin.el.querySelector('.mk-bar span').textContent = TABS.find(t => t[0] === tab)[2];
+            $('#dmTabs').innerHTML = TABS.map(([id, ic, n]) => `<div class="dm-tab${tab === id ? ' on' : ''}" data-tab="${id}"><i>${ic}</i>${n}</div>`).join('');
+            const sb = $('#dmSB'), top = sb.scrollTop;
+            sb.innerHTML = {
+                general: `<div class="dm-box"><div class="dm-row"><span>Launch at login</span>${sw('login', true)}</div><div class="dm-row"><span>Accessibility</span><span style="margin-left:auto;color:var(--win-muted)">Optional · not added</span></div></div><p class="dm-note">Without Accessibility, LilDim uses the public window list and works the same. With it, focus changes are instant and fn-to-peek turns on.</p>`,
+                look: `<div class="dm-box"><div class="dm-row"><span>Style</span>${seg('style', [['dim', 'Dim'], ['blur', 'Blur']])}</div></div>${profBox('light')}${profBox('dark')}
+                    <div class="dm-box"><div class="dm-row"><span>Animation</span><span class="dm-anim">Instant <input type="range" min="0" max="1" step="0.05" value="${P.anim}" data-anim> Slow</span></div></div>
+                    <div class="dm-box"><div class="dm-row"><span>Focus ring</span>${sw('ring', P.ring)}</div></div><p class="dm-note">A colored border around the focused window. Set intensity to 0% for a border without dimming.</p>
+                    <div class="dm-box"><div class="dm-row"><span>Keep menu bar bright</span>${sw('menubar', P.menubar)}</div><div class="dm-row"><span>Keep Dock bright</span>${sw('dock', P.dock)}</div></div>`,
+                behavior: `<div class="dm-box"><div class="dm-row"><span>Highlight</span>${seg('highlight', [['window', 'Window'], ['app', 'App']])}</div><div class="dm-row"><span>Empty desktop</span>${seg('emptyDesktop', [['bright', 'Undim'], ['dim', 'Keep dim']])}</div></div><p class="dm-note">With several displays: keep one focused window and dim the rest, or one bright window per display.</p>`,
+                apps: `<div class="dm-gh">Pause while in front</div><div class="dm-box"><div class="dm-row"><span>Keynote</span>${sw('pauseKeynote', P.pauseKeynote)}</div></div><p class="dm-note">Pause automatically whenever an app you choose is in front, like Keynote or a game.</p>`,
+                shortcuts: `<div class="dm-box"><div class="dm-row"><span>Toggle LilDim</span><span style="margin-left:auto">⌃⌥⌘D</span></div><div class="dm-row"><span>Peek</span><span style="margin-left:auto">Hold fn</span></div><div class="dm-row"><span>Toggle</span><span style="margin-left:auto">⌥-click the icon</span></div><div class="dm-row"><span>Intensity</span><span style="margin-left:auto">Scroll on the icon</span></div></div>`,
+                about: `<div class="dm-box"><div class="dm-row"><b>LilDim</b><span style="margin-left:auto;color:var(--win-muted)">Part of LilStudio</span></div></div><p class="dm-note">No network access, no tracking, nothing to sign up for.</p>`
+            }[tab];
+            sb.scrollTop = top;
+        }
+        $('#dmTabs').addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; renderSet(); } });
+        $('#dmSB').addEventListener('input', e => {
+            const t = e.target;
+            if (t.dataset.int) { P[t.dataset.int].i = +t.value; t.nextElementSibling.textContent = t.value + '%'; save(); apply(false); Q.done('intensity'); }
+            if (t.hasAttribute('data-anim')) { P.anim = +t.value; save(); }
+        });
+        $('#dmSB').addEventListener('click', e => {
+            const s = e.target.closest('[data-t]'), b = e.target.closest('.dm-seg button'), c = e.target.closest('[data-col]');
+            if (s) { if (s.dataset.t !== 'login') P[s.dataset.t] = !P[s.dataset.t]; save(); apply(); renderSet(); if (s.dataset.t === 'ring' && P.ring) Q.done('ring'); }
+            if (b) { setPref(b.parentElement.dataset.k, b.dataset.v); renderSet(); }
+            if (c) { P[c.dataset.col].c = c.dataset.c; save(); apply(); renderSet(); }
+        });
+
+        // Light and Dark profiles follow the site theme, with a gentle fade
+        new MutationObserver(() => { apply(); Q.done('theme'); themeChip(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        function themeChip() { $('[data-do="theme"]').textContent = mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'; }
+
+        // ---------- Menus, dock, controls ----------
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }],
+            app: () => $('#mbApp').textContent === 'LilDim' ? [{ t: 'Settings…', k: '⌘,', act: openSettings }, '-', { t: 'Quit LilDim', k: '⌘Q', act: () => setQuit(true) }] : [{ t: 'About ' + $('#mbApp').textContent, dis: true }, '-', { t: 'Hide', k: '⌘H', dis: true }],
+            file: () => [{ t: 'New Window', k: '⌘N', dis: true }, { t: 'Close Window', k: '⌘W', act: () => focusId && M.closeWin(focusId) }],
+            edit: () => [{ t: 'Copy', k: '⌘C', dis: true }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Minimize', k: '⌘M', act: () => focusId && M.minWin(focusId) }, '-', ...Object.keys(WIN).filter(id => M.wins.get(id).open).map(id => ({ t: WIN[id].title, act: () => M.openWin(id) }))],
+            help: () => [{ t: 'Search', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => { focusId = null; M.focus = null; M.wins.forEach(w => w.el.classList.remove('focus')); $('#mbApp').textContent = 'Finder'; apply(); } },
+            { id: 'safari', name: 'Safari', bg: 'radial-gradient(circle,#fff 0 46%,#2F7CF6 47%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M27 15l-4 10-8 2 4-10z" fill="#FF453A"/></svg>' },
+            { id: 'mail', name: 'Mail', bg: 'linear-gradient(#53B8FF,#1A7CF5)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><rect x="9" y="13" width="24" height="17" rx="2" fill="#fff"/><path d="M9.5 14l11.5 9 11.5-9" fill="none" stroke="#1A7CF5" stroke-width="2"/></svg>' },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFE27A 0 28%, #FFFDF4 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M10 22h22M10 28h22M10 34h14" stroke="#C9C3A8" stroke-width="2"/></svg>' },
+            { id: 'keynote', name: 'Keynote', bg: 'linear-gradient(160deg,#FFB020,#FF6B35)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M12 30h18M21 30V14M14 14h14l-2 8H16z" stroke="#fff" stroke-width="2.4" fill="none"/></svg>' },
+            { id: 'terminal', name: 'Terminal', bg: '#1C1C1E', icon: '<span style="font:700 15px Space Mono,monospace;color:#5AD16A">&gt;_</span>' }
+        ]);
+        $$('[data-do]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.do) {
+                case 'toggle': setOn(!P.on); break;
+                case 'keynote': M.openWin('keynote'); break;
+                case 'theme': toggleTheme(); break;
+                case 'relaunch': setQuit(false); break;
+            }
+        }));
+
+        // ---------- Things to try ----------
+        const ensurePop = async () => { if (quit) setQuit(false); if (!M.popOpen(pop)) { await M.press(item); await wait(400); } };
+        const Q = Quests({
+            key: 'dmSim.quests',
+            items: [
+                { id: 'focus', t: 'Switch windows', d: 'Click Notes, then Mail. The dim crossfades and follows you.' },
+                { id: 'intensity', t: 'Set the strength', d: 'Drag the slider in the ◐ popover, or just scroll on the ◐ icon.' },
+                { id: 'blur', t: 'Try Blur', d: 'Style › Blur: the rest of the screen goes soft instead of dark.' },
+                { id: 'app', t: 'Highlight the whole app', d: 'Highlight › App, then click a Mail window. Both Mail windows stay bright.' },
+                { id: 'ring', t: 'Add a focus ring', d: 'Settings (⚙︎) › Look › Focus ring. A colored border around the window you’re in.' },
+                { id: 'peek', t: 'Peek', d: 'Press and hold “Hold to peek” (fn on your Mac). The dim lifts until you let go.' },
+                { id: 'pause', t: 'Pause it', d: 'Popover › Pause › For 15 Minutes. Or open Keynote: it pauses by itself.' },
+                { id: 'theme', t: 'Flip dark mode', d: 'Use the moon/sun at the top of this page. LilDim fades to its Dark profile (45%).' }
+            ],
+            show: {
+                async focus() { await M.press(M.wins.get('notes').el.querySelector('.mk-bar span')); await wait(800); await M.press(M.wins.get('mail').el.querySelector('.mk-bar span')); await wait(800); M.ghostHide(); },
+                async intensity() { await ensurePop(); await M.ghostTo(intIn); const a = prof().i; await M.tween(900, t => { prof().i = Math.round(a + (75 - a) * Math.sin(t * Math.PI / 2)); apply(false); }); save(); Q.done('intensity'); await wait(800); M.ghostHide(); },
+                async blur() { await ensurePop(); await M.press($('.dm-seg[data-k="style"] [data-v="blur"]', pop)); await wait(1100); M.ghostHide(); },
+                async app() { await ensurePop(); await M.press($('.dm-seg[data-k="highlight"] [data-v="app"]', pop)); await wait(300); M.closePops(); await M.press(M.wins.get('mail2').el.querySelector('.mk-bar span')); await wait(1000); M.ghostHide(); },
+                async ring() { await ensurePop(); await M.press($('#dmGear')); await wait(400); tab = 'look'; renderSet(); $('#dmSB').scrollTop = 400; await wait(300); if (!P.ring) await M.press($('#dmSB [data-t="ring"]')); await wait(900); M.ghostHide(); },
+                async peek() { await M.ghostTo({ x: M.W / 2, y: M.H - 20 }); peek(true); await wait(1300); peek(false); M.ghostHide(); },
+                async pause() { await ensurePop(); if (paused) resume(); await M.press($('#dmPause')); await wait(400); await M.press($('.mk-ui > .mk-menu .mk-mi')); await wait(1100); M.ghostHide(); },
+                async theme() { toggleTheme(); await wait(1600); }
+            },
+            onReset() { P = defaults(); save(); paused = 0; quit = false; item.hidden = false; $('[data-do="relaunch"]').hidden = true; M.closePops(); M.closeWin('settings'); M.closeWin('keynote'); placeAll(); ['notes', 'mail', 'mail2', 'terminal', 'safari'].forEach(id => M.openWin(id)); apply(); item.classList.add('hint'); }
+        });
+
+        // ---------- Start ----------
+        M.on('layout', c => { if (c) { placeAll(); apply(false); } });
+        ['notes', 'mail2', 'mail', 'terminal', 'safari'].forEach(id => M.focusWin(id));
+        themeChip();
+        if (!Q.has('intensity')) item.classList.add('hint');
+
+        // Test hooks: ?sim=pop | blur | app | ring | settings
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'pop') M.openPop(item, pop);
+            if (s === 'blur') setPref('style', 'blur');
+            if (s === 'app') { setPref('highlight', 'app'); M.focusWin('mail'); }
+            if (s === 'ring') { P.ring = true; apply(); }
+            if (s === 'settings') openSettings();
+        })); });
+        window.__dm = { M, P: () => P, focus: () => focusId, active, Q, layers };
+    })();
     </script>
     <script src="/studio-wheel.js" defer></script>
 </body>

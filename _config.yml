@@ -3,3 +3,6 @@
 # (lilstudio.app/lildisplay/pair/?code=NN) open the iPhone app.
 include:
   - .well-known
+# Internal notes are not part of the site.
+exclude:
+  - docs

@@ -203,7 +203,7 @@ privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
 
 ## Testing hooks and tools
 
-- `?wheel=open`: force the wheel open. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over. Homepage grid: `?gridsweep=<a>,<b>` does the same between two tiles (by class: `stats,bounce`).
+- `?wheel=open`: force the wheel fully open (no auto-hide). By default the open watch *peeks* (Dock-style: only the top third of the case shows in the corner, `PEEK_FRACTION`) and slides up when the pointer reaches it or on a tap; `?wheel=peek` forces that start state. Apps with `hidden: true` in `ALL_PRODUCTS` (unreleased iOS apps) only appear on their own page. `?wheelhover=<id>`: simulate the pointer on one icon. `?wheelsweep=<a>,<b>`: glide a virtual pointer from icon a to b and back (4 s loop) to watch the hand-over. Homepage grid: `?gridsweep=<a>,<b>` does the same between two tiles (by class: `stats,bounce`).
 - Headless Chrome screenshots work for the hero:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,1000 --virtual-time-budget=4000 --screenshot=out.png URL`.
   Run one instance at a time with its own `--user-data-dir`, and give it time; parallel runs
@@ -221,3 +221,29 @@ privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
   The same `jsc` runs quick numeric simulations (spring overshoot, packing gaps) before any visual check.
 - Only stop preview servers and simulators you started yourself; other sessions may be using theirs.
 
+## Redesigning an app page (read `docs/REDESIGN-HANDOFF.md` first)
+
+`/lildisplay/` was rebuilt on 2026-11-13 around a **live, playable model of the app as the
+hero** (iPhone · copy · Mac, a physics cable, a working macOS desktop with the real site in
+its browser, guided "things to try"). The handoff file has the full story, the code map,
+the test toolkit and a playbook for the other apps. Rules that came out of it:
+
+- **Read the app's own repo first** (strings, controls, colours, current version, what is
+  released). The page must behave like the real app.
+- **Never push until Saeed says so**; he previews locally first. Don't commit his
+  screenshots (he drops them in the app folder) or `.DS_Store`.
+- Name one-off component classes so they can't collide with JS state classes
+  (`.live` badge vs `section.live` broke a section). Search for every rule on a selector
+  before restyling it; later rules and old media queries silently win.
+- `display:` overrides `[hidden]` (add `[hidden]{display:none}`); % padding is relative to
+  width; `.fade-in.visible` overrides hover transforms unless you add explicit rules.
+- Interactive surfaces: preventDefault on mouse pointerdown + temporary `user-select:none`
+  while dragging; invisible grab margins need `overflow-x: clip` on the section.
+- A page that can load itself in an iframe must detect it (`?embed=1` or
+  `window.self !== window.top`) and skip its simulator.
+- Testing: headless Chrome is ≥ 500 px wide; continuous rAF loops stall its virtual time
+  (screenshot with `--force-prefers-reduced-motion`); very tall screenshots glitch, so
+  screenshot sections in isolation. Interaction tests = a temporary `_t.html` copy with
+  an injected script dispatching PointerEvents and writing PASS/FAIL to `document.title`.
+- `docs/` is excluded from the published site (`_config.yml`); other `.md` files
+  (including this one) are public.
