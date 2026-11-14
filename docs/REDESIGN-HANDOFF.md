@@ -305,3 +305,129 @@ popovers, a Dock, HUD, and `M.press(el)` for demos.
    sandbox (they are still sandboxed builds, so the wording is accurate); revisit if a direct-download
    build drops the sandbox.
 
+
+## 11. LilDisplay rebuilt again: the site lives on the Mac (2026-11-14, local, not pushed)
+
+Saeed asked for the website "shown only in the Mac", the Mac wired to the iPhone with a USB cable "with
+the physics that makes sense", both devices movable, simpler and less detailed than §1, and playful.
+`lildisplay/index.html` was rewritten (~2,200 lines, was ~4,500). The old version is in git (`9c10af3`).
+
+**What the page is now**
+- One screen (`.room`, `position: fixed`, no page scroll): a desk band at the bottom, a MacBook on it,
+  an iPhone clipped to the left side of the lid (phones: landscape, resting on top of the lid), a
+  USB-C cable from the iPhone's port to the Mac's base. The studio wheel is still loaded last.
+- **The website is inside the Mac**: a browser window (`.win[data-w="browser"]`) whose body is the
+  whole site (nav with theme toggle, hero + downloads, stats, modes, what's new, features, gestures,
+  photos, setup, pricing, FAQ, contact form, footer). Same text, JSON-LD and meta as before, with
+  section `id`s so `#faq` links work. In-site `#` links scroll the window (`scrollSiteTo`).
+  Responsive by container queries on `.b-scroll`.
+- The Mac world is ~880 points wide (`sm = clamp(screenW / 880, 0.74, 1.15)`); the iPhone's display is
+  320×693 points (×1.35 in Full Resolution). Each window is drawn twice (Mac copy in the HTML, iPhone
+  copy cloned at boot, `aria-hidden`, ids stripped); scroll, `<details>` and form fields are mirrored
+  (`twin()`).
+- **Display arrangement follows the real position** (`arrange()`): iPhone left / right / above the
+  Mac, vertically aligned with where it physically is. Windows on the iPhone ride along with it.
+  Dragging a window maps the pointer through whichever screen it is over (`worldPt`, nearest screen in
+  the gap between them).
+- Kept from the real apps: menu bar status item "LilDisplay · Code 42" with a cut-down 3.3 menu
+  (status, Pairing Code › QR, Display Quality ›, Reconnect, Help & Support…, Quit); iOS idle screen
+  ("Connect your iPhone via USB", steps Plug USB / Mac app / Swipe up, "Swipe up to connect"), sheet
+  with WiFi | USB, the saved code (pair once) and Connect/Disconnect; "Connection lost" when the cable
+  comes out. Removed on purpose: Remote/Trackpad modes in the model, keyboard, gestures demo,
+  Spaces, Mission Control, Launchpad, Spotlight, lid, Terminal/Music/Photos, the quest cards outside.
+
+**Physics** (one rAF loop at 120 Hz substeps, sleeps when everything has settled)
+- Bodies `mac` and `ph`: gravity 2600 px/s², floor = desk, walls, bounce (phone 0.3, Mac 0.1), squash
+  on landing, tilt spring while carried (lags like a held object). Throw = pointer velocity on release
+  (Mac at 55%). A heavy Mac landing makes the iPhone hop.
+- Clip: drop the iPhone within ~44 px of the lid's side → it snaps on (`mount`), and rides with the
+  Mac. Falling onto the lid's top edge rests it there (`mount top`).
+- Cable: 34 Verlet points, pinned straight out of each port (`PLUG` 22 px), floor friction. Its
+  length is a max distance between the ports (`tether()`): it holds a carried iPhone back (stretching
+  a little), the Mac tows the iPhone, a free iPhone swings on it. Pulled ~170 px past its length while
+  carrying the iPhone → it pops out (`unplug(true)`, the plug recoils). Drag the loose plug (or the
+  iPhone) to the port to plug it back; the iPhone then shows "Swipe up to connect" again.
+- Grab the cable anywhere to swing it; lift the iPhone by it.
+- Packets ride the cable only while a screen changes (the real Mac app sends frames only then):
+  green Mac → iPhone, yellow for touches going back. WiFi shows a dotted arc instead.
+
+**Quests** (the Notes window on the Mac, `localStorage['ld.quests']`): drag the note to the other
+screen, throw the iPhone, yank and replug, turn it, clip it to the side, open the LilDisplay menu.
+Clicking an item shows a hint bubble on the desk (`hintFor`). Phones don't show the note (no room).
+
+**Test hooks**: `?sim=unplugged|idle|wifi|floor|right|menu|notesphone|landscape|portrait|done`,
+`window.__ld` (state, bodies, `unplug`, `plugIn`, `connect`, `rotatePhone`, `step(n)` runs physics
+substeps). Headless Chrome fires only a few rAF frames, so `tests/t_lildisplay.js` drives physics with
+`__ld.step()`; it runs with `--motion` (added to `run_tests.sh`). Smooth scrolling doesn't advance in
+headless either.
+
+**Known limits**: on a phone the Mac's screen is small, so the site reads like a little window
+(about 170 px of text height at 390 px wide); the green button / Help menu still work there.
+
+**Second round, same day (Saeed):** a gap between the iPhone and the Mac; both float and **stay exactly where
+they are dropped** (no gravity, no throw, no clip-on; only the cable can tug them; the desk is a lower
+limit). The Mac is ~25% bigger (`macW ≈ (vw − 120) / 1.24`, lifted `G.lift` above the desk) and the cable
+starts as a **U** hanging under both ports (`ropeInit`). Pressing a window on the Mac makes the iPhone's
+screen blink green ("Drop it here", `#phDrop`) and the Mac's edge facing it pulse with an arrow
+(`#macEdge`); while dragging over the iPhone it turns solid ("Release to drop"). The iPhone menu has the
+app's **Portrait | Landscape** row; turning keeps the phone's size (width and height swap). Quests now:
+note to the other screen, iPhone to the other side, swing the cable, yank + replug, turn, open the menu.
+
+**Third round:** a live **Terminal** window on the Mac (under Notes, Dock icon `>_`). It loops a session
+(`swift build` with a progress bar → `swift test` with a spinner → `git push` → `lildisplay stream` with a
+ticking frame/fps line that reads the real connection state) and pauses while closed/minimized/hidden.
+Click it ("click to type" in its title bar) to type: `help`, `lildisplay`, `rotate`, `connect`, `yank`,
+`build`/`demo`, `ls`, `date`, `echo`, `clear`; after 20 s idle the demo resumes. Both copies mirror its
+output, so it can be dragged onto the iPhone and keeps running there. The iPhone's turn button is now a
+yellow **"Rotate"** pill with a turn icon above the phone (the phone can't go above y = 52 so it stays on
+screen). Letting go of the loose plug within ~48 px of the port snaps it in.
+
+**Fourth round (screen use):** `sizes()` now picks the arrangement that gives the biggest Mac for the window
+(`G.layout`: `side` = iPhone beside it, `top` = iPhone on its side above it, always `top` under 700 px),
+with a thinner desk, small margins and no width cap. Measured: the Mac is 67–77% of the width at 1280×720,
+1440×900, 1920×1080 and 2560×1440 (height-bound on ultrawides), 91–96% in tall windows. The Mac's screen
+scales its contents up to 1.35× on big displays (`sm`). If the visitor hasn't moved or turned anything, a
+resize re-lays it all out (and turns the iPhone to suit the new layout).
+
+**Fifth round (real app features, swallow, notes, browser):**
+- Mac menu is now the complete LilDisplay for Mac 3.3 menu (read from `Sender/Sender/AppDelegate.swift`):
+  status + live "60 FPS • 7.9 ms" row, optional "CPU 3% • RAM 31 MB", Pairing Code › QR (real hint text),
+  Display Quality ›, Reconnect, Permissions (Screen Recording / Accessibility — Enabled, Fix Permissions
+  After Update… with the real alert), Advanced › (Keep Awake When Lid Is Closed with the real alert, Show CPU
+  & Memory Usage, New Pairing Code), Launch at Login, Help & Support…, Quit (asks about Keep Awake like the
+  app). The status item reads "● LilDisplay · Code NN" while waiting and "● LilDisplay" (green) connected.
+- (A lid you could close was tried and removed at Saeed's request; Keep Awake is only a menu toggle now.)
+- iPhone app (simplified on purpose; no Stats, Dark/Light, Direct/Trackpad rows): trial row, WiFi | USB, the
+  two code wheels + Scan (pairs when the Mac menu's QR submenu is open; a wrong code fails), Auto | Portrait |
+  Landscape, Display | Remote | Trackpad, the real Connect button (blue ▶ Connect, Cancel while connecting,
+  green ■ Disconnect) and the "Not Connected · ☆ Rate LilDisplay" / "USB ◔ 60 ⏱ 8ms" row. Remote shows
+  touches. Trackpad: no display on the iPhone, landscape pad with settings (tracking speed, tap to click)
+  and ⋯; it drives a pointer on the Mac (tap = click, two fingers / wheel = scroll).
+- Windows crossing screens go down the cable as a green lump with a little window inside (`swallow()`),
+  along the dotted arc over WiFi.
+- Notes: "Set up" (four install steps with the App Store and DMG links, editable, saved in
+  `localStorage['ld.note']`, paste is plain text) and "Things to try" tabs.
+- Browser: type in the address bar. lilstudio.app pages load inside it (this page itself shows the built-in
+  site; framed copies of this page render just the site), YouTube links become embeds, words search
+  Wikipedia, other sites load in an iframe with an "Open in a new tab" bar (many sites refuse framing).
+  ‹ › ↻ work, a loading bar runs. Same-site links in the site open inside the Mac too.
+- Screen 10% taller (16:11), contents scaled `sw / 840`, bigger default browser window.
+
+**Sixth round (less text):** the website inside the Mac is trimmed to hero, stats, three modes, six short
+features, photos, pricing, seven FAQs (JSON-LD regenerated to match) and a one-line contact; What's New,
+gestures and setup were removed from it (setup lives in the Notes "Set up" tab; the support page and the
+`vs-*` guides keep the longer answers). The desk now carries a short headline and one line of "Live" copy
+(`.desk-copy`), with a slightly taller desk. Terminal is shorter and sits above the Dock.
+
+**Seventh round:** the lid feature is gone (Saeed didn't want it). The desk shows the headline + "Live" line on
+the left and three fact cards on the right (`.desk-facts`: iPhone & iPad as a Mac display · USB or WiFi, no
+router · $2.99 once, Mac app free), hidden under 700 px.
+
+**Eighth round:** the headline, "Live" line, fact cards (only ≥ 1760 px wide, so the bar stays one row) and
+two big download buttons (App Store, Mac DMG) sit in a top bar (`.topbar`); `sizes()` measures it
+(`G.top`) and keeps the Mac and the Rotate pill below it. The desk is thin again. Turning the iPhone
+sideways next to the Mac gently pushes the Mac away (`makeRoom()` / `animateMac()`; it narrows only if the
+window has no room, the iPhone keeps its size) and turning it upright brings the Mac back. The Mac's
+desktop is tiled with 8-point gutters: Notes over Terminal in a left column (35%), the browser fills the rest.
+- "⠿ Drag to move" grips (`.grip`): under the Mac (`.mac-grip`), and above the iPhone next to Rotate
+  (`.ph-tools`) because the cable leaves the iPhone's bottom. Any pointerdown on them starts the device drag.

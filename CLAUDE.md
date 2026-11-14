@@ -49,8 +49,7 @@ and are linked from nowhere. To bring one back: remove that meta from its 3 html
 `sitemap.xml`, drop `hidden: true` from its entry in `ALL_PRODUCTS` (`studio-wheel.js`), restore its
 card from the HTML comment in `index.html` (search "hidden until they ship"), add its tile back to the
 hero `.app-grid` (and go back to a 4-column grid in both `.app-grid` rules if the count needs it), update
-"N right now", the meta description and the footer, and re-add it to LilDisplay's Launchpad list
-(`launchpad()` in `lildisplay/index.html`).
+"N right now", the meta description and the footer.
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
 `lilstats`, `lilpad`, `lilpass`, `lilbounce`, `lildim`, `lilsnap`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
@@ -321,7 +320,15 @@ Every app page now has a live, playable model of the app as its hero (LilDisplay
 other eleven on 2026-11-14; §8 of the handoff lists what each one does). `/lildisplay/` was rebuilt on 2026-11-13 around a **live, playable model of the app as the
 hero** (iPhone · copy · Mac, a physics cable, a working macOS desktop with the real site in
 its browser, guided "things to try"). The handoff file has the full story, the code map,
-the test toolkit and a playbook for the other apps. Rules that came out of it:
+the test toolkit and a playbook for the other apps.
+
+**`/lildisplay/` is different since 2026-11-14 (handoff §11):** the whole page is one desk with a Mac
+and an iPhone, no page scroll, no nav/stats/sections outside. **The website itself is the content of
+the browser window on the Mac** (real HTML, `.site`, container queries; the iPhone's display shows a
+cloned copy). The devices float and stay wherever they are dragged, joined by a
+Verlet USB-C cable (hanging in a U) that can be yanked out and plugged back in. Edit site text inside
+`.win[data-w="browser"]`; it doesn't follow the app-page anatomy below. Rules that came out of the
+first rebuild:
 
 - **Read the app's own repo first** (strings, controls, colours, current version, what is
   released). The page must behave like the real app.
