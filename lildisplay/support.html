@@ -57,6 +57,12 @@
   <li>The Mac app has no window. It lives in the menu bar, where it shows the WiFi pairing code.</li>
   <li>On the iPhone or iPad, swipe up to open the menu, choose <strong>USB</strong> or
     <strong>WiFi</strong>, and tap <strong>Connect</strong>.</li>
+  <li>WiFi, the first time: hover <em>Pairing Code</em> in the Mac's LilDisplay menu to show a QR
+    code, then tap <strong>Scan</strong> on the iPhone or iPad (or point the Camera at it). Since
+    version 3.3 the code stays the same, so after that you just tap Connect.</li>
+  <li>Pick a mode in the same menu: <strong>Display</strong> (extra screen), <strong>Remote</strong>
+    (extra screen you can touch) or <strong>Trackpad</strong> (the whole phone is a Mac trackpad, no
+    extra screen).</li>
 </ul>
 
 <h2>Common problems</h2>
@@ -83,8 +89,10 @@
 
 <h3>WiFi won't connect.</h3>
 <ul>
-  <li>The two-digit code on the iPhone or iPad must match the code in the Mac menu bar. The Mac
-    picks a new code every few hours, so check it again if it worked before.</li>
+  <li>The two-digit code on the iPhone or iPad must match the code in the Mac menu bar. Tap
+    <strong>Scan</strong> and scan the QR code under <em>Pairing Code</em> in the Mac menu to set it
+    for you. LilDisplay for Mac 3.3 keeps its code for good (Advanced → New Pairing Code makes a new
+    one); older Mac versions pick a new code every few hours, so update the Mac app.</li>
   <li>Turn Wi-Fi on on both devices. They don't need to join the same network: they connect
     directly, peer-to-peer.</li>
   <li>On the iPhone or iPad, allow LilDisplay to use the local network: Settings → Privacy &amp;
@@ -123,6 +131,13 @@
   Your Mac app is older than the iPhone or iPad app expects. Download the latest version from
   <a href="./">our website</a>, quit LilDisplay from the menu bar, drag the new copy onto Applications
   and choose <strong>Replace</strong>. Your permissions are kept.
+</p>
+
+<h3>Trackpad mode says "Update LilDisplay for Mac".</h3>
+<p>
+  Trackpad mode, QR pairing and the permission hints on your iPhone need LilDisplay for Mac 3.3 or
+  later. Get it from <a href="./">our website</a>. Until then, tap <em>Use as Display</em> to keep
+  using your device as a display.
 </p>
 
 <h3>Rotating my iPhone restarts the connection.</h3>
