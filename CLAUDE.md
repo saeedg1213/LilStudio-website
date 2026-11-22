@@ -22,7 +22,7 @@ no npm: every page is a hand-written `.html` file with its CSS in a `<style>` bl
 
 ## Current state of the apps (updated 2026-11-14)
 
-Saeed's rule (2026-11-14): **every app is free except LilHide ($1)**. LilDisplay's iOS app keeps its
+Saeed's rule (2026-11-14): **every app is free except LilHide ($1)**; LilClack is also $1 (his call, 2026-11-21). LilDisplay's iOS app keeps its
 in-app "3 free sessions, then $2.99" unlock because that limit is in the app itself (ask before changing
 that copy). Never state a price he hasn't given.
 
@@ -33,6 +33,7 @@ that copy). Never state a price he hasn't given.
 | LilDock | Mac | DMG `lildock/LilDock.dmg`, 1.0 (1) | Free · v1.0 · macOS 14.6+ | `~/dev/LilDock` |
 | LilDim | Mac | DMG `lildim/LilDim.dmg`, 1.0.0 (1) | Free · v1.0 · macOS 14.6+ | `~/dev/LilDim` |
 | LilSnap | Mac | DMG `lilsnap/LilSnap.dmg`, 1.0.0 (1) | Free · v1.0 · macOS 14+ | `~/dev/LilSnap` (XcodeGen) |
+| LilClack | Mac | **Coming soon** to the Mac App Store (no Apple ID yet: `APP_STORE_URL = ''`, buttons read "Coming to the Mac App Store" and point at `#try`) | **$1 once** (Saeed's price, 2026-11-21) · macOS 14+ | `~/dev/LilClack` |
 | LilHide | Mac | Mac App Store id6810696786 | **$1 once** · macOS 13.5+ | `~/dev/LilHide` |
 | LilMirror | Mac | Mac App Store id6811193440 | Free · macOS 13+ | `~/dev/LilMirror` |
 | LilStats | Mac | Mac App Store id6821720769 | Free · macOS 14.6+ | `~/dev/LilStats` |
@@ -52,7 +53,7 @@ hero `.app-grid` (and go back to a 4-column grid in both `.app-grid` rules if th
 "N right now", the meta description and the footer.
 
 App ids are lowercase (`lildisplay`, `lildock`, `lilusage`, `lilvibe`, `lilhide`, `lilmirror`,
-`lilstats`, `lilpad`, `lilpass`, `lilbounce`, `lildim`, `lilsnap`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
+`lilstats`, `lilpad`, `lilpass`, `lilbounce`, `lildim`, `lilsnap`, `lilclack`). The URL is `/<appid>/`. The wheel finds the current page from the first path segment,
 so the folder name must equal the wheel id.
 
 ## Visual language (neo-brutalist)
@@ -80,7 +81,7 @@ so the folder name must equal the wheel id.
 Colours already used in the wheel (pick something distinct for a new app):
 studio `#FFE135` · LilDisplay `#00FF88` · LilDock `#FF6B5E` · LilUsage `#FFB020` ·
 LilVibe `#FF9466` · LilHide `#6C8CFF` · LilMirror `#F7DC3C` · LilStats `#7ED48A` ·
-LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35` · LilDim `#B68CFF` · LilSnap `#3FD98A`.
+LilPad `#FF7AC6` · LilPass `#7CC4F0` · LilBounce `#FF6B35` · LilDim `#B68CFF` · LilSnap `#3FD98A` · LilClack `#2CCBB9`.
 
 ## Motion language (Apple Watch-style)
 
@@ -259,9 +260,10 @@ privacy manifest (`PrivacyInfo.xcprivacy`) and its code (grep for network APIs).
    - Add a colour token to `:root` under "Product accents" (`--<short>` and `--<short>-alt`;
      e.g. `--stats`), then a rule for each of `.cell.app.<short>`, `.app-stage.<short>`,
      `.app-dot.<short>`, `.btn-app.<short>`.
-   - Hero `.app-grid` (3×3 since the iOS apps were hidden): LilStats, LilDisplay, LilDock / LilUsage,
-     LilVibe, LilDim / LilSnap, LilHide, LilMirror. The grid is full: a new app needs a fourth column or
-     row (change `grid-template-columns`/`-rows` in both `.app-grid` rules, desktop and ≤600px).
+   - Hero `.app-grid` (4×3 since LilClack, 2026-11-21): LilStats, LilDisplay, LilDock, LilUsage /
+     LilVibe, LilDim, LilSnap, LilClack / (muted), LilHide, LilMirror, (muted). The two `.cell.muted`
+     slots are free for the next apps; past 12, change `grid-template-columns`/`-rows` in both `.app-grid`
+     rules, desktop and ≤600px.
      It has the wheel's Watch-style hover (script at the end of index.html): the tile under the pointer
      swells on a spring and the others glide aside; it reads the column count from the computed
      `grid-template-columns` and the cells in DOM order, so keep cells (apps and muted) in grid order.
@@ -353,3 +355,17 @@ first rebuild:
   an injected script dispatching PointerEvents and writing PASS/FAIL to `document.title`.
 - `docs/` is excluded from the published site (`_config.yml`); other `.md` files
   (including this one) are public.
+
+## LilClack page notes (2026-11-21)
+
+- Built from `lilstats/index.html` (base CSS, MacKit CSS/JS, Quests) plus LilClack-specific CSS/HTML/JS.
+  The hero model plays the app's **real recordings** with Web Audio: `lilclack/sounds/<board>.flac` sprites
+  + `sprites.json` (start/duration of every take), made by `~/dev/LilClack/scripts/web-sprites.py <site>/lilclack/sounds`
+  whenever the app's packs change. FLAC decodes in Safari, Chrome and Firefox; decoding uses an
+  OfflineAudioContext so nothing plays (or warns) before a click.
+- The JS ports the app's logic 1:1: `Dynamics.swift` (rhythm → intensity), `Variation.swift` (layer and
+  per-key take), `KeyMap.swift` (KeyboardEvent.code → Mac key code, pan, class), `Router.swift` (what to play).
+  Typing only sounds in the note window and the "Type here" field; ⌃⌥K toggles anywhere on the page.
+- Hooks: `?sim=pop,options,call,crisp,off`; `window.__lc`; test `docs/tools/tests/t_lilclack.js`.
+- When it goes live: set `APP_STORE_URL` (the buttons then read "Mac App Store"), change the badge
+  "Coming Soon · Mac App Store", the homepage card's `.app-price` and the FAQ "on its way" line.

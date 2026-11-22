@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilClack — Support</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilClack colours (same as its main page) */
+        :root { --primary: #2CCBB9; --secondary: #FF6B5E; --logo-bar: linear-gradient(90deg, #2CCBB9 0 33%, #FFD23F 33% 66%, #FF6B5E 66%); }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilClack</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilClack</a></li>
+                <li><a href="support.html" aria-current="page">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>LilClack Support</h1>
+<p class="lede">Real mechanical keyboard sounds for your Mac.</p>
+
+<div class="note">
+  Need a hand, found a bug, or want a board added? Email
+  <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>. We read every
+  message and usually reply the same day.
+</div>
+
+<h2>Getting started</h2>
+<p>
+  LilClack has no Dock icon. After launching, a welcome window helps you allow
+  <strong>Input Monitoring</strong>, then it lives in your menu bar as a small keyboard.
+</p>
+<ul>
+  <li><strong>Click</strong> the keyboard to pick a board (Clack, Crisp or Snappy), set volume and tone, and open Options.</li>
+  <li><strong>Right-click</strong> it, or press <strong>⌃⌥K</strong>, to turn sounds on or off.</li>
+  <li>Click the shortcut shown in the menu to record a new one. Esc cancels, Delete removes it.</li>
+</ul>
+
+<h2>Common questions</h2>
+
+<h3>I don't hear anything.</h3>
+<p>
+  Check that LilClack is allowed in System Settings › Privacy &amp; Security › Input
+  Monitoring (the menu shows an orange banner if it isn't). Then check the master switch,
+  the volume slider, and Options › Output. The menu's status line says "Paused, mic in use"
+  while an app is using your microphone and "Pause during calls" is on.
+</p>
+
+<h3>Why does the first key or the spacebar sound different?</h3>
+<p>
+  On purpose. LilClack reads your typing rhythm: quick rolls play soft takes, ordinary
+  typing medium ones, and the first key after a pause, Return and Space hit harder.
+  Turn off Options › Natural variation for a steadier sound.
+</p>
+
+<h3>Can I use it with AirPods or another speaker?</h3>
+<p>
+  Yes. "System Output" follows whatever macOS is using, including when AirPods connect.
+  Pick a specific device in Options › Output to keep LilClack there. For headphones,
+  turn on 3D audio.
+</p>
+
+<h3>Can I control it from Shortcuts or a script?</h3>
+<p>
+  The Shortcuts app has Toggle LilClack, Turn LilClack On or Off, and Set LilClack Switch actions,
+  and a Focus filter can turn sounds off during a Focus. Links work too:
+  <code>lilclack://on</code>, <code>lilclack://off</code>, <code>lilclack://toggle</code>
+  and <code>lilclack://switch/crisp</code>.
+</p>
+
+<h3>How do I quit it?</h3>
+<p>
+  Click the keyboard in the menu bar and choose <strong>Quit</strong> (⌘Q while the menu is open).
+  To stop it starting with your Mac, turn off Options › Open at login.
+</p>
+
+<h2>System requirements</h2>
+<p>macOS 14 or later, on Apple silicon or Intel.</p>
+
+<footer>
+  LilClack is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+    </main>
+
+    <script src="/studio-wheel.js?v=3" defer></script>
+</body>
+</html>

@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
-    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilDim and LilSnap.">
+    <meta name="description" content="LilStudio builds small, native Mac and iOS apps that do one thing well. No subscriptions, no accounts, no telemetry. Home of LilDisplay, LilUsage, LilHide, LilMirror, LilVibe, LilDock, LilStats, LilDim, LilSnap and LilClack.">
     <meta property="og:title" content="LilStudio – Small Mac &amp; iOS apps that do one thing well">
     <meta property="og:description" content="Small, native Mac and iOS apps. No subscriptions, no accounts, no telemetry.">
     <meta property="og:url" content="https://lilstudio.app/">
@@ -63,6 +63,8 @@
             --dim-alt: #FFD166;
             --snap: #3FD98A;
             --snap-alt: #FDD33F;
+            --clack: #2CCBB9;
+            --clack-alt: #FF6B5E;
         }
 
         [data-theme="light"] {
@@ -397,7 +399,7 @@
 
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(3, 96px);
+            grid-template-columns: repeat(4, 96px);
             grid-template-rows: repeat(3, 96px);
             gap: 12px;
             transform: rotate(-4deg);
@@ -474,6 +476,7 @@
         .cell.app.bounce { background: var(--bounce); }
         .cell.app.dim { background: var(--dim); }
         .cell.app.snap { background: var(--snap); }
+        .cell.app.clack { background: var(--clack); }
 
         .cell.app svg { width: 26px; height: 26px; }
 
@@ -622,6 +625,7 @@
         .app-stage.bounce { background: var(--bounce); }
         .app-stage.dim { background: var(--dim); }
         .app-stage.snap { background: var(--snap); }
+        .app-stage.clack { background: var(--clack); }
 
         .app-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
 
@@ -656,6 +660,7 @@
         .app-dot.bounce { background: var(--bounce); }
         .app-dot.dim { background: var(--dim); }
         .app-dot.snap { background: var(--snap); }
+        .app-dot.clack { background: var(--clack); }
 
         .app-kicker {
             font-family: 'Space Mono', monospace;
@@ -716,6 +721,7 @@
         .btn-app.bounce { background: var(--bounce); }
         .btn-app.dim { background: var(--dim); }
         .btn-app.snap { background: var(--snap); }
+        .btn-app.clack { background: var(--clack); }
 
         .btn-app:hover {
             transform: translate(-2px, -2px);
@@ -1078,7 +1084,7 @@
             h1 { font-size: 1.9rem; }
             section { padding: 4rem 1rem; }
             .section-header h2 { font-size: 2rem; }
-            .app-grid { grid-template-columns: repeat(3, 70px); grid-template-rows: repeat(3, 70px); gap: 8px; }
+            .app-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(3, 70px); gap: 8px; }
             .cell { font-size: 0.56rem; }
             .cell.app svg { width: 22px; height: 22px; }
             .hero-buttons { flex-direction: column; width: 100%; }
@@ -1521,6 +1527,44 @@
         @keyframes ldmFocus { 0%, 30% { opacity: 0; } 36%, 94% { opacity: .55; } 100% { opacity: 0; } }
         @keyframes ldmLift { 0% { z-index: 3; } 33.3% { z-index: 1; } }
 
+        /* ---- LilClack ---- */
+        .lck { position: relative; width: 176px; height: 140px; }
+        .lck-key {
+            position: absolute; left: 34px; top: 44px; width: 92px; height: 76px; border-radius: 12px;
+            background: #E6D6AE; border: 3px solid #17150F; box-shadow: 4px 4px 0 #17150F;
+            animation: lckPress 2.4s infinite;
+        }
+        .lck-key::before {
+            content: ''; position: absolute; left: 9px; right: 9px; top: 4px; height: 46px;
+            background: #FBF3DD; border: 3px solid #17150F; border-radius: 9px;
+        }
+        .lck-key::after {
+            content: ''; position: absolute; left: 50%; top: 34px; width: 28px; height: 9px; margin-left: -14px;
+            background: var(--clack); border: 2px solid #17150F; border-radius: 5px;
+        }
+        @keyframes lckPress {
+            0%, 30%, 100% { transform: translate(0, 0); box-shadow: 4px 4px 0 #17150F; }
+            34%, 46%      { transform: translate(3px, 4px); box-shadow: 1px 0 0 #17150F; }
+        }
+        .lck-w {
+            position: absolute; left: 96px; top: 6px; width: 56px; height: 56px; border-radius: 50%;
+            border: 7px solid transparent; border-top-color: #FFD23F; border-right-color: #FFD23F;
+            transform: rotate(10deg) scale(0.6); opacity: 0; animation: lckWave 2.4s infinite;
+            filter: drop-shadow(2px 2px 0 #17150F);
+        }
+        .lck-w + .lck-w { left: 86px; top: -6px; width: 80px; height: 80px; border-top-color: var(--clack-alt); border-right-color: var(--clack-alt); animation-delay: 0.12s; }
+        @keyframes lckWave {
+            0%, 32%  { opacity: 0; transform: rotate(10deg) scale(0.6); }
+            40%      { opacity: 1; transform: rotate(10deg) scale(1); }
+            75%, 100% { opacity: 0; transform: rotate(10deg) scale(1.15); }
+        }
+        .lck b {
+            position: absolute; left: 6px; top: 8px; font: 700 12px/1 'Space Mono', monospace; color: #17150F;
+            background: #FFFBEF; border: 2px solid #17150F; box-shadow: 2px 2px 0 #17150F; padding: 4px 7px;
+            transform: rotate(-6deg); opacity: 0; animation: lckWord 2.4s infinite;
+        }
+        @keyframes lckWord { 0%, 33% { opacity: 0; } 37%, 62% { opacity: 1; } 68%, 100% { opacity: 0; } }
+
         /* ---- LilSnap ---- */
         .lsn { position: relative; width: 176px; height: 140px; }
         .lsn-screen {
@@ -1557,6 +1601,8 @@
         @media (prefers-reduced-motion: reduce) {
             .lsn-screen i { animation: none; left: 4px; top: 4px; width: 78px; height: 92px; }
             .lsn-keys b { animation: none; }
+            .lck-key, .lck b { animation: none; }
+            .lck-w { animation: none; opacity: 1; transform: rotate(10deg); }
             .lsn-keys b:nth-child(1) { opacity: 1; }
             .ldm i, .ldm i::after { animation: none; }
             .ldm i:nth-child(1)::after { opacity: 0; }
@@ -1647,6 +1693,11 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="9" height="16" rx="1" fill="currentColor" fill-opacity=".35"/><rect x="13" y="4" width="9" height="16" rx="1" fill="#fff"/></svg>
                         LilSnap
                     </a>
+                    <a class="cell app clack" href="/lilclack/" aria-label="LilClack">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="9" width="13" height="11" rx="2"/><rect x="5.5" y="10.5" width="8" height="6" rx="1" fill="#fff"/><path d="M17 5a5 5 0 013 4M18.5 2a8 8 0 014 6" stroke-linecap="round"/></svg>
+                        LilClack
+                    </a>
+                    <div class="cell muted" aria-hidden="true"></div>
                     <a class="cell app hide" href="/lilhide/" aria-label="LilHide">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="4" height="4"/><rect x="13" y="7" width="4" height="4"/><rect x="7" y="13" width="4" height="4"/></svg>
                         LilHide
@@ -1655,6 +1706,7 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>
                         LilMirror
                     </a>
+                    <div class="cell muted" aria-hidden="true"></div>
                 </div>
             </div>
         </div>
@@ -1670,7 +1722,7 @@
     <section class="apps" id="apps">
         <div class="section-header fade-in">
             <h2>The Apps</h2>
-            <p>Nine right now. Each one solves a single annoyance properly.</p>
+            <p>Ten right now. Each one solves a single annoyance properly.</p>
         </div>
 
         <div class="apps-grid">
@@ -2033,6 +2085,30 @@
                     </div>
                 </div>
             </div>
+            <div class="app-card fade-in stagger-1">
+                <div class="app-stage clack" aria-hidden="true">
+                    <div class="lck">
+                        <div class="lck-key"></div><i class="lck-w"></i><i class="lck-w"></i><b>clack!</b>
+                    </div>
+                </div>
+                <div class="app-body">
+                    <div class="app-title">
+                        <span class="app-dot clack"></span>
+                        <h3>LilClack</h3>
+                    </div>
+                    <div class="app-kicker">Mac &middot; Keyboard sounds</div>
+                    <p>Real, hand-recorded mechanical keyboard sounds as you type, on any keyboard. It reads your rhythm, so quick rolls land light and the first key after a pause lands hard. Stereo, 3D audio, and quiet during calls.</p>
+                    <div class="chips">
+                        <span class="chip">3 real boards</span>
+                        <span class="chip">Smart dynamics</span>
+                        <span class="chip">Quiet in calls</span>
+                    </div>
+                    <div class="app-cta">
+                        <a href="/lilclack/" class="btn btn-app clack">Open LilClack &rarr;</a>
+                        <span class="app-price">Coming soon &middot; $1 once &middot; macOS 14+</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -2094,7 +2170,7 @@
     </section>
 
     <footer>
-        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lildim/">LilDim</a> · <a href="/lilsnap/">LilSnap</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
+        <p>© 2026 LilStudio · <a href="/lildisplay/">LilDisplay</a> · <a href="/lilusage/">LilUsage</a> · <a href="/lilhide/">LilHide</a> · <a href="/lilmirror/">LilMirror</a> · <a href="/lilvibe/">LilVibe</a> · <a href="/lildock/">LilDock</a> · <a href="/lilstats/">LilStats</a> · <a href="/lildim/">LilDim</a> · <a href="/lilsnap/">LilSnap</a> · <a href="/lilclack/">LilClack</a> · <a href="mailto:support@lilstudio.app">Support</a></p>
     </footer>
 
     <script>
@@ -2239,6 +2315,6 @@
             }, 1200);
         })();
     </script>
-    <script src="/studio-wheel.js?v=2" defer></script>
+    <script src="/studio-wheel.js?v=3" defer></script>
 </body>
 </html>

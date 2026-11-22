@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LilClack &ndash; Real Mechanical Keyboard Sounds for Your Mac</title>
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+
+    <meta name="description" content="LilClack plays real, recorded mechanical keyboard sounds as you type on your Mac. Three hand-recorded boards, smart dynamics from your typing rhythm, stereo and 3D audio, and it pauses itself during calls. $1 once.">
+    <meta property="og:title" content="LilClack &ndash; Real Mechanical Keyboard Sounds for Your Mac">
+    <meta property="og:description" content="Every key, a satisfying clack. Real recordings, smart dynamics, $1 once.">
+    <meta property="og:url" content="https://lilstudio.app/lilclack/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://lilstudio.app/lilclack/screenshots/app-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="/assets/theme.js"></script>
+    <style>
+        :root {
+            /* Neo-Brutalist Colors - Dark Mode. Primary/secondary come from the app icon. */
+            --primary: #2CCBB9;
+            --secondary: #FF6B5E;
+            --accent: #FF6B5E;
+            --yellow: #FFD23F;
+            --load-low: #33C759;
+            --load-mid: #FFC200;
+            --load-high: #FF453A;
+            --bg: #0D0D0D;
+            --bg-elevated: #1A1A1A;
+            --text: #FFFFFF;
+            --text-muted: #9A9A9A;
+            --border: #FFFFFF;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            /* Windows inside the model follow the site theme */
+            --win-bg: #262628;
+            --win-bar: #333336;
+            --win-text: #F2F2F2;
+            --win-muted: #9A9AA0;
+            --win-line: rgba(255,255,255,0.08);
+            --set-bg: #1F1F21;
+            --set-box: #2C2C2F;
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F1DE;
+            --bg-elevated: #FFFBEF;
+            --text: #17150F;
+            --text-muted: #55503F;
+            --border: #17150F;
+            --win-bg: #FFFFFF;
+            --win-bar: #ECEAE4;
+            --win-text: #1D1D1F;
+            --win-muted: #77736A;
+            --win-line: rgba(0,0,0,0.07);
+            --set-bg: #F2F1EE;
+            --set-box: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .bg-pattern {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---- Navigation ---- */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 1rem 2rem;
+            background: var(--bg);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.5rem;
+            color: var(--text); letter-spacing: -0.02em; position: relative; z-index: 0; text-decoration: none;
+        }
+
+        /* Teal, yellow and coral under the logo: the icon's keycap tile and its two sound waves */
+        .logo::before {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 8px; z-index: -1;
+            background: linear-gradient(90deg, var(--primary) 0 33%, var(--yellow) 33% 66%, var(--secondary) 66%);
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; position: relative;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 3px;
+            background: var(--primary); transition: width 0.2s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+        /* ---- Buttons ---- */
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 0.03em; text-decoration: none; cursor: pointer;
+            border: var(--border-width) solid var(--border);
+            transition: transform 0.15s, box-shadow 0.15s; position: relative;
+        }
+
+        .btn-primary {
+            background: var(--primary); color: #000;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--border);
+        }
+        .btn-primary:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+
+        .theme-toggle {
+            width: 48px; height: 48px; background: var(--bg-elevated);
+            border: var(--border-width) solid var(--border); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s; box-shadow: 4px 4px 0 var(--border);
+        }
+        .theme-toggle:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+        .theme-toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .theme-toggle svg { width: 24px; height: 24px; color: var(--yellow); }
+        .sun-icon { display: block; }
+        .moon-icon { display: none; }
+        [data-theme="light"] .sun-icon { display: none; }
+        [data-theme="light"] .moon-icon { display: block; }
+        [data-theme="light"] .theme-toggle svg { color: #6B5B95; }
+
+        /* ---- Hero copy ---- */
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: var(--yellow);
+            border: var(--border-width) solid var(--border);
+            font-family: 'Space Mono', monospace; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em; color: #000;
+            margin-bottom: 1.5rem; transform: rotate(-1deg); box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .badge-dot {
+            width: 8px; height: 8px; background: var(--load-low); border: 2px solid #000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; line-height: 1.1;
+            letter-spacing: -0.03em; margin-bottom: 1.5rem;
+        }
+
+        h1 .highlight { position: relative; display: inline-block; z-index: 0; }
+        h1 .highlight::before {
+            content: ''; position: absolute; bottom: 0; left: -4px; right: -4px; height: 35%;
+            background: var(--primary); z-index: -1; transform: skewX(-3deg);
+            transform-origin: left; animation: highlightFill 0.9s cubic-bezier(.2,.9,.25,1) 0.6s both;
+        }
+
+        @keyframes highlightFill { from { transform: skewX(-3deg) scaleX(0); } to { transform: skewX(-3deg) scaleX(1); } }
+
+        .hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.7; }
+
+        .hero-buttons { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; }
+        .download-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+        .system-req {
+            font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-muted);
+            margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .privacy-notice {
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            padding: 1rem 1.5rem; border: var(--border-width) solid var(--border); max-width: 550px;
+        }
+        .privacy-notice svg { flex-shrink: 0; color: var(--primary); }
+        .privacy-notice p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; text-align: left; }
+        .privacy-notice a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .privacy-notice a:hover { background: var(--primary); color: #000; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ========== MacKit: a small working macOS desktop for the live hero ==========
+           Shared by the app pages (copied, no build step). The desktop is authored in
+           points (1024 × 640, or 760 × 475 on narrow screens) and scaled to fit. */
+        .mk-mac { position: relative; width: 100%; animation: fadeIn 0.9s ease 0.3s backwards; }
+        .mk-lid { position: relative; background: #161618; border: var(--border-width) solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 14px 0; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-cam { position: absolute; top: 0; left: 50%; width: 9%; height: 14px; transform: translateX(-50%); background: #161618; border-radius: 0 0 7px 7px; z-index: 5; }
+        .mk-cam::after { content: ''; position: absolute; left: 50%; top: 4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2C3440; }
+        .mk-cam.on::after { background: #28C840; box-shadow: 0 0 6px #28C840; }
+        .mk-screen { position: relative; overflow: hidden; border-radius: 6px 6px 0 0; background: #000; aspect-ratio: 1.6; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+        .mk-base { position: relative; height: 18px; margin: 0 -4%; background: linear-gradient(#D9DADD, #A9ABB0); border: var(--border-width) solid var(--border); border-radius: 0 0 14px 14px; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); }
+        .mk-base::before { content: ''; position: absolute; top: 0; left: 50%; width: 16%; height: 7px; transform: translateX(-50%); background: #8E9096; border-radius: 0 0 8px 8px; }
+        [data-theme="dark"] .mk-base { background: linear-gradient(#5A5B60, #2E2F33); }
+
+        .mk-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; font: 13px/1.35 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Space Grotesk', sans-serif; color: var(--win-text); --mb-ink: #111; }
+        [data-theme="dark"] .mk-world { --mb-ink: #F5F5F5; }
+        .mk-wall { position: absolute; inset: 0; transition: filter 0.4s, opacity 0.4s; }
+        .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #6B2A17 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #8C3B1E 0 40%, transparent 41%),
+                linear-gradient(180deg, #7DB8E4 0%, #B9D6EC 38%, #F3D2B0 62%, #D9875A 78%, #8A3A1C 100%);
+        }
+        [data-theme="dark"] .mk-wall.sky {
+            background:
+                radial-gradient(120% 70% at 30% 115%, #1B0D14 0 38%, transparent 39%),
+                radial-gradient(80% 50% at 80% 112%, #2A1420 0 40%, transparent 41%),
+                radial-gradient(2px 2px at 20% 18%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 10%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 82% 26%, #fff 50%, transparent 51%),
+                linear-gradient(180deg, #0B1530 0%, #1E2A55 40%, #6B3A6E 66%, #3A1C33 82%, #170A14 100%);
+        }
+        .mk-wins { position: absolute; inset: 0; isolation: isolate; z-index: 1; }
+        .mk-ui { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .mk-ui > * { pointer-events: auto; }
+
+        /* Menu bar */
+        .mk-menubar { position: absolute; top: 0; left: 0; right: 0; height: 26px; display: flex; align-items: center; gap: 2px; padding: 0 8px; font-size: 13px; color: var(--mb-ink); background: rgba(246, 240, 230, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); white-space: nowrap; z-index: 20; }
+        [data-theme="dark"] .mk-menubar { background: rgba(24, 24, 28, 0.62); }
+        .mk-mbi { height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; cursor: default; flex-shrink: 0; }
+        .mk-mbi.app { font-weight: 700; }
+        .mk-mbi:hover, .mk-mbi.open { background: rgba(0, 0, 0, 0.12); }
+        [data-theme="dark"] .mk-mbi:hover, [data-theme="dark"] .mk-mbi.open { background: rgba(255, 255, 255, 0.18); }
+        .mk-mbi svg { width: 16px; height: 16px; display: block; }
+        .mk-mb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+        .mk-mbi.hint { animation: mkHint 1.1s ease-in-out infinite; }
+        @keyframes mkHint { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 4px var(--primary); background: color-mix(in srgb, var(--primary) 40%, transparent); } }
+
+        /* Menus and popovers */
+        .mk-menu { position: absolute; top: 28px; min-width: 220px; padding: 5px; border-radius: 10px; background: rgba(246, 244, 240, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.18), 0 18px 40px rgba(0,0,0,0.32); color: #1D1D1F; font-size: 13px; z-index: 40; animation: mkMenuIn 0.14s ease-out; }
+        [data-theme="dark"] .mk-menu { background: rgba(40, 40, 44, 0.92); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px rgba(0,0,0,0.5); }
+        .mk-menu[hidden] { display: none; }
+        @keyframes mkMenuIn { from { opacity: 0; transform: translateY(-4px); } }
+        .mk-mi { position: relative; display: flex; align-items: center; gap: 8px; height: 23px; padding: 0 9px; border-radius: 5px; white-space: nowrap; cursor: default; }
+        .mk-mi .ck { width: 12px; flex-shrink: 0; font-size: 11px; }
+        .mk-mi .k { margin-left: auto; padding-left: 18px; opacity: 0.5; font-size: 12px; }
+        .mk-mi.dis { opacity: 0.45; }
+        .mk-mi:not(.dis):hover, .mk-mi.open { background: #2F7CF6; color: #fff; }
+        .mk-mi:not(.dis):hover .k { opacity: 0.85; }
+        .mk-mh { font-size: 11px; font-weight: 700; opacity: 0.5; padding: 6px 9px 2px; }
+        .mk-sep { height: 1px; margin: 4px 9px; background: rgba(0,0,0,0.12); }
+        [data-theme="dark"] .mk-sep { background: rgba(255,255,255,0.14); }
+        .mk-sub { position: absolute; left: calc(100% + 4px); top: -5px; display: none; }
+        .mk-mi.has-sub::after { content: '›'; margin-left: auto; padding-left: 18px; opacity: 0.6; font-size: 15px; }
+        .mk-mi.has-sub:hover > .mk-sub, .mk-mi.has-sub.open > .mk-sub { display: block; color: #1D1D1F; }
+        [data-theme="dark"] .mk-mi.has-sub:hover > .mk-sub { color: #F2F2F2; }
+        .mk-pop { position: absolute; top: 30px; border-radius: 12px; background: rgba(248, 246, 242, 0.96); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 0 0 1px rgba(0,0,0,0.16), 0 20px 46px rgba(0,0,0,0.34); color: #1D1D1F; z-index: 38; animation: mkMenuIn 0.16s ease-out; }
+        [data-theme="dark"] .mk-pop { background: rgba(38, 38, 42, 0.95); color: #F2F2F2; box-shadow: 0 0 0 1px rgba(255,255,255,0.14), 0 20px 46px rgba(0,0,0,0.55); }
+        .mk-pop[hidden] { display: none; }
+        .mk-pop::before { content: ''; position: absolute; top: -6px; left: var(--arrow, 50%); width: 12px; height: 12px; margin-left: -6px; background: inherit; transform: rotate(45deg); border-radius: 2px; box-shadow: -1px -1px 0 rgba(0,0,0,0.1); }
+        .mk-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; border-radius: 6px; font: 500 12px -apple-system, BlinkMacSystemFont, sans-serif; color: inherit; background: rgba(0,0,0,0.07); border: 0; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.2); cursor: default; }
+        [data-theme="dark"] .mk-btn { background: rgba(255,255,255,0.14); box-shadow: none; }
+        .mk-btn.blue { background: #2F7CF6; color: #fff; }
+        .mk-btn:active { filter: brightness(0.9); }
+
+        /* Windows */
+        .mk-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; background: var(--win-bg); border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 14px 34px rgba(0,0,0,0.35); transform-origin: 50% 100%; transition: transform 0.36s cubic-bezier(0.3, 1.15, 0.5, 1), opacity 0.28s, box-shadow 0.2s; }
+        .mk-win[hidden] { display: none; }
+        .mk-win.drag { transition: none; }
+        .mk-win.gone { opacity: 0; transform: scale(0.2) translateY(60%); pointer-events: none; }
+        .mk-win:not(.focus) { box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 6px 18px rgba(0,0,0,0.22); }
+        .mk-bar { height: 28px; flex: 0 0 28px; display: flex; align-items: center; gap: 7px; padding: 0 11px; background: var(--win-bar); border-bottom: 1px solid var(--win-line); touch-action: none; cursor: default; }
+        .mk-bar i { width: 12px; height: 12px; border-radius: 50%; display: block; flex-shrink: 0; position: relative; }
+        .mk-bar i[data-a="close"] { background: #FF5F57; }
+        .mk-bar i[data-a="min"] { background: #FEBC2E; }
+        .mk-bar i[data-a="zoom"] { background: #28C840; }
+        .mk-bar i::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 9px/1 -apple-system, sans-serif; color: rgba(0,0,0,0.55); opacity: 0; }
+        .mk-bar:hover i::after { opacity: 1; }
+        .mk-bar i[data-a="close"]::after { content: '×'; font-size: 11px; }
+        .mk-bar i[data-a="min"]::after { content: '−'; }
+        .mk-bar i[data-a="zoom"]::after { content: '+'; }
+        .mk-win:not(.focus) .mk-bar i { background: #BDBBB5; }
+        .mk-bar span { flex: 1; text-align: center; font-weight: 600; font-size: 13px; color: var(--win-muted); margin-right: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .mk-body { flex: 1; position: relative; overflow: hidden; }
+
+        /* Dock */
+        .mk-dock { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 6px; padding: 5px 7px; border-radius: 16px; background: rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 20px rgba(0,0,0,0.18); z-index: 15; }
+        [data-theme="dark"] .mk-dock { background: rgba(40, 40, 46, 0.45); box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 6px 20px rgba(0,0,0,0.3); }
+        .mk-dk { position: relative; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: default; transition: transform 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .mk-dk img { width: 100%; height: 100%; border-radius: 10px; display: block; }
+        .mk-dk:hover { transform: translateY(-6px) scale(1.12); }
+        .mk-dk.bounce { animation: mkBounce 0.6s ease 2; }
+        @keyframes mkBounce { 30% { transform: translateY(-16px); } 60% { transform: translateY(0); } }
+        .mk-dk.run::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--mb-ink); opacity: 0.7; }
+        .mk-dk .tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 6px; background: rgba(246, 244, 240, 0.95); color: #1D1D1F; font-size: 12px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.2); display: none; pointer-events: none; }
+        .mk-dk:hover .tip { display: block; }
+        .mk-dsep { width: 1px; height: 38px; align-self: center; background: rgba(0,0,0,0.25); }
+        [data-theme="dark"] .mk-dsep { background: rgba(255,255,255,0.25); }
+
+        /* HUD toast (like the macOS volume HUD) */
+        .mk-hud { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.9); padding: 14px 22px; border-radius: 16px; background: rgba(30, 30, 32, 0.78); color: #fff; font-size: 15px; font-weight: 600; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1); z-index: 60; max-width: 70%; }
+        .mk-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+
+        /* Ghost pointer that drives "Show me" */
+        .mk-ghost { position: absolute; left: 0; top: 0; width: 18px; height: 26px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity 0.25s; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
+        .mk-ghost.on { opacity: 1; }
+        .mk-ghost::after { content: ''; position: absolute; left: -9px; top: -9px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--primary); opacity: 0; }
+        .mk-ghost.tap::after { animation: mkTap 0.45s ease-out; }
+        @keyframes mkTap { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+        /* Hero layout: copy · Mac */
+        .hero { position: relative; z-index: 1; padding: 7rem 2rem 2.5rem; overflow-x: clip; }
+        .hero-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(330px, 0.72fr) minmax(0, 1.5fr); gap: 3.2rem; align-items: center; }
+        .hero-copy { animation: fadeInUp 0.7s ease 0.1s both; min-width: 0; }
+        .hero-copy .hero-subtitle { margin-left: 0; }
+        .hero-id { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+        .hero-id .badge { margin-bottom: 0; }
+        .hero-appicon-sm { width: 64px; height: 64px; border-radius: 15px; border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); transform: rotate(-3deg); flex-shrink: 0; }
+        .live-line { margin-top: 1.1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .live-line b { color: var(--text); }
+        .live-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; background: var(--primary); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; margin-right: 0.35rem; box-shadow: 2px 2px 0 var(--border); vertical-align: 1px; animation: blink 1.6s infinite; }
+        .hero-stage { min-width: 0; padding: 0 2.5%; }
+        .desk-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; margin-top: 1.5rem; }
+        .chip { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.45rem 0.75rem; background: var(--bg); color: var(--text); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border); }
+        .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .chip.on { background: var(--primary); color: #000; }
+        .chip.g { background: var(--yellow); color: #000; }
+        .chip[hidden] { display: none; }
+        .bar-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        /* Quests: guided "things to try" */
+        .quests-wrap { max-width: 1240px; margin: 2.4rem auto 0; }
+        .quests-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quests-head h3 { font-size: 1.35rem; letter-spacing: -0.02em; }
+        .q-progress { display: flex; align-items: center; gap: 0.75rem; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .q-meter { width: 180px; height: 16px; border: 2px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+        .q-meter span { position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+        .q-reset { background: none; border: 0; color: var(--text-muted); font: inherit; font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
+        .quests { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; list-style: none; }
+        .quests .quest { flex: 0 1 calc((100% - 3rem) / 4); min-width: 240px; }
+        .quest { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; position: relative; transition: transform 0.2s, background 0.3s, box-shadow 0.2s; }
+        .quest .qn { font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+        .quest b { font-size: 1.02rem; line-height: 1.3; }
+        .quest p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; flex: 1; }
+        .quest button { align-self: flex-start; margin-top: 0.35rem; }
+        .quest .stamp { position: absolute; top: -12px; right: -10px; background: var(--primary); color: #000; border: 2px solid var(--border); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.7rem; padding: 0.15rem 0.5rem; transform: rotate(6deg) scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+        .quest.done .stamp { transform: rotate(6deg) scale(1); }
+        .quest.done { background: color-mix(in srgb, var(--primary) 14%, var(--bg-elevated)); }
+        .quest.next { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--primary); }
+        .q-win { display: none; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--yellow); color: #000; border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transform: rotate(-0.5deg); }
+        .q-win.show { display: flex; animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+        @keyframes popIn { from { transform: scale(0.8) rotate(-3deg); opacity: 0; } }
+        .q-win b { font-size: 1.3rem; }
+        .q-win .btn { box-shadow: 4px 4px 0 #000; border-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; } }
+
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+            .hero-copy { text-align: center; max-width: 660px; margin: 0 auto; }
+            .hero-copy .hero-subtitle { margin-left: auto; }
+            .hero-id { justify-content: center; }
+            .hero-copy .hero-buttons, .hero-copy .hero-buttons-row { justify-content: center; align-items: center; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 6rem 1rem 1.5rem; }
+            .mk-lid { padding: 8px 8px 0; border-radius: 12px 12px 0 0; }
+            .mk-cam { height: 8px; }
+            .mk-base { height: 12px; }
+            .q-meter { width: 110px; }
+            .quests .quest { min-width: 0; flex-basis: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mk-win, .mk-dk, .mk-hud { transition: none !important; }
+        }
+
+        /* ========== LilClack, running inside the model ========== */
+        .hero-copy h1 { font-size: clamp(2.3rem, 3.3vw, 3.4rem); }
+        .hero-copy .hero-buttons { align-items: flex-start; }
+        .hero-copy .download-btn-wrapper { align-items: flex-start; }
+        .mk-mbi.lc-item { padding: 0 7px; }
+        .mk-mbi.lc-item svg { width: 19px; height: 15px; transition: opacity 0.2s; }
+        .mk-mbi.lc-item.off svg { opacity: 0.38; }
+        .mk-mbi.ls-gly { padding: 0 6px; }
+        .mk-mbi.ls-gly svg { opacity: 0.9; }
+        .lc-mic { width: 7px; height: 7px; border-radius: 50%; background: #FF9F0A; margin: 0 4px; align-self: center; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+        .lc-mic[hidden] { display: none; }
+
+        /* Popover (MenuView.swift: 300 pt wide, 16 pt padding) */
+        .lc-pop { width: 300px; padding: 16px; font-size: 13px; }
+        .lc-head { display: flex; align-items: center; gap: 10px; }
+        .lc-ic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,0.06); color: #2F7CF6; flex-shrink: 0; transition: color 0.2s; }
+        [data-theme="dark"] .lc-ic { background: rgba(255,255,255,0.08); }
+        .lc-ic.off { color: var(--win-muted); }
+        .lc-ic svg { width: 19px; height: 15px; }
+        .lc-title { flex: 1; min-width: 0; }
+        .lc-title b { display: block; font-size: 13px; }
+        .lc-title small { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--win-muted); white-space: nowrap; }
+        .lc-kbd { padding: 0 5px; border-radius: 4px; background: rgba(0,0,0,0.07); }
+        [data-theme="dark"] .lc-kbd { background: rgba(255,255,255,0.09); }
+        .lc-sw { width: 38px; height: 22px; border-radius: 11px; background: rgba(0,0,0,0.13); position: relative; flex-shrink: 0; transition: background 0.2s; cursor: default; border: 0; padding: 0; }
+        [data-theme="dark"] .lc-sw { background: rgba(255,255,255,0.16); }
+        .lc-sw::after { content: ''; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1); }
+        .lc-sw.on { background: #2F7CF6; }
+        .lc-sw.on::after { transform: translateX(16px); }
+        .lc-sw.mini { width: 26px; height: 15px; }
+        .lc-sw.mini::after { width: 11px; height: 11px; }
+        .lc-sw.mini.on::after { transform: translateX(11px); }
+        .lc-body { transition: opacity 0.2s; }
+        .lc-body.dim { opacity: 0.55; }
+        .lc-cards { display: flex; gap: 8px; margin: 14px 0; }
+        .lc-card { flex: 1; min-width: 0; min-height: 66px; border-radius: 10px; border: 0; background: rgba(0,0,0,0.05); color: var(--win-text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif; cursor: default; padding: 6px 2px; }
+        [data-theme="dark"] .lc-card { background: rgba(255,255,255,0.06); }
+        .lc-card svg { width: 17px; height: 17px; margin-bottom: 2px; }
+        .lc-card small { font-size: 10px; color: var(--win-muted); white-space: nowrap; }
+        .lc-card.on { background: rgba(47,124,246,0.14); box-shadow: inset 0 0 0 1.5px rgba(47,124,246,0.8); color: #2F7CF6; font-weight: 650; }
+        [data-theme="dark"] .lc-card.on { color: #5AA2FF; }
+        .lc-sl { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; font-size: 11px; color: var(--win-muted); }
+        .lc-range { display: flex; align-items: center; gap: 6px; font-size: 10px; }
+        .lc-range input { flex: 1; min-width: 0; accent-color: #2F7CF6; height: 14px; margin: 0; }
+        .lc-hr { height: 1px; background: var(--win-line); margin: 14px 0 10px; }
+        .lc-opt-h { display: flex; align-items: center; justify-content: space-between; width: 100%; border: 0; background: none; color: var(--win-text); font: 500 13px -apple-system, BlinkMacSystemFont, sans-serif; padding: 0; cursor: default; }
+        .lc-opt-h i { font-style: normal; color: var(--win-muted); font-size: 11px; transition: transform 0.18s; }
+        .lc-opt-h.open i { transform: rotate(90deg); }
+        .lc-opts { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
+        .lc-opts[hidden] { display: none; }
+        .lc-g small { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: var(--win-muted); margin-bottom: 4px; }
+        .lc-row { display: flex; align-items: center; justify-content: space-between; min-height: 22px; font-size: 12.5px; cursor: default; }
+        .lc-sel { font-size: 11px; padding: 1px 7px; border-radius: 5px; background: rgba(0,0,0,0.06); color: var(--win-text); }
+        [data-theme="dark"] .lc-sel { background: rgba(255,255,255,0.1); }
+        .lc-foot { display: flex; align-items: flex-end; gap: 8px; }
+        .lc-foot div { flex: 1; font-size: 11px; line-height: 1.3; }
+        .lc-foot div small { display: block; font-size: 10px; color: var(--win-muted); }
+        .lc-foot em { font-style: normal; font-size: 10px; color: var(--win-muted); opacity: 0.7; }
+        .lc-hl { animation: mkHint 1.1s ease-in-out 3; border-radius: 6px; }
+
+        /* Notes window: where you type */
+        .lc-note { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--win-bg); }
+        .lc-note textarea { flex: 1; width: 100%; border: 0; resize: none; outline: none; background: transparent; color: var(--win-text); font: 14px/1.55 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; padding: 14px 18px; }
+        .lc-note textarea::placeholder { color: var(--win-muted); }
+        .lc-note textarea.hint { animation: lcGlow 1.6s ease-in-out infinite; }
+        @keyframes lcGlow { 50% { box-shadow: inset 0 0 0 3px rgba(44, 203, 185, 0.55); } }
+        .lc-strip { height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-top: 1px solid var(--win-line); font-size: 11px; color: var(--win-muted); white-space: nowrap; overflow: hidden; }
+        .lc-strip b { color: var(--win-text); font-weight: 600; min-width: 46px; }
+        .lc-lv { display: flex; gap: 3px; }
+        .lc-lv i { width: 26px; height: 8px; border-radius: 4px; background: var(--win-line); transition: background 0.08s; }
+        .lc-lv i.on { background: var(--primary); }
+        .lc-lv i.on.hard { background: var(--secondary); }
+        .lc-lv i.on.mid { background: var(--yellow); }
+
+        /* FaceTime */
+        .lc-ft { position: absolute; inset: 0; background: linear-gradient(160deg, #2A3B4F, #11161D); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 12px; }
+        .lc-ft .av { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(140deg, #FFB020, #FF6B5E); display: grid; place-items: center; font: 700 22px -apple-system, sans-serif; color: #fff; }
+        .lc-ft small { opacity: 0.7; }
+        .lc-ft button { border: 0; border-radius: 16px; padding: 6px 14px; font: 600 12px -apple-system, sans-serif; cursor: default; color: #fff; background: #34C759; }
+        .lc-ft button.end { background: #FF3B30; }
+
+        /* ---- Boards ---- */
+        .boards { background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); border-bottom: var(--border-width) solid var(--border); }
+        .board-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .board {
+            background: var(--bg); border: var(--border-width) solid var(--border); box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+            padding: 1.4rem; display: flex; flex-direction: column; gap: 0.7rem; transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+        }
+        .board:nth-child(1) { transform: rotate(-0.6deg); } .board:nth-child(3) { transform: rotate(0.6deg); }
+        .board.fade-in:not(.visible) { transform: translateY(30px); }
+        .board:hover { transform: translate(-3px, -3px); box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border); }
+        .board.on { background: color-mix(in srgb, var(--primary) 16%, var(--bg)); }
+        .board-top { display: flex; align-items: center; gap: 0.8rem; }
+        .board-sym { width: 48px; height: 48px; border: var(--border-width) solid var(--border); display: grid; place-items: center; background: var(--c); flex-shrink: 0; }
+        .board-sym svg { width: 24px; height: 24px; color: #000; }
+        .board h3 { font-size: 1.4rem; line-height: 1.1; }
+        .board h3 small { display: block; font: 700 0.7rem 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 0.2rem; }
+        .board p { color: var(--text-muted); font-size: 0.93rem; line-height: 1.55; flex: 1; }
+        .board canvas { width: 100%; height: 64px; border: 2px solid var(--border); background: var(--bg-elevated); display: block; }
+        .board .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .board .tags span { font: 700 0.65rem 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.15rem 0.45rem; border: 2px solid var(--border); }
+        .board .chip { align-self: flex-start; }
+        .boards-note { text-align: center; margin-top: 2.25rem; font-family: 'Space Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+        /* ---- Smart dynamics ---- */
+        .smart-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; align-items: center; }
+        .rule-list { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+        .rule-list li { display: flex; gap: 0.9rem; align-items: center; padding: 0.9rem 1.1rem; background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); color: var(--text-muted); font-size: 0.93rem; }
+        .rule-list li b { color: var(--text); display: block; }
+        .rule-list .lv { display: flex; gap: 3px; flex-shrink: 0; }
+        .rule-list .lv i { width: 10px; height: 26px; border: 2px solid var(--border); background: var(--bg); }
+        .rule-list .lv i.f { background: var(--primary); }
+        .rule-list .lv i.f.m { background: var(--yellow); }
+        .rule-list .lv i.f.h { background: var(--secondary); }
+        .rhythm { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); padding: 1.4rem; }
+        .rhythm h3 { font-size: 1.05rem; margin-bottom: 0.25rem; }
+        .rhythm > p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem; }
+        .rh-bars { height: 120px; display: flex; align-items: flex-end; gap: 4px; border: 2px solid var(--border); background: var(--bg); padding: 8px; overflow: hidden; }
+        .rh-bars i { flex: 0 0 calc((100% - 23 * 4px) / 24); background: var(--primary); border: 2px solid var(--border); border-bottom: 0; height: var(--h); transition: height 0.18s cubic-bezier(0.3, 1.5, 0.5, 1); }
+        .rh-bars i.m { background: var(--yellow); } .rh-bars i.h { background: var(--secondary); }
+        .rh-legend { display: flex; gap: 1rem; margin-top: 0.7rem; font: 700 0.68rem 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); flex-wrap: wrap; }
+        .rh-legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border: 2px solid var(--border); background: var(--primary); margin-right: 0.35rem; vertical-align: -1px; }
+        .rh-legend span.m::before { background: var(--yellow); } .rh-legend span.h::before { background: var(--secondary); }
+        .rh-try { width: 100%; margin-top: 1rem; padding: 0.75rem 0.9rem; font: 600 0.95rem 'Space Grotesk', sans-serif; color: var(--text); background: var(--bg); border: var(--border-width) solid var(--border); box-shadow: 4px 4px 0 var(--border); outline: none; }
+        .rh-try:focus { box-shadow: 4px 4px 0 var(--primary); }
+        .rh-row { display: flex; gap: 0.6rem; margin-top: 0.8rem; flex-wrap: wrap; }
+
+        @media (max-width: 1100px) {
+            .hero-copy .hero-buttons, .hero-copy .download-btn-wrapper { align-items: center; }
+        }
+        @media (max-width: 900px) {
+            .board-grid { grid-template-columns: 1fr; max-width: 520px; }
+            .board:nth-child(n) { transform: none; }
+            .smart-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ---- Stats bar ---- */
+        .stats-bar {
+            position: relative; z-index: 1;
+            border-top: var(--border-width) solid var(--border);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+        .stats-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+        .stat-item { padding: 1rem; text-align: center; border-right: var(--border-width) solid var(--border); transition: background 0.2s; }
+        .stat-item:last-child { border-right: none; }
+        .stat-item:hover { background: var(--yellow); }
+        .stat-item:hover h3, .stat-item:hover p { color: #000; }
+        .stat-item h3 { font-family: 'Space Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+        .stat-item p { font-family: 'Space Mono', monospace; color: var(--text); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+
+        /* ---- Sections ---- */
+        section { position: relative; z-index: 1; padding: 6rem 2rem; }
+
+        .section-header { text-align: center; max-width: 620px; margin: 0 auto 3.5rem; }
+        .section-header h2 { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; position: relative; display: inline-block; z-index: 0; }
+
+        /* Heading underline sweeps teal -> yellow -> coral, like the icon, when it scrolls in */
+        .section-header h2::after {
+            content: ''; position: absolute; bottom: 4px; left: 0; right: 0; height: 12px; z-index: -1;
+            background: linear-gradient(90deg, var(--primary), var(--yellow) 55%, var(--secondary));
+            transform: skewX(-5deg) scaleX(0); transform-origin: left;
+            transition: transform 1.1s cubic-bezier(.2,.9,.25,1) 0.2s;
+        }
+        .section-header.visible h2::after { transform: skewX(-5deg) scaleX(1); }
+
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; }
+        /* ---- Features ---- */
+        .features-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+        .feature-card {
+            background: var(--bg-elevated); border: var(--border-width) solid var(--border);
+            padding: 1.75rem; display: flex; gap: 1.25rem; align-items: flex-start;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border);
+        }
+        .feature-card:hover { box-shadow: calc(var(--shadow-offset) + 4px) calc(var(--shadow-offset) + 4px) 0 var(--border); }
+
+        .feature-icon {
+            width: 48px; height: 48px; background: var(--primary); border: var(--border-width) solid var(--border);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(.2,.9,.25,1.4);
+        }
+        .feature-card:nth-child(even) .feature-icon { background: var(--yellow); }
+        .feature-card:hover .feature-icon { transform: rotate(-8deg) scale(1.08); }
+        .feature-icon svg { width: 24px; height: 24px; color: #000; }
+
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* ---- FAQ ---- */
+        .faq-grid { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+        .faq-item {
+            background: var(--bg-elevated); border: var(--border-width) solid var(--border); padding: 1.5rem;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--border); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .faq-item:hover { transform: translate(-3px, -3px); box-shadow: calc(var(--shadow-offset) + 3px) calc(var(--shadow-offset) + 3px) 0 var(--border); }
+        .faq-item h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .faq-item p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* ---- Contact ---- */
+        .contact { text-align: center; background: var(--bg-elevated); border-top: var(--border-width) solid var(--border); }
+        .contact-card {
+            max-width: 500px; margin: 0 auto; background: var(--bg); border: var(--border-width) solid var(--border);
+            padding: 2.5rem; box-shadow: 8px 8px 0 var(--border); transform: rotate(0.5deg);
+        }
+        .contact-card h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .contact-card p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+        /* ---- Footer ---- */
+        footer {
+            position: relative; z-index: 1; text-align: center; padding: 2rem;
+            border-top: var(--border-width) solid var(--border); background: var(--bg-elevated);
+            font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+        }
+        footer a { color: var(--text); text-decoration: none; border-bottom: 2px solid var(--primary); transition: background 0.2s, color 0.2s; }
+        footer a:hover { background: var(--primary); color: #000; }
+
+        /* ---- Scroll animations ---- */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .scale-in { opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .scale-in.visible { opacity: 1; transform: scale(1); }
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        /* Hover lifts shouldn't wait for the reveal delay */
+        .fade-in.visible:hover { transition-delay: 0s; }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 1000px) {
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-item { border-bottom: var(--border-width) solid var(--border); }
+            .stat-item:nth-child(2) { border-right: none; }
+            .stat-item:nth-last-child(-n+2) { border-bottom: none; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 1rem; }
+            .nav-links { display: none; }
+            .nav-right .btn { padding: 0.6rem 0.9rem; font-size: 0.8rem; width: auto; }
+            .theme-toggle { width: 42px; height: 42px; }
+            h1 { font-size: 2rem; }
+            .hero-copy .btn { width: 100%; justify-content: center; }
+            .download-btn-wrapper { width: 100%; }
+            section { padding: 4rem 1rem; }
+            .section-header h2 { font-size: 2rem; }
+            .contact-card { padding: 1.5rem; transform: none; }
+            footer { font-size: 0.75rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+            }
+            .hero-copy { opacity: 1; }
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <a class="logo" href="./">LilClack</a>
+            <ul class="nav-links">
+                <li><a href="/">Studio</a></li>
+                <li><a href="#try">Try It</a></li>
+                <li><a href="#boards">Boards</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#try" class="btn btn-primary" data-appstore>Get It</a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===================== HERO: copy · a Mac running LilClack ===================== -->
+    <section class="hero" id="try" aria-label="LilClack, with a working model of the app">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="hero-id">
+                    <img src="screenshots/app-icon.png" alt="LilClack app icon" class="hero-appicon-sm" width="64" height="64">
+                    <div class="badge"><div class="badge-dot"></div>Coming Soon &middot; Mac App Store</div>
+                </div>
+                <h1>Every key, a satisfying <span class="highlight">clack</span>.</h1>
+                <p class="hero-subtitle">LilClack plays real, recorded mechanical keyboard sounds as you type, on your MacBook's keyboard or any other. It listens to your rhythm: quick rolls land light, the first key after a pause lands hard, and every key keeps its own voice.</p>
+                <div class="hero-buttons">
+                    <div class="download-btn-wrapper">
+                        <a href="#try" class="btn btn-primary" data-appstore>
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                            <span data-cta>Coming to the Mac App Store</span>
+                        </a>
+                        <span class="system-req">$1 once &middot; macOS 14+ &middot; Apple silicon &amp; Intel &middot; No account</span>
+                    </div>
+                    <div class="privacy-notice">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <p>It only notices <i>that</i> a key went down, never which letters you type. Nothing is recorded, nothing leaves your Mac. <a href="privacy.html">Privacy Policy</a></p>
+                    </div>
+                </div>
+                <p class="live-line"><span class="live-tag">LIVE</span>That's LilClack on the Mac, with its real recordings. <b>Turn your sound on, click the note and type.</b></p>
+            </div>
+
+            <div class="hero-stage" id="stage">
+                <div class="mk-mac" id="mac">
+                    <div class="mk-lid">
+                        <div class="mk-cam"></div>
+                        <div class="mk-screen" id="macScreen" aria-label="A Mac desktop running LilClack. Click the note and type, or click the keyboard in the menu bar.">
+                            <div class="mk-world">
+                                <div class="mk-wall sky"></div>
+                                <div class="mk-wins"></div>
+                                <div class="mk-ui">
+                                    <div class="mk-menubar" id="menubar">
+                                        <div class="mk-mbi" data-menu="apple" aria-label="Apple menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+                                        <div class="mk-mbi app" data-menu="app" id="mbApp">Notes</div>
+                                        <div class="mk-mbi" data-menu="file">File</div>
+                                        <div class="mk-mbi" data-menu="edit">Edit</div>
+                                        <div class="mk-mbi" data-menu="view">View</div>
+                                        <div class="mk-mbi" data-menu="window">Window</div>
+                                        <div class="mk-mbi" data-menu="help">Help</div>
+                                        <div class="mk-mb-right">
+                                            <span class="lc-mic" id="micDot" title="Microphone in use" hidden></span>
+                                            <div class="mk-mbi lc-item" id="lcItem" role="button" aria-label="LilClack. Click for settings, right-click to turn sounds on or off."><svg viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="15" rx="3"/><path d="M5.5 6h1M9.5 6h1M13.5 6h1M17.5 6h1M5.5 9.5h1M9.5 9.5h1M13.5 9.5h1M17.5 9.5h1M7.5 13h9" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi ls-gly" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 9a15 15 0 0120 0M5.5 12.5a10 10 0 0113 0M9 16a5 5 0 016 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg></div>
+                                            <div class="mk-mbi ls-gly" aria-hidden="true"><svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.8" style="width:23px"><rect x="1" y="2" width="22" height="12" rx="3.5"/><rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M25.5 6.5v3" stroke-linecap="round"/></svg></div>
+                                            <div class="mk-mbi" id="mbClock">9:41</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mk-pop lc-pop" id="lcPop" hidden>
+                                        <div class="lc-head">
+                                            <div class="lc-ic" id="pIc"><svg viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><rect x="1" y="1" width="22" height="16" rx="3.5"/><path d="M5 5.5h2v2H5zM9 5.5h2v2H9zM13 5.5h2v2h-2zM17 5.5h2v2h-2zM5 9.5h2v2H5zM17 9.5h2v2h-2zM8 12.5h8v2H8z" fill="#fff" fill-opacity="0.85"/></svg></div>
+                                            <div class="lc-title"><b>LilClack</b><small><span id="pState">On</span>·<span class="lc-kbd">⌃⌥K to toggle</span></small></div>
+                                            <button class="lc-sw on" type="button" id="pOn" aria-label="Sounds"></button>
+                                        </div>
+                                        <div class="lc-body" id="pBody">
+                                            <div class="lc-cards" id="pCards"></div>
+                                            <div class="lc-sl">
+                                                <span>Volume</span><span class="lc-range">🔈<input type="range" id="pVol" min="0" max="1" step="0.01" aria-label="Volume">🔊</span>
+                                                <span>Tone</span><span class="lc-range">Deep<input type="range" id="pTone" min="-1" max="1" step="0.1" aria-label="Tone">Bright</span>
+                                            </div>
+                                            <div class="lc-hr"></div>
+                                            <button class="lc-opt-h" type="button" id="pOptH">Options <i>›</i></button>
+                                            <div class="lc-opts" id="pOpts" hidden>
+                                                <div class="lc-g"><small>SOUND</small>
+                                                    <div class="lc-row" data-pref="keyUp">Key release sound<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="variation">Natural variation<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="modifiers">Modifier keys<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="returnDing">Return-key ding<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="mouse">Mouse clicks<span class="lc-sw mini"></span></div>
+                                                </div>
+                                                <div class="lc-g"><small>AUDIO</small>
+                                                    <div class="lc-row" data-pref="spatial">Stereo by key position<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="spatial3D">3D audio for headphones<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row">Output<span class="lc-sel">System Output ⌄</span></div>
+                                                </div>
+                                                <div class="lc-g"><small>GENERAL</small>
+                                                    <div class="lc-row" data-pref="pauseInCalls">Pause during calls<span class="lc-sw mini"></span></div>
+                                                    <div class="lc-row" data-pref="login">Open at login<span class="lc-sw mini"></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="lc-hr"></div>
+                                        <div class="lc-foot"><div><span id="pToday">0 keys today</span><small id="pTotal">0 all time</small></div><em>v1.0.0</em><button class="mk-btn" type="button" id="pQuit">Quit</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mk-base"></div>
+                </div>
+                <div class="desk-bar">
+                    <span class="bar-label">Try:</span>
+                    <button class="chip g" type="button" data-do="demo">▶ Type a sentence for me</button>
+                    <button class="chip" type="button" data-do="call">📞 Start a FaceTime call</button>
+                    <button class="chip on" type="button" data-do="relaunch" hidden>Open LilClack again</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="quests-wrap">
+            <div class="quests-head">
+                <h3>Eight things to try</h3>
+                <div class="q-progress"><span id="qCount">0 / 8</span><span class="q-meter"><span id="qMeter"></span></span><button class="q-reset" id="qReset" type="button">Start over</button></div>
+            </div>
+            <ol class="quests" id="quests"></ol>
+            <div class="q-win" id="qWin">
+                <div><b>That's LilClack. Soon on your own keyboard.</b><br>$1 once, no account, nothing to set up but one permission.</div>
+                <a href="#try" class="btn btn-primary" data-appstore><span data-cta>Coming to the Mac App Store</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-bar" style="padding:0">
+        <div class="stats-grid">
+            <div class="stat-item"><h3 data-count="3">3</h3><p>Real boards</p></div>
+            <div class="stat-item"><h3 data-count="3">3</h3><p>Velocity layers</p></div>
+            <div class="stat-item"><h3>0%</h3><p>CPU when off</p></div>
+            <div class="stat-item"><h3>$1</h3><p>Once</p></div>
+        </div>
+    </section>
+
+    <section class="boards" id="boards">
+        <div class="section-header fade-in">
+            <h2>Three Real Boards</h2>
+            <p>Not synthesized. Each one is a real keyboard, recorded by hand, cleaned of room noise and cut into presses, releases and spacebar hits.</p>
+        </div>
+        <div class="board-grid" id="boardGrid"></div>
+        <p class="boards-note fade-in">Pick one here and the Mac above switches to it &middot; Tone makes any of them deeper or brighter</p>
+    </section>
+
+    <section class="smart" id="smart">
+        <div class="section-header fade-in">
+            <h2>It Follows Your Fingers</h2>
+            <p>A Mac keyboard can't tell how hard you press, so LilClack reads your rhythm instead, and picks a soft, medium or hard take to match.</p>
+        </div>
+        <div class="smart-grid">
+            <ul class="rule-list">
+                <li class="fade-in stagger-1"><span class="lv"><i class="f"></i><i></i><i></i></span><div><b>Quick rolls land light</b>Keys less than 70 ms apart play the soft takes, like fingers brushing past.</div></li>
+                <li class="fade-in stagger-2"><span class="lv"><i class="f"></i><i class="f m"></i><i></i></span><div><b>Steady typing sits in the middle</b>The ordinary rhythm of a sentence gets the medium layer.</div></li>
+                <li class="fade-in stagger-3"><span class="lv"><i class="f"></i><i class="f m"></i><i class="f h"></i></span><div><b>After a pause, it lands hard</b>The first key of a new thought, plus Return and Space, hit heavier.</div></li>
+                <li class="fade-in stagger-4"><span class="lv"><i class="f"></i><i class="f"></i><i class="f"></i></span><div><b>Every key has its own voice</b>Each key keeps its own take, and releases snap back as hard as you pressed.</div></li>
+            </ul>
+            <div class="rhythm scale-in">
+                <h3>Your last 24 keys</h3>
+                <p>Each bar is one press: its height is how hard LilClack thinks you hit it.</p>
+                <div class="rh-bars" id="rhBars" aria-hidden="true"></div>
+                <div class="rh-legend"><span>Soft</span><span class="m">Medium</span><span class="h">Hard</span></div>
+                <input class="rh-try" id="rhTry" type="text" placeholder="Type here: roll fast, then pause…" aria-label="Type here to hear LilClack" autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header fade-in">
+            <h2>Features</h2>
+            <p>One small menu, everything you'd want from a keyboard you don't have.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M2 12h2l2-6 3 12 3-9 2 6 2-3h6"/></svg></div>
+                <div><h3>Recorded, Then Cleaned</h3><p>Real takes with the room noise lifted out by spectral gating, trimmed to the attack, levelled so releases sit under presses like on a real board.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 20V14M10 20V8M16 20V11M22 20V4"/></svg></div>
+                <div><h3>Smart Dynamics</h3><p>Soft, medium and hard layers chosen from your typing rhythm, with Return and Space a little heavier and fast typists a little lighter.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-3">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0118 0v2"/><rect x="2" y="14" width="5" height="7" rx="1.5"/><rect x="17" y="14" width="5" height="7" rx="1.5"/></svg></div>
+                <div><h3>Stereo &amp; 3D Audio</h3><p>Keys on the left sound on the left. In headphones, 3D audio puts the keyboard in front of you instead of inside your head.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-4">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 17v4M3 3l18 18"/></svg></div>
+                <div><h3>Quiet in Calls</h3><p>When any app uses your microphone, LilClack pauses itself, and it comes back when you hang up. Focus filters can switch it off too.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-1">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M7 11h1M11 11h2M16 11h1M8 15h8"/></svg></div>
+                <div><h3>On and Off, Your Way</h3><p>A shortcut you choose (⌃⌥K out of the box), a right-click on the icon, the Shortcuts app, or a <code>lilclack://toggle</code> link.</p></div>
+            </div>
+            <div class="feature-card fade-in stagger-2">
+                <div class="feature-icon"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+                <div><h3>Tiny and Instant</h3><p>About 2 MB, native Swift, sounds pre-loaded so a key plays right away. Turned off, it stops listening and uses nothing at all.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="section-header fade-in">
+            <h2>Good to Know</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item fade-in stagger-1">
+                <h3>Does it record what I type?</h3>
+                <p>No. LilClack only learns that a key went down or up and where that key sits (for stereo). It never reads characters, keeps no log, and has no internet access at all.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>Why does it ask for Input Monitoring?</h3>
+                <p>That's the macOS permission for noticing key presses in other apps. LilClack uses a listen-only tap: it can't change, block or send keystrokes. The welcome window walks you through it.</p>
+            </div>
+            <div class="faq-item fade-in stagger-3">
+                <h3>Will people on my calls hear it?</h3>
+                <p>Not by default. "Pause during calls" silences LilClack whenever an app is using your microphone. It checks only whether the mic is in use; it never opens it.</p>
+            </div>
+            <div class="faq-item fade-in stagger-1">
+                <h3>Does it work with external keyboards?</h3>
+                <p>Yes, with the built-in keyboard and any keyboard you plug in or pair. It can play through any output, including AirPods, and follows you when you switch.</p>
+            </div>
+            <div class="faq-item fade-in stagger-2">
+                <h3>How much does it cost?</h3>
+                <p>$1, once. No subscription, no in-app purchases, no account. It's on its way to the Mac App Store.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="section-header fade-in">
+            <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-card scale-in">
+            <h2>Want a board you love in LilClack?</h2>
+            <p>Every message is read and answered.</p>
+            <a href="mailto:support@lilstudio.app" class="btn btn-primary">support@lilstudio.app</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LilStudio &middot; <a href="/">Studio</a> &middot; <a href="/lilstats/">LilStats</a> &middot; <a href="/lilhide/">LilHide</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+    </footer>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // Every "Get It" button picks this up.
+        // Empty until LilClack is live; then the buttons point at the store and read "Mac App Store".
+        const APP_STORE_URL = '';
+        if (APP_STORE_URL) document.querySelectorAll('[data-appstore]').forEach(a => { a.href = APP_STORE_URL; a.querySelectorAll('[data-cta]').forEach(s => { s.textContent = 'Mac App Store'; }); });
+
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
+        };
+        const wait = ms => new Promise(r => setTimeout(r, REDUCED ? Math.min(ms, 60) : ms));
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        // ---------- Scroll reveals ----------
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        $$('.fade-in, .scale-in').forEach(el => io.observe(el));
+
+        // Count-up for the stats bar
+        const counter = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                counter.unobserve(e.target);
+                const end = +e.target.dataset.count;
+                if (REDUCED || end === 0) return;
+                const t0 = performance.now();
+                const tick = (now) => {
+                    const p = Math.min(1, (now - t0) / 900);
+                    e.target.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+                    if (p < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
+
+        const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+        const rnd = (a, b) => a + Math.random() * (b - a);
+
+        // ---------- MacKit: a small working macOS desktop (shared by the app pages; copied, no build step) ----------
+        // The desktop lives in points (1024 × 640, or 760 × 475 when the screen is narrow) and is scaled to fit.
+        // Windows drag by their title bar, the traffic lights close / minimise / zoom, menus slide along the
+        // menu bar like macOS, and a ghost pointer drives the "Show me" demos.
+        function MacKit(root, opt = {}) {
+            const screen = root.querySelector('.mk-screen'), world = root.querySelector('.mk-world');
+            const winsEl = world.querySelector('.mk-wins'), ui = world.querySelector('.mk-ui');
+            const M = { W: 0, H: 0, s: 1, MB: 26, DOCK: 60, wins: new Map(), z: 1, root, screen, world, ui, focus: null, visible: true, busy: false };
+            const listeners = {};
+            M.on = (ev, fn) => (listeners[ev] = listeners[ev] || []).push(fn);
+            const emit = (ev, ...a) => (listeners[ev] || []).forEach(f => f(...a));
+            const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function fit() {
+                const cw = screen.clientWidth;
+                if (!cw) return;
+                const W = cw < (opt.narrowAt || 620) ? (opt.narrowW || 760) : 1024, H = Math.round(W / 1.6);
+                const changed = W !== M.W;
+                M.W = W; M.H = H; M.s = cw / W;
+                world.style.width = W + 'px'; world.style.height = H + 'px';
+                world.style.transform = `scale(${M.s})`;
+                emit('layout', changed);
+                if (changed) M.wins.forEach(w => { clampWin(w); place(w); });
+            }
+            new ResizeObserver(fit).observe(screen);
+
+            // Pointer → desktop points; element → its box in desktop points (from layout, not animation)
+            M.pt = e => { const r = screen.getBoundingClientRect(); return { x: (e.clientX - r.left) / M.s, y: (e.clientY - r.top) / M.s }; };
+            M.box = el => {
+                const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+                return { x: (r.left - s.left) / M.s, y: (r.top - s.top) / M.s, w: r.width / M.s, h: r.height / M.s };
+            };
+
+            // ---- Visibility: loops run only while the Mac is on screen and the tab is shown ----
+            new IntersectionObserver(es => { M.visible = es[0].isIntersecting && !document.hidden; emit('visible', M.visible); }).observe(root);
+            document.addEventListener('visibilitychange', () => { M.visible = !document.hidden; emit('visible', M.visible); });
+
+            // ---- Windows ----
+            function place(w) {
+                const s = w.el.style;
+                s.left = w.x + 'px'; s.top = w.y + 'px'; s.width = w.w + 'px'; s.height = w.h + 'px'; s.zIndex = w.z;
+            }
+            function clampWin(w) {
+                w.w = Math.min(w.w, M.W); w.h = Math.min(w.h, M.H - M.MB);
+                w.x = clampN(w.x, 60 - w.w, M.W - 60);
+                w.y = clampN(w.y, M.MB, M.H - 40);
+            }
+            M.place = place;
+            M.win = o => {
+                const el = document.createElement('div');
+                el.className = 'mk-win ' + (o.cls || '');
+                el.dataset.win = o.id;
+                el.innerHTML = (o.noBar ? '' : `<div class="mk-bar"><i data-a="close"></i><i data-a="min"></i><i data-a="zoom"></i><span>${o.title || ''}</span></div>`) + `<div class="mk-body">${o.html || ''}</div>`;
+                winsEl.appendChild(el);
+                const w = { id: o.id, el, body: el.querySelector('.mk-body'), x: o.x, y: o.y, w: o.w, h: o.h, z: ++M.z, open: o.open !== false, min: false, saved: null, dockId: o.dock || o.id };
+                M.wins.set(o.id, w);
+                el.hidden = !w.open;
+                place(w);
+                el.addEventListener('pointerdown', () => M.focusWin(w.id), true);
+                const bar = el.querySelector('.mk-bar');
+                if (bar) {
+                    bar.addEventListener('click', e => {
+                        const a = e.target.dataset && e.target.dataset.a;
+                        if (a === 'close') M.closeWin(w.id);
+                        else if (a === 'min') M.minWin(w.id);
+                        else if (a === 'zoom') M.zoomWin(w.id);
+                    });
+                    bar.addEventListener('dblclick', e => { if (!e.target.dataset.a) M.zoomWin(w.id); });
+                    let drag = null;
+                    bar.addEventListener('pointerdown', e => {
+                        if (e.target.dataset.a || e.button > 0) return;
+                        if (e.pointerType === 'mouse') e.preventDefault();
+                        const p = M.pt(e);
+                        drag = { ox: p.x - w.x, oy: p.y - w.y, id: e.pointerId, moved: false };
+                        bar.setPointerCapture(e.pointerId);
+                        el.classList.add('drag');
+                    });
+                    bar.addEventListener('pointermove', e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const p = M.pt(e);
+                        w.x = p.x - drag.ox; w.y = p.y - drag.oy; drag.moved = true;
+                        clampWin(w); place(w);
+                        emit('move', w);
+                    });
+                    const end = e => {
+                        if (!drag || e.pointerId !== drag.id) return;
+                        const moved = drag.moved;
+                        drag = null; el.classList.remove('drag');
+                        if (moved) emit('drop', w);
+                    };
+                    bar.addEventListener('pointerup', end);
+                    bar.addEventListener('pointercancel', end);
+                }
+                return w;
+            };
+            M.focusWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (M.focus !== id) { w.z = ++M.z; place(w); }
+                M.focus = id;
+                M.wins.forEach(x => x.el.classList.toggle('focus', x === w));
+                emit('focus', w);
+            };
+            M.openWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                const was = w.open && !w.min;
+                w.open = true; w.min = false; w.el.hidden = false;
+                requestAnimationFrame(() => w.el.classList.remove('gone'));
+                M.focusWin(id); M.updateDock();
+                if (!was) emit('win', w, 'open');
+            };
+            M.closeWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.open = false; w.min = false; w.el.hidden = true; w.el.classList.remove('gone');
+                if (M.focus === id) M.focus = null;
+                M.updateDock(); emit('win', w, 'close');
+            };
+            M.minWin = id => {
+                const w = M.wins.get(id);
+                if (!w || !w.open) return;
+                w.min = true;
+                const d = M.dockEl && M.dockEl.querySelector(`[data-dk="${w.dockId}"]`);
+                if (d) { const b = M.box(d); w.el.style.transformOrigin = `${b.x + b.w / 2 - w.x}px ${b.y - w.y}px`; }
+                w.el.classList.add('gone');
+                setTimeout(() => { if (w.min) w.el.hidden = true; }, 320);
+                if (M.focus === id) M.focus = null;
+                emit('win', w, 'min');
+            };
+            M.zoomWin = id => {
+                const w = M.wins.get(id);
+                if (!w) return;
+                if (w.saved) { Object.assign(w, w.saved); w.saved = null; }
+                else { w.saved = { x: w.x, y: w.y, w: w.w, h: w.h }; Object.assign(w, { x: 0, y: M.MB, w: M.W, h: M.H - M.MB - M.DOCK - 4 }); }
+                place(w); emit('win', w, 'zoom');
+            };
+
+            // ---- Menus (menu bar and status items) ----
+            let openMenu = null;
+            M.closeMenus = () => {
+                if (!openMenu) return;
+                openMenu.el.remove();
+                openMenu.anchor.classList.remove('open');
+                const was = openMenu; openMenu = null;
+                emit('menu', was.anchor, false);
+            };
+            function buildMenu(items) {
+                const m = document.createElement('div');
+                m.className = 'mk-menu';
+                items.forEach(it => {
+                    if (it === '-') { m.insertAdjacentHTML('beforeend', '<div class="mk-sep"></div>'); return; }
+                    if (it.h) { m.insertAdjacentHTML('beforeend', `<div class="mk-mh">${it.h}</div>`); return; }
+                    const d = document.createElement('div');
+                    d.className = 'mk-mi' + (it.dis ? ' dis' : '') + (it.sub ? ' has-sub' : '') + (it.cls ? ' ' + it.cls : '');
+                    d.innerHTML = `<span class="ck">${it.on ? '✓' : ''}</span><span>${it.t}</span>${it.k ? `<span class="k">${it.k}</span>` : ''}`;
+                    if (it.id) d.dataset.mi = it.id;
+                    if (it.sub) d.appendChild(buildMenu(it.sub)).classList.add('mk-sub');
+                    d.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (it.dis || it.sub) return;
+                        if (!it.keep) M.closeMenus();
+                        if (it.act) it.act(d);
+                    });
+                    m.appendChild(d);
+                });
+                return m;
+            }
+            M.openMenu = (anchor, build, align) => {
+                M.closeMenus(); M.closePops();
+                const items = build();
+                const el = items instanceof HTMLElement ? items : buildMenu(items);
+                ui.appendChild(el);
+                const b = M.box(anchor);
+                const w = el.offsetWidth;
+                const x = align === 'right' ? b.x + b.w - w : b.x;
+                el.style.left = clampN(x, 4, M.W - w - 4) + 'px';
+                anchor.classList.add('open');
+                openMenu = { el, anchor, build, align };
+                emit('menu', anchor, true);
+                return el;
+            };
+            M.menuItem = (anchor, build, align) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openMenu && openMenu.anchor === anchor) M.closeMenus(); else M.openMenu(anchor, build, align);
+                });
+                anchor.addEventListener('pointerenter', () => { if (openMenu && openMenu.anchor !== anchor && openMenu.anchor.parentElement && anchor.closest('.mk-menubar')) M.openMenu(anchor, build, align); });
+            };
+            M.refreshMenu = () => { if (openMenu) { const { anchor, build, align } = openMenu; M.openMenu(anchor, build, align); } };
+
+            // Popovers (status item panels): a prebuilt element in .mk-ui
+            let openPop = null;
+            M.closePops = () => {
+                if (!openPop) return;
+                openPop.pop.hidden = true; openPop.anchor.classList.remove('open');
+                const was = openPop; openPop = null;
+                emit('pop', was.pop, false);
+            };
+            M.openPop = (anchor, pop) => {
+                M.closeMenus();
+                if (openPop && openPop.pop === pop) return;
+                M.closePops();
+                pop.hidden = false;
+                const b = M.box(anchor), w = pop.offsetWidth;
+                const x = clampN(b.x + b.w / 2 - w / 2, 6, M.W - w - 6);
+                pop.style.left = x + 'px';
+                pop.style.setProperty('--arrow', (b.x + b.w / 2 - x) + 'px');
+                anchor.classList.add('open');
+                openPop = { anchor, pop };
+                emit('pop', pop, true);
+            };
+            M.popItem = (anchor, pop) => {
+                anchor.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') e.preventDefault();
+                    if (openPop && openPop.pop === pop) M.closePops(); else M.openPop(anchor, pop);
+                });
+                pop.addEventListener('pointerdown', e => e.stopPropagation());
+            };
+            M.popOpen = pop => !!openPop && openPop.pop === pop;
+            screen.addEventListener('pointerdown', e => {
+                if (e.target.closest('.mk-menu, .mk-pop')) return;
+                M.closeMenus(); M.closePops();
+            });
+
+            // ---- Dock ----
+            M.dock = items => {
+                const d = document.createElement('div');
+                d.className = 'mk-dock';
+                items.forEach(it => {
+                    if (it === '|') { d.insertAdjacentHTML('beforeend', '<div class="mk-dsep"></div>'); return; }
+                    const b = document.createElement('div');
+                    b.className = 'mk-dk';
+                    b.dataset.dk = it.id;
+                    b.style.background = it.bg || '';
+                    b.innerHTML = (it.img ? `<img src="${it.img}" alt="" width="42" height="42">` : (it.icon || '')) + `<span class="tip">${it.name}</span>`;
+                    b.addEventListener('click', () => {
+                        if (it.act) it.act(b);
+                        else if (M.wins.has(it.id)) M.openWin(it.id);
+                    });
+                    d.appendChild(b);
+                });
+                ui.appendChild(d);
+                M.dockEl = d;
+                M.updateDock();
+                return d;
+            };
+            M.updateDock = () => {
+                if (!M.dockEl) return;
+                M.dockEl.querySelectorAll('.mk-dk').forEach(b => {
+                    const w = M.wins.get(b.dataset.dk);
+                    if (w) b.classList.toggle('run', w.open);
+                });
+            };
+
+            // ---- HUD + clock ----
+            const hud = document.createElement('div');
+            hud.className = 'mk-hud';
+            ui.appendChild(hud);
+            let hudT = 0;
+            M.hud = (html, ms = 1400) => {
+                hud.innerHTML = html; hud.classList.add('show');
+                clearTimeout(hudT); hudT = setTimeout(() => hud.classList.remove('show'), ms);
+            };
+            M.clock = el => {
+                const set = () => {
+                    const d = new Date();
+                    const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    el.textContent = M.W < 1000 ? t : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + '  ' + t;
+                };
+                set(); setInterval(set, 15000); M.on('layout', set);
+            };
+
+            // ---- Ghost pointer for "Show me" ----
+            const ghost = document.createElement('div');
+            ghost.className = 'mk-ghost';
+            ghost.innerHTML = '<svg viewBox="0 0 18 26" width="18" height="26" aria-hidden="true"><path d="M1.5 1.5v19.5l5-4.6 3.4 7.4 3.2-1.5-3.3-7.2h6.7z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+            ui.appendChild(ghost);
+            const G = { x: 0, y: 0 };
+            const moveGhost = () => { ghost.style.transform = `translate(${G.x}px, ${G.y}px)`; };
+            M.tween = (ms, fn) => new Promise(res => {
+                if (REDUCED || ms <= 0) { fn(1); res(); return; }
+                const t0 = performance.now();
+                const step = now => {
+                    const t = Math.min(1, (now - t0) / ms), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    fn(e);
+                    if (t < 1) requestAnimationFrame(step); else res();
+                };
+                requestAnimationFrame(step);
+            });
+            M.ghostTo = async (target, ms = 520) => {
+                let p = target;
+                if (target instanceof Element) { const b = M.box(target); p = { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+                if (!ghost.classList.contains('on')) { G.x = M.W * 0.62; G.y = M.H * 0.6; moveGhost(); ghost.classList.add('on'); }
+                const a = { ...G };
+                await M.tween(ms, t => { G.x = a.x + (p.x - a.x) * t; G.y = a.y + (p.y - a.y) * t; moveGhost(); });
+                return p;
+            };
+            M.ghostTap = async () => {
+                ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+                await new Promise(r => setTimeout(r, REDUCED ? 30 : 180));
+            };
+            // Glide to an element and press it (fires the same handlers a person would)
+            M.press = async (el, ms) => {
+                if (!el) return;
+                await M.ghostTo(el, ms);
+                await M.ghostTap();
+                const b = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, pointerId: 99, pointerType: 'mouse', isPrimary: true, button: 0 };
+                el.dispatchEvent(new PointerEvent('pointerdown', o));
+                el.dispatchEvent(new PointerEvent('pointerup', o));
+                el.dispatchEvent(new MouseEvent('click', o));
+            };
+            M.ghostHide = () => ghost.classList.remove('on');
+
+            return M;
+        }
+
+        // ---------- Quests: "things to try", each with a Show me autopilot ----------
+        function Quests(o) {
+            const list = document.getElementById('quests');
+            let done = new Set(store.get(o.key, []).filter(id => o.items.some(q => q.id === id)));
+            list.innerHTML = o.items.map((q, i) => `<li class="quest" data-q="${q.id}"><span class="stamp">DONE ✓</span><span class="qn">${String(i + 1).padStart(2, '0')}</span><b>${q.t}</b><p>${q.d}</p><button class="chip" type="button" data-show="${q.id}">▶ Show me</button></li>`).join('');
+            function render() {
+                const next = o.items.find(q => !done.has(q.id));
+                list.querySelectorAll('.quest').forEach(li => {
+                    li.classList.toggle('done', done.has(li.dataset.q));
+                    li.classList.toggle('next', !!next && li.dataset.q === next.id);
+                });
+                document.getElementById('qCount').textContent = `${done.size} / ${o.items.length}`;
+                document.getElementById('qMeter').style.transform = `scaleX(${done.size / o.items.length})`;
+                document.getElementById('qWin').classList.toggle('show', done.size === o.items.length);
+            }
+            const Q = {
+                done(id) {
+                    if (done.has(id) || !o.items.some(q => q.id === id)) return;
+                    done.add(id); store.set(o.key, Array.from(done)); render();
+                    if (o.onDone) o.onDone(id);
+                },
+                has: id => done.has(id),
+                busy: false
+            };
+            document.getElementById('qReset').addEventListener('click', () => { done = new Set(); store.set(o.key, []); render(); if (o.onReset) o.onReset(); });
+            list.addEventListener('click', async e => {
+                const b = e.target.closest('[data-show]');
+                if (!b || Q.busy) return;
+                const stage = document.getElementById(o.stage || 'stage');
+                const r = stage.getBoundingClientRect();
+                if (r.top < 60 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+                await wait(380);
+                Q.busy = true;
+                try { await o.show[b.dataset.show](); } finally { Q.busy = false; if (o.afterShow) o.afterShow(); }
+            });
+            render();
+            return Q;
+        }
+
+        // ---------- Boards (SwitchProfile.swift) ----------
+        const SYM = {
+            clack: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 014 0v6"/><path d="M13 9a2 2 0 014 0v3M17 11a2 2 0 014 0v3a7 7 0 01-7 7h-1a7 7 0 01-6-3.5L4.5 14a2 2 0 013.4-2L9 13.5"/></svg>',
+            crisp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.7L19.5 9.5l-5.7 1.8L12 17l-1.8-5.7L4.5 9.5l5.7-1.8zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg>',
+            snappy: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>'
+        };
+        const BOARDS = [
+            { id: 'clack', name: 'Clack', blurb: 'Punchy, deep', gain: 0.8, c: 'var(--primary)', tags: ['Mid-range', 'Rattly space'],
+              text: 'A punchy board with most of its energy in the mid-range, and a deep spacebar that rattles like a real stabilizer.' },
+            { id: 'crisp', name: 'Crisp', blurb: 'Bright, hollow', gain: 1, c: 'var(--yellow)', tags: ['Bright top', 'Case ring'],
+              text: 'Two thirds of its sound sits above 4 kHz, with a hollow ring from the case under every press. The sparkly one.' },
+            { id: 'snappy', name: 'Snappy', blurb: 'Short, tight', gain: 0.66, c: 'var(--secondary)', tags: ['31 ms decay', 'No ring'],
+              text: 'Short, tight presses that stop dead after about 30 ms. Calm enough for long writing sessions.' }
+        ];
+        const board = () => BOARDS.find(b => b.id === SET.board) || BOARDS[0];
+
+        // ---------- Settings (Prefs in Router.swift) ----------
+        const defaults = () => ({ enabled: true, board: 'clack', volume: 0.7, tone: 0, keyUp: true, variation: true, modifiers: true, returnDing: false, mouse: false, spatial: true, spatial3D: false, pauseInCalls: true, login: false, options: false });
+        let SET = Object.assign(defaults(), store.get('lcSim.set', {}));
+        if (!BOARDS.some(b => b.id === SET.board)) SET.board = 'clack';
+        const keys = store.get('lcSim.keys', { today: 0, total: 0 });
+        let quit = store.get('lcSim.quit', false), inCall = false;
+        const active = () => SET.enabled && !quit && !(SET.pauseInCalls && inCall);
+        function saved() { store.set('lcSim.set', SET); renderPop(); syncBoards(); }
+
+        // ---------- KeyMap.swift: KeyboardEvent.code → Mac key code, class, pan ----------
+        const ROWS = [
+            [[53, 'Escape'], [122, 'F1'], [120, 'F2'], [99, 'F3'], [118, 'F4'], [96, 'F5'], [97, 'F6'], [98, 'F7'], [100, 'F8'], [101, 'F9'], [109, 'F10'], [103, 'F11'], [111, 'F12']],
+            [[50, 'Backquote'], [18, 'Digit1'], [19, 'Digit2'], [20, 'Digit3'], [21, 'Digit4'], [23, 'Digit5'], [22, 'Digit6'], [26, 'Digit7'], [28, 'Digit8'], [25, 'Digit9'], [29, 'Digit0'], [27, 'Minus'], [24, 'Equal'], [51, 'Backspace']],
+            [[48, 'Tab'], [12, 'KeyQ'], [13, 'KeyW'], [14, 'KeyE'], [15, 'KeyR'], [17, 'KeyT'], [16, 'KeyY'], [32, 'KeyU'], [34, 'KeyI'], [31, 'KeyO'], [35, 'KeyP'], [33, 'BracketLeft'], [30, 'BracketRight'], [42, 'Backslash']],
+            [[57, 'CapsLock'], [0, 'KeyA'], [1, 'KeyS'], [2, 'KeyD'], [3, 'KeyF'], [5, 'KeyG'], [4, 'KeyH'], [38, 'KeyJ'], [40, 'KeyK'], [37, 'KeyL'], [41, 'Semicolon'], [39, 'Quote'], [36, 'Enter']],
+            [[56, 'ShiftLeft'], [6, 'KeyZ'], [7, 'KeyX'], [8, 'KeyC'], [9, 'KeyV'], [11, 'KeyB'], [45, 'KeyN'], [46, 'KeyM'], [43, 'Comma'], [47, 'Period'], [44, 'Slash'], [60, 'ShiftRight']],
+            [[63, 'Fn'], [59, 'ControlLeft'], [58, 'AltLeft'], [55, 'MetaLeft'], [49, 'Space'], [54, 'MetaRight'], [61, 'AltRight'], [123, 'ArrowLeft'], [125, 'ArrowDown'], [124, 'ArrowRight']]
+        ];
+        const CODE = {}, PAN = {};
+        ROWS.forEach(row => row.forEach(([k, c], i) => { CODE[c] = k; PAN[k] = (i / (row.length - 1) * 2 - 1) * 0.7; }));
+        CODE.ArrowUp = 126; CODE.NumpadEnter = 76; CODE.Delete = 117; CODE.ControlRight = 62;
+        PAN[49] = 0; PAN[126] = PAN[125];
+        const WIDE = new Set([36, 76, 51, 117, 48, 57, 56, 60]), RETURN = new Set([36, 76]);
+        const MODS = new Set([56, 60, 59, 62, 58, 61, 55, 54, 57, 63]);
+        const keyClass = k => k === 49 ? 'space' : WIDE.has(k) ? 'wide' : 'normal';
+        const charCode = ch => ch === ' ' ? 49 : ch === '\n' ? 36 : (CODE['Key' + ch.toUpperCase()] ?? CODE['Digit' + ch] ?? ({ ',': 43, '.': 47, "'": 39, '?': 44, '!': 18, '-': 27 })[ch] ?? 0);
+
+        // ---------- Dynamics.swift: typing rhythm → intensity ----------
+        const DYN = { last: 0, pace: 0.18, held: new Float32Array(128).fill(0.5), sawRoll: false, presses: 0 };
+        function press(key, now, modifier) {
+            const gap = DYN.last === 0 || now < DYN.last ? 2 : (now - DYN.last) / 1000;
+            DYN.last = now;
+            let v = gap < 0.07 ? 0.22 : gap < 0.4 ? 0.3 + (gap - 0.07) / 0.33 * 0.3 : gap < 1.2 ? 0.6 + (gap - 0.4) / 0.8 * 0.25 : 0.9;
+            DYN.pace = DYN.pace * 0.8 + Math.min(gap, 1) * 0.2;
+            if (DYN.pace < 0.12) v -= 0.08; else if (DYN.pace > 0.3) v += 0.05;
+            if (RETURN.has(key)) v += 0.2; else if (key === 49) v += 0.1; else if (keyClass(key) === 'wide') v += 0.05;
+            if (modifier) v *= 0.7;
+            v = clamp(v);
+            DYN.held[key & 127] = v;
+            if (!modifier) {   // quest: a quick roll, then a key after a real pause
+                DYN.presses++;
+                if (gap < 0.07) DYN.sawRoll = true;
+                else if (gap >= 1.2 && DYN.sawRoll && DYN.presses > 4) Q.done('rhythm');
+            }
+            return v;
+        }
+        const release = key => 0.25 + 0.6 * DYN.held[key & 127];
+        // Variation.swift
+        const pickLayer = (x, n, jit) => n > 1 ? Math.min(n - 1, Math.max(0, Math.floor((x + jit * 0.1) * n))) : 0;
+        const pickTake = (n, key, roll, alt) => n > 1 ? (roll < 0.35 ? alt % n : ((Math.imul(key, 2654435761) >>> 0) >>> 16) % n) : 0;
+
+        // ---------- Sound: Web Audio port of ClickEngine (same recorded takes as the app) ----------
+        let ctx = null, out = null, sprites = null;
+        const buffers = {}, loading = {};
+        const decoder = () => new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 1, 48000);
+        function loadSprites() { return sprites ? Promise.resolve(sprites) : fetch('sounds/sprites.json').then(r => r.json()).then(j => (sprites = j)); }
+        function loadBoard(id) {
+            if (buffers[id]) return Promise.resolve(buffers[id]);
+            return loading[id] = loading[id] || Promise.all([loadSprites(), fetch(`sounds/${id}.flac`).then(r => r.arrayBuffer())])
+                .then(([, ab]) => new Promise((res, rej) => decoder().decodeAudioData(ab, res, rej)))
+                .then(buf => { buffers[id] = buf; drawWaves(); return buf; });
+        }
+        function audio() {
+            if (!ctx) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return null;
+                ctx = new AC(); out = ctx.createGain(); out.connect(ctx.destination);
+            }
+            if (ctx.state === 'suspended') ctx.resume();
+            return ctx;
+        }
+        let lastPlay = 0;
+        function playTake(kind, cls, key, intensity, gain, id) {
+            const b = BOARDS.find(x => x.id === (id || SET.board)), buf = buffers[b.id], e = sprites && sprites[b.id];
+            if (!audio() || !buf || !e) { loadBoard(b.id); return; }
+            let layers, rate = Math.pow(2, SET.tone * 0.4);
+            if (kind === 'down') {
+                if (cls === 'space') { if (e.space) layers = [e.space]; else { layers = [e.hard || e.medium]; rate *= 0.84; } }
+                else { layers = ['soft', 'medium', 'hard'].map(k => e[k]).filter(Boolean); if (cls === 'wide') rate *= 0.94; }
+            } else {
+                layers = [e.up]; rate *= cls === 'wide' ? 0.94 : cls === 'space' ? 0.86 : 1;
+            }
+            const v = SET.variation;
+            const takes = layers[pickLayer(intensity, layers.length, v ? rnd(-1, 1) : 0)];
+            const [start, dur] = takes[pickTake(takes.length, key, v ? Math.random() : 1, Math.floor(Math.random() * takes.length))];
+            const src = ctx.createBufferSource(), g = ctx.createGain();
+            src.buffer = buf; src.playbackRate.value = rate;
+            g.gain.value = b.gain * gain * (0.85 + 0.15 * intensity) * (v ? rnd(0.92, 1) : 1) * SET.volume * 1.3;
+            let node = src.connect(g);
+            const pan = SET.spatial ? (PAN[key] || 0) * (SET.spatial3D ? 1.25 : 1) : 0;
+            if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = clamp(pan, -1, 1); node = node.connect(p); }
+            node.connect(out);
+            src.start(0, start, dur / rate + 0.01);
+            lastPlay = performance.now();
+        }
+        // Extras.ding: a bell with inharmonic partials
+        function ding() {
+            if (!audio()) return;
+            const t = ctx.currentTime;
+            [[2150, 0.42, 1], [2150 * 2.76, 0.22, 0.45], [2150 * 5.4, 0.1, 0.2], [1075, 0.2, 0.15]].forEach(([f, d, a]) => {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.frequency.value = f * Math.pow(2, SET.tone * 0.4);
+                g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(a * 0.16 * SET.volume + 0.0001, t + 0.004);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + d * 3);
+                o.connect(g).connect(out); o.start(t); o.stop(t + d * 3 + 0.05);
+            });
+            Q.done('ding');
+        }
+        function mouseClick(down) {
+            if (!audio()) return;
+            const n = Math.floor(ctx.sampleRate * 0.03), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+            for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * (down ? 0.0015 : 0.001))) * (down ? 0.5 : 0.3);
+            const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+            f.type = 'highpass'; f.frequency.value = 1500; g.gain.value = SET.volume;
+            s.buffer = b; s.connect(f).connect(g).connect(out); s.start();
+        }
+
+        // Router.swift: an event → what to play
+        function keyDown(key, from) {
+            if (!active()) return;
+            if (MODS.has(key)) { if (SET.modifiers) playTake('down', keyClass(key), key, press(key, performance.now(), true), 0.8); return; }
+            const i = press(key, performance.now(), false);
+            playTake('down', keyClass(key), key, i, 1);
+            if (SET.returnDing && RETURN.has(key)) ding();
+            meter(i, key);
+            keys.today++; keys.total++; store.set('lcSim.keys', keys); renderKeys();
+            if (from !== 'demo') Q.done('type');
+        }
+        function keyUp(key) {
+            if (!active() || !SET.keyUp || (MODS.has(key) && !SET.modifiers)) return;
+            playTake('up', keyClass(key), key, release(key), MODS.has(key) ? 0.8 : 1);
+        }
+
+        // ---------- The Mac ----------
+        const M = MacKit($('#mac'));
+        const item = $('#lcItem'), pop = $('#lcPop');
+        const LAYOUTS_FOR = {
+            1024: { notes: [150, 64, 520, 330], ft: [690, 300, 290, 220] },
+            760: { notes: [40, 44, 470, 262], ft: [500, 230, 240, 190] }
+        };
+        const notes = M.win({ id: 'notes', title: 'Notes', x: 0, y: 0, w: 10, h: 10, html: '<div class="lc-note"><textarea id="note" placeholder="Click here and type. Every key plays a real recording." aria-label="A note to type in" spellcheck="false"></textarea><div class="lc-strip" aria-hidden="true"><b id="mKey">–</b><span class="lc-lv" id="mLv"><i></i><i></i><i></i></span><span id="mTxt">soft · medium · hard</span></div></div>' });
+        const ft = M.win({ id: 'ft', title: 'FaceTime', open: false, x: 0, y: 0, w: 10, h: 10, html: '<div class="lc-ft"><div class="av">MJ</div><b>Maya Jones</b><small id="ftState">FaceTime Audio · 0:00</small><button class="end" type="button" id="ftEnd">End</button></div>' });
+        function placeAll() {
+            const L = LAYOUTS_FOR[M.W] || LAYOUTS_FOR[1024];
+            [['notes', notes], ['ft', ft]].forEach(([k, w]) => { [w.x, w.y, w.w, w.h] = L[k]; w.saved = null; M.place(w); });
+        }
+        M.on('layout', changed => { if (changed) placeAll(); });
+        M.on('focus', w => { $('#mbApp').textContent = { notes: 'Notes', ft: 'FaceTime' }[w.id] || 'Finder'; });
+        M.on('win', (w, what) => { if (w.id === 'ft' && what === 'close' && inCall) setCall(false); });
+
+        // Typing in the note (and the try-it field below)
+        const note = $('#note');
+        const held = new Set();
+        function onKeyDown(e) {
+            const k = CODE[e.code];
+            if (k == null || e.repeat || held.has(e.code)) return;
+            held.add(e.code); keyDown(k);
+            note.classList.remove('hint');
+        }
+        function onKeyUp(e) { const k = CODE[e.code]; if (k == null) return; held.delete(e.code); keyUp(k); }
+        [note, $('#rhTry')].forEach(el => { el.addEventListener('keydown', onKeyDown); el.addEventListener('keyup', onKeyUp); el.addEventListener('blur', () => held.clear()); });
+        note.addEventListener('pointerdown', () => { audio(); loadBoard(SET.board); });
+        // Soft keyboards that don't report keys: play from the text change instead
+        [note, $('#rhTry')].forEach(el => el.addEventListener('input', e => {
+            if (performance.now() - lastPlay < 60 || !e.data) return;
+            const k = charCode(e.data.slice(-1)); keyDown(k); setTimeout(() => keyUp(k), 90);
+        }));
+
+        // ⌃⌥K toggles, anywhere on the page (like the global shortcut)
+        document.addEventListener('keydown', e => {
+            if (e.code === 'KeyK' && e.ctrlKey && e.altKey && !e.metaKey) { e.preventDefault(); toggle('hotkey'); }
+        });
+        function toggle(how) {
+            SET.enabled = !SET.enabled; saved();
+            M.hud(SET.enabled ? 'Sounds on' : 'Sounds off', 800);
+            if (how) Q.done('toggle');
+        }
+
+        // Status item: click opens the menu, right-click or ⌥-click toggles
+        item.addEventListener('pointerdown', e => {
+            if (e.button === 2 || e.altKey) { e.stopImmediatePropagation(); e.preventDefault(); toggle('item'); }
+        }, true);
+        item.addEventListener('contextmenu', e => e.preventDefault());
+        M.popItem(item, pop);
+        M.on('pop', (p, open) => { if (p === pop && open) { renderPop(); Q.done('open'); item.classList.remove('hint'); } });
+
+        // Mouse clicks on the Mac's screen
+        $('#macScreen').addEventListener('pointerdown', e => { if (SET.mouse && active() && e.button === 0) mouseClick(true); });
+        $('#macScreen').addEventListener('pointerup', e => { if (SET.mouse && active() && e.button === 0 && SET.keyUp) mouseClick(false); });
+
+        // ---------- Popover (MenuView.swift) ----------
+        $('#pCards').innerHTML = BOARDS.map(b => `<button class="lc-card" type="button" data-board="${b.id}">${SYM[b.id]}<span>${b.name}</span><small>${b.blurb}</small></button>`).join('');
+        function renderPop() {
+            $('#pOn').classList.toggle('on', SET.enabled);
+            $('#pBody').classList.toggle('dim', !SET.enabled);
+            $('#pIc').classList.toggle('off', !active());
+            item.classList.toggle('off', !active());
+            $('#pState').textContent = active() ? 'On' : SET.enabled && inCall && SET.pauseInCalls ? 'Paused, mic in use' : 'Off';
+            $$('.lc-card', pop).forEach(c => c.classList.toggle('on', c.dataset.board === SET.board));
+            $('#pVol').value = SET.volume; $('#pTone').value = SET.tone;
+            $('#pOptH').classList.toggle('open', SET.options); $('#pOpts').hidden = !SET.options;
+            $$('[data-pref]', pop).forEach(r => r.querySelector('.lc-sw').classList.toggle('on', !!SET[r.dataset.pref]));
+        }
+        function renderKeys() { $('#pToday').textContent = `${keys.today.toLocaleString()} keys today`; $('#pTotal').textContent = `${keys.total.toLocaleString()} all time`; }
+        async function preview() {
+            await loadBoard(SET.board);
+            playTake('down', 'normal', 0, 0.7, 1);
+            setTimeout(() => playTake('up', 'normal', 0, 0.7, 1), 110);
+        }
+        function setBoard(id) {
+            if (SET.board === id) { preview(); return; }
+            SET.board = id; saved(); preview();
+            if (id !== 'clack') Q.done('board');
+        }
+        $('#pOn').addEventListener('click', () => toggle());
+        pop.addEventListener('click', e => {
+            const c = e.target.closest('[data-board]'); if (c) { audio(); setBoard(c.dataset.board); }
+            const r = e.target.closest('[data-pref]');
+            if (r) { SET[r.dataset.pref] = !SET[r.dataset.pref]; saved(); if (r.dataset.pref === 'returnDing' && SET.returnDing) note.focus(); }
+        });
+        $('#pVol').addEventListener('input', e => { SET.volume = +e.target.value; store.set('lcSim.set', SET); });
+        $('#pVol').addEventListener('change', () => { audio(); preview(); });
+        $('#pTone').addEventListener('input', e => { SET.tone = +e.target.value; store.set('lcSim.set', SET); });
+        $('#pTone').addEventListener('change', () => { audio(); preview(); if (SET.tone !== 0) Q.done('tone'); });
+        $('#pOptH').addEventListener('click', () => { SET.options = !SET.options; saved(); });
+        $('#pQuit').addEventListener('click', () => { M.closePops(); setQuit(true); });
+        function setQuit(q) {
+            quit = q; store.set('lcSim.quit', q);
+            item.hidden = q; $('[data-do="relaunch"]').hidden = !q;
+            M.hud(q ? 'LilClack quit.<br><small style="font-weight:500;opacity:.7">Typing is silent again.</small>' : 'LilClack', q ? 1600 : 800);
+            renderPop();
+        }
+
+        // Typing meter in the note's status strip + the rhythm bars below
+        const lvl = i => i < 1 / 3 ? 0 : i < 2 / 3 ? 1 : 2;
+        const NAMES = ['soft', 'medium', 'hard'];
+        const label = k => { for (const c in CODE) if (CODE[c] === k) return c.replace(/^Key|^Digit/, '').replace('Space', 'space').replace('Enter', 'return').replace('Backspace', 'delete'); return '·'; };
+        const rh = $('#rhBars');
+        // Seeded with a typical sentence (pause, steady words, a quick roll, Space and Return) until you type
+        [0.9, 0.45, 0.4, 0.5, 0.6, 0.42, 0.38, 0.22, 0.18, 0.2, 0.55, 0.48, 0.45, 0.4, 0.6, 0.5, 0.25, 0.2, 0.44, 0.5, 0.62, 0.46, 0.4, 0.95].forEach(v => {
+            const b = document.createElement('i'); b.className = ['', 'm', 'h'][v < 1 / 3 ? 0 : v < 2 / 3 ? 1 : 2];
+            b.style.setProperty('--h', Math.round(12 + v * 88) + '%'); rh.appendChild(b);
+        });
+        function meter(i, key) {
+            const l = lvl(i);
+            $('#mKey').textContent = label(key);
+            $$('#mLv i').forEach((el, n) => { el.className = n <= l ? 'on' + (l === 2 ? ' hard' : l === 1 ? ' mid' : '') : ''; });
+            $('#mTxt').textContent = NAMES[l];
+            const bar = rh.firstElementChild; rh.appendChild(bar);
+            bar.className = ['', 'm', 'h'][l]; bar.style.setProperty('--h', Math.round(12 + i * 88) + '%');
+        }
+
+        // ---------- A call: the mic goes orange, LilClack pauses ----------
+        let callT0 = 0, callTimer = 0;
+        function setCall(on) {
+            inCall = on;
+            $('#micDot').hidden = !on;
+            const b = $('[data-do="call"]'); b.textContent = on ? '■ End the call' : '📞 Start a FaceTime call'; b.classList.toggle('on', on);
+            clearInterval(callTimer);
+            if (on) {
+                M.openWin('ft'); callT0 = Date.now();
+                callTimer = setInterval(() => { const s = Math.floor((Date.now() - callT0) / 1000); $('#ftState').textContent = `FaceTime Audio · ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+                if (SET.pauseInCalls && SET.enabled) { M.hud('LilClack paused<br><small style="font-weight:500;opacity:.7">The mic is in use</small>', 1500); Q.done('call'); }
+            } else {
+                M.closeWin('ft');
+                if (SET.pauseInCalls && SET.enabled) M.hud('Sounds back on', 900);
+            }
+            renderPop();
+        }
+        $('#ftEnd').addEventListener('click', () => setCall(false));
+
+        // ---------- Typing robot (demo + Show me) ----------
+        let typing = false;
+        async function typeText(text, gaps) {
+            if (typing) return; typing = true;
+            audio(); await loadBoard(SET.board);
+            M.openWin('notes'); M.focusWin('notes');
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i], k = charCode(ch);
+                note.value += ch; note.scrollTop = note.scrollHeight;
+                keyDown(k, 'demo');
+                const g = gaps ? gaps(i, ch) : (ch === ' ' ? rnd(110, 200) : rnd(70, 170));
+                setTimeout(() => keyUp(k), Math.min(g * 0.8, rnd(60, 110)));
+                await wait(g);
+            }
+            typing = false;
+        }
+        const SENTENCES = ['The quick brown fox jumps over the lazy dog.\n', 'Hello from LilClack, one key at a time.\n', 'Fast rolls are light. Pauses land hard.\n'];
+        let sentence = 0;
+        $$('[data-do]').forEach(b => b.addEventListener('click', () => {
+            switch (b.dataset.do) {
+                case 'demo': typeText(SENTENCES[sentence++ % SENTENCES.length]); break;
+                case 'call': setCall(!inCall); break;
+                case 'relaunch': setQuit(false); break;
+            }
+        }));
+
+        // ---------- Menu bar menus ----------
+        const front = () => $('#mbApp').textContent;
+        const MENUS = {
+            apple: () => [{ t: 'About This Mac', dis: true }, '-', { t: 'System Settings…', dis: true }, '-', { t: 'Sleep', dis: true }, { t: 'Restart…', dis: true }, { t: 'Shut Down…', dis: true }],
+            app: () => [{ t: 'About ' + front(), dis: true }, '-', { t: 'Settings…', k: '⌘,', dis: true }, '-', { t: 'Hide ' + front(), k: '⌘H', dis: true }, '-', { t: 'Quit ' + front(), k: '⌘Q', dis: true }],
+            file: () => front() === 'Notes' ? [{ t: 'New Note', k: '⌘N', act: () => { note.value = ''; M.openWin('notes'); note.focus(); } }] : [{ t: 'New Window', k: '⌘N', dis: true }],
+            edit: () => [{ t: 'Undo', k: '⌘Z', dis: true }, '-', { t: 'Select All', k: '⌘A', act: () => { M.openWin('notes'); note.focus(); note.select(); } }],
+            view: () => [{ t: 'Enter Full Screen', k: '⌃⌘F', dis: true }],
+            window: () => [{ t: 'Minimize', k: '⌘M', act: () => M.focus && M.minWin(M.focus) }, '-', ...Array.from(M.wins.values()).filter(w => w.open).map(w => ({ t: w.el.querySelector('.mk-bar span').textContent, act: () => M.openWin(w.id) }))],
+            help: () => [{ t: front() + ' Help', dis: true }]
+        };
+        $$('[data-menu]', $('#menubar')).forEach(el => M.menuItem(el, MENUS[el.dataset.menu]));
+        M.clock($('#mbClock'));
+        M.dock([
+            { id: 'finder', name: 'Finder', bg: 'linear-gradient(90deg,#6FC3FF 50%,#E9F4FF 50%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M15 15v4M27 15v4M13 27c5 4 11 4 16 0" stroke="#123" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>', act: () => M.hud('Finder', 700) },
+            { id: 'notes', name: 'Notes', bg: 'linear-gradient(#FFD43B 0 28%,#FFFDF3 28%)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M11 22h20M11 28h20M11 34h13" stroke="#C9B98A" stroke-width="2"/></svg>' },
+            { id: 'ft', name: 'FaceTime', bg: 'linear-gradient(#5CE27A,#1DB34B)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><rect x="9" y="14" width="17" height="14" rx="3" fill="#fff"/><path d="M27 19l7-4v12l-7-4z" fill="#fff"/></svg>', act: () => setCall(!inCall) },
+            '|',
+            { id: 'trash', name: 'Trash', bg: 'linear-gradient(#E9E9EE,#C5C5CC)', icon: '<svg viewBox="0 0 42 42" width="42" height="42"><path d="M13 14h16l-2 18H15z" fill="none" stroke="#666" stroke-width="2"/><path d="M11 13h20" stroke="#666" stroke-width="2"/></svg>', act: () => M.hud('Trash is empty', 800) }
+        ]);
+
+        // ---------- Boards section: real waveforms, listen, pick ----------
+        const grid = $('#boardGrid');
+        grid.innerHTML = BOARDS.map((b, i) => `<article class="board fade-in stagger-${i + 1}" data-b="${b.id}"><div class="board-top"><div class="board-sym" style="--c:${b.c}">${SYM[b.id]}</div><h3>${b.name}<small>${b.blurb}</small></h3></div><canvas aria-hidden="true"></canvas><p>${b.text}</p><div class="tags">${b.tags.map(t => `<span>${t}</span>`).join('')}</div><button class="chip g" type="button" data-listen="${b.id}">▶ Listen &amp; use it</button></article>`).join('');
+        $$('.board', grid).forEach(el => io.observe(el));
+        grid.addEventListener('click', async e => {
+            const b = e.target.closest('[data-listen]'); if (!b) return;
+            audio(); await loadBoard(b.dataset.listen);
+            if (SET.board !== b.dataset.listen) { SET.board = b.dataset.listen; saved(); if (SET.board !== 'clack') Q.done('board'); }
+            phrase(b.dataset.listen);
+        });
+        function syncBoards() { $$('.board', grid).forEach(el => el.classList.toggle('on', el.dataset.b === SET.board)); }
+        // A short phrase with a roll, a space and a hard first key: plays without touching the note
+        function phrase(id) {
+            const seq = [[3, 0.9], [31, 0.5], [17, 0.25], [49, 0.6], [12, 0.45], [32, 0.3], [34, 0.22], [8, 0.5], [40, 0.4], [36, 0.95]];
+            let t = 0;
+            seq.forEach(([k, i], n) => {
+                setTimeout(() => { playTake('down', keyClass(k), k, i, 1, id); meter(i, k); }, t);
+                setTimeout(() => { if (SET.keyUp) playTake('up', keyClass(k), k, 0.25 + 0.6 * i, 1, id); }, t + 85);
+                t += n === 2 ? 260 : i < 0.3 ? 60 : 150;
+            });
+        }
+        function drawWaves() {
+            const ink = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#111';
+            $$('.board', grid).forEach(el => {
+                const id = el.dataset.b, buf = buffers[id], cv = el.querySelector('canvas');
+                if (!buf || !sprites) return;
+                const dpr = Math.min(devicePixelRatio || 1, 2), w = cv.clientWidth, h = cv.clientHeight;
+                if (!w) return;
+                cv.width = w * dpr; cv.height = h * dpr;
+                const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+                const d = buf.getChannelData(0), takes = [...(sprites[id].hard || []), ...(sprites[id].space || []).slice(0, 1), ...(sprites[id].up || []).slice(0, 2)];
+                const total = takes.reduce((a, [, du]) => a + du, 0), cols = Math.floor(w / 3);
+                let x = 0; c.fillStyle = ink;
+                takes.forEach(([s, du]) => {
+                    const n = Math.max(1, Math.round(cols * du / total)), a = Math.floor(s * buf.sampleRate), len = Math.floor(du * buf.sampleRate);
+                    for (let j = 0; j < n; j++) {
+                        let m = 0; for (let q = Math.floor(a + len * j / n), e2 = Math.floor(a + len * (j + 1) / n); q < e2; q++) m = Math.max(m, Math.abs(d[q]));
+                        const bh = Math.max(1, Math.pow(m, 0.6) * (h - 8));
+                        c.fillRect(x * 3, (h - bh) / 2, 2, bh); x++;
+                    }
+                });
+            });
+        }
+        new IntersectionObserver(es => { if (es[0].isIntersecting) BOARDS.forEach(b => loadBoard(b.id)); }, { rootMargin: '200px' }).observe(grid);
+        new MutationObserver(drawWaves).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        addEventListener('resize', () => { clearTimeout(drawWaves.t); drawWaves.t = setTimeout(drawWaves, 150); });
+
+        // ---------- Things to try ----------
+        const ensurePop = async () => { if (quit) setQuit(false); if (!M.popOpen(pop)) { await M.press(item); await wait(450); } };
+        const Q = Quests({
+            key: 'lcSim.quests',
+            items: [
+                { id: 'type', t: 'Type something', d: 'Click the note on the Mac and type on your own keyboard. Sound on: every key is a real recording.' },
+                { id: 'open', t: 'Open LilClack', d: 'Click the keyboard in the Mac’s menu bar. That’s the whole app: one small menu.' },
+                { id: 'board', t: 'Try another board', d: 'Pick Crisp or Snappy in the menu, or press Listen on a board further down.' },
+                { id: 'rhythm', t: 'Roll fast, then pause', d: 'Type a burst of keys quickly, stop for a second, then press one more. Watch soft turn to hard.' },
+                { id: 'tone', t: 'Make it deeper', d: 'Drag Tone toward Deep or Bright. Every take is re-pitched, like a different switch.' },
+                { id: 'toggle', t: 'Turn it off and on', d: 'Press ⌃⌥K right here on the page, or right-click the keyboard icon.' },
+                { id: 'call', t: 'Take a call', d: 'Start a FaceTime call below. The mic dot turns orange and LilClack pauses itself.' },
+                { id: 'ding', t: 'Ring the bell', d: 'Options › Return-key ding, then press Return in the note. Very typewriter.' }
+            ],
+            show: {
+                async type() { await M.press(note); note.focus({ preventScroll: true }); await typeText('Hello! '); await wait(300); M.ghostHide(); },
+                async open() { await ensurePop(); await wait(1200); M.ghostHide(); },
+                async board() { await ensurePop(); await M.press($('.lc-card[data-board="crisp"]', pop)); await wait(900); M.ghostHide(); Q.done('board'); },
+                async rhythm() {
+                    M.closePops(); await M.press(note); M.ghostHide();
+                    await typeText('asdf jkl', (i, ch) => ch === ' ' ? 120 : 45);
+                    await wait(1400); await typeText('Hard.\n', () => 160); Q.done('rhythm');
+                },
+                async tone() {
+                    await ensurePop(); const t = $('#pTone');
+                    await M.ghostTo(t); await M.ghostTap();
+                    const a = SET.tone; await M.tween(500, k => { SET.tone = Math.round((a + (-0.6 - a) * k) * 10) / 10; t.value = SET.tone; });
+                    store.set('lcSim.set', SET); await preview(); Q.done('tone'); await wait(700); M.ghostHide();
+                },
+                async toggle() {
+                    if (quit) setQuit(false);
+                    M.closePops(); await M.ghostTo(item); await M.ghostTap(); toggle('item'); await wait(900);
+                    await M.ghostTap(); toggle('item'); await wait(600); M.ghostHide();
+                },
+                async call() { M.closePops(); await M.press($('.mk-dk[data-dk="ft"]') || item); if (!inCall) setCall(true); await wait(1200); await typeText('shh ', () => 120); await wait(400); M.ghostHide(); },
+                async ding() {
+                    if (inCall) setCall(false);
+                    await ensurePop(); if (!SET.options) { await M.press($('#pOptH')); await wait(350); }
+                    if (!SET.returnDing) await M.press($('[data-pref="returnDing"]', pop));
+                    await wait(500); M.closePops(); await M.press(note); await typeText('Ding\n', () => 150); M.ghostHide();
+                }
+            },
+            onReset() {
+                SET = defaults(); store.set('lcSim.set', SET); if (quit) setQuit(false); if (inCall) setCall(false);
+                M.closePops(); M.closeMenus(); note.value = ''; M.openWin('notes'); placeAll(); M.focusWin('notes');
+                renderPop(); syncBoards(); item.classList.add('hint'); note.classList.add('hint');
+            }
+        });
+
+        // ---------- Start ----------
+        placeAll(); M.focusWin('notes');
+        item.hidden = quit; $('[data-do="relaunch"]').hidden = !quit;
+        if (!Q.has('open')) item.classList.add('hint');
+        if (!Q.has('type')) note.classList.add('hint');
+        renderPop(); renderKeys(); syncBoards();
+
+        // Test hooks: ?sim=pop | options | call | crisp | off
+        const SIM = (location.search.match(/[?&]sim=([\w,]+)/) || [])[1];
+        let simDone = false;
+        if (SIM) M.on('layout', () => { if (simDone) return; simDone = true; requestAnimationFrame(() => SIM.split(',').forEach(s => {
+            if (s === 'options') { SET.options = true; renderPop(); }
+            if (s === 'pop') M.openPop(item, pop);
+            if (s === 'call') setCall(true);
+            if (s === 'crisp') { SET.board = 'crisp'; saved(); }
+            if (s === 'off') { SET.enabled = false; saved(); }
+        })); });
+        window.__lc = { M, SET: () => SET, DYN, keyDown, keyUp, press, pickLayer, pickTake, Q, buffers, setCall, toggle };
+    })();
+    </script>
+    <script src="/studio-wheel.js?v=3" defer></script>
+</body>
+</html>

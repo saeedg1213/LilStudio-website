@@ -26,7 +26,7 @@
     'use strict';
 
     // Bump when an icon in /assets/wheel/ changes, so browsers don't keep the old one cached.
-    const ICON_VERSION = '6';
+    const ICON_VERSION = '7';
 
     const ALL_PRODUCTS = [
         { id: 'studio',     name: 'LilStudio',  tag: 'All apps',                       href: '/',            color: '#FFE135', icon: null },
@@ -42,6 +42,7 @@
         { id: 'lilbounce',  name: 'LilBounce',  tag: 'A cartoon ball in your phone',   href: '/lilbounce/',  color: '#FF6B35', icon: '/assets/wheel/lilbounce.png', hidden: true },
         { id: 'lildim',     name: 'LilDim',     tag: 'Dim all but the front window',   href: '/lildim/',     color: '#B68CFF', icon: '/assets/wheel/lildim.png' },
         { id: 'lilsnap',    name: 'LilSnap',    tag: 'Snap windows into place',        href: '/lilsnap/',    color: '#3FD98A', icon: '/assets/wheel/lilsnap.png' },
+        { id: 'lilclack',   name: 'LilClack',   tag: 'Keyboard sounds as you type',   href: '/lilclack/',   color: '#2CCBB9', icon: '/assets/wheel/lilclack.png' },
     ];
     const first = location.pathname.split('/').filter(Boolean)[0] || '';
     const PRODUCTS = ALL_PRODUCTS.filter(p => !p.hidden || p.id === first);

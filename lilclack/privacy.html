@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LilClack — Privacy Policy</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+<style>
+        /* LilClack colours (same as its main page) */
+        :root { --primary: #2CCBB9; --secondary: #FF6B5E; --logo-bar: linear-gradient(90deg, #2CCBB9 0 33%, #FFD23F 33% 66%, #FF6B5E 66%); }
+</style>
+<script src="/assets/theme.js"></script>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <nav class="sp-nav">
+        <div class="sp-nav-inner">
+            <a href="./" class="sp-logo">LilClack</a>
+            <ul class="sp-links">
+                <li class="sp-hide-sm"><a href="/">Studio</a></li>
+                <li><a href="./">LilClack</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li class="sp-hide-sm"><a href="privacy.html" aria-current="page">Privacy</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">
+                <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="sp">
+
+<h1>Privacy Policy</h1>
+<p class="updated">LilClack for macOS — last updated 21 November 2026</p>
+
+<div class="note">
+  <strong>LilClack collects nothing.</strong> No personal data, no usage data, no
+  analytics, no crash reports, no identifiers. The app has no server, no account
+  system, and no network connection.
+</div>
+
+<h2>What LilClack notices</h2>
+<p>
+  To play a sound for each key press, LilClack uses a listen-only keyboard event tap,
+  which macOS allows after you grant <strong>Input Monitoring</strong>. For each event it
+  reads only that a key went down or up, the key's position on the keyboard (to place
+  the sound left or right), and whether it was a modifier such as Shift. It never reads
+  the characters you type, never keeps a log of keys, and cannot change, block or send
+  keystrokes. If you turn on mouse sounds, it notices that a mouse button was pressed,
+  nothing more.
+</p>
+
+<h2>Pause during calls</h2>
+<p>
+  With "Pause during calls" on, LilClack asks macOS whether your default microphone is
+  currently being used by any app. That's a yes-or-no property of the device. LilClack
+  never opens the microphone and never hears or records audio.
+</p>
+
+<h2>What LilClack stores on your Mac</h2>
+<p>
+  LilClack saves your settings (sound, volume, tone, options, shortcut) and two simple
+  counters, keys pressed today and in total, using the standard macOS preferences system.
+  The counters are numbers only, with no record of which keys. Nothing leaves your
+  computer. Deleting the app removes them.
+</p>
+
+<h2>What LilClack does not do</h2>
+<ul>
+  <li>It does not record, store or transmit what you type.</li>
+  <li>It does not open your microphone or camera.</li>
+  <li>It does not request Accessibility, Screen Recording or Full Disk Access.</li>
+  <li>It does not connect to the internet. It's sandboxed, with no network access.</li>
+  <li>It does not include third-party SDKs, trackers, or advertising.</li>
+</ul>
+
+<h2>Children</h2>
+<p>
+  LilClack is suitable for all ages and collects no data from anyone, including
+  children under 13.
+</p>
+
+<h2>Changes to this policy</h2>
+<p>
+  If this policy ever changes, the updated version will be posted on this page
+  with a new date. Material changes will also be described in the app's release
+  notes on the Mac App Store.
+</p>
+
+<h2>Contact</h2>
+<p>
+  Questions about privacy in LilClack: <a href="mailto:support@lilstudio.app">support@lilstudio.app</a>
+</p>
+
+<footer>
+  LilClack is part of <a href="https://lilstudio.app">LilStudio</a>.
+</footer>
+
+    </main>
+
+    <script src="/studio-wheel.js?v=3" defer></script>
+</body>
+</html>
