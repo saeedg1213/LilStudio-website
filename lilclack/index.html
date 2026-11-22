@@ -1406,12 +1406,12 @@
             snappy: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>'
         };
         const BOARDS = [
-            { id: 'clack', name: 'Clack', blurb: 'Punchy, deep', gain: 0.8, c: 'var(--primary)', tags: ['Mid-range', 'Rattly space'],
+            { id: 'clack', name: 'Clack', blurb: 'Punchy, deep', gain: 0.68, c: 'var(--primary)', tags: ['Mid-range', 'Rattly space'],
               text: 'A punchy board with most of its energy in the mid-range, and a deep spacebar that rattles like a real stabilizer.' },
-            { id: 'crisp', name: 'Crisp', blurb: 'Bright, hollow', gain: 1, c: 'var(--yellow)', tags: ['Bright top', 'Case ring'],
-              text: 'Two thirds of its sound sits above 4 kHz, with a hollow ring from the case under every press. The sparkly one.' },
-            { id: 'snappy', name: 'Snappy', blurb: 'Short, tight', gain: 0.66, c: 'var(--secondary)', tags: ['31 ms decay', 'No ring'],
-              text: 'Short, tight presses that stop dead after about 30 ms. Calm enough for long writing sessions.' }
+            { id: 'crisp', name: 'Crisp', blurb: 'Bright, hollow', gain: 0.4, c: 'var(--yellow)', tags: ['Bright top', 'Case ring'],
+              text: 'Over a third of its sound sits above 4 kHz, with a hollow ring from the case under every press. The sparkly one.' },
+            { id: 'snappy', name: 'Snappy', blurb: 'Short, tight', gain: 0.44, c: 'var(--secondary)', tags: ['35 ms decay', 'No ring'],
+              text: 'Short, tight presses that die away in about 35 ms. Calm enough for long writing sessions.' }
         ];
         const board = () => BOARDS.find(b => b.id === SET.board) || BOARDS[0];
 
