@@ -60,6 +60,16 @@ TARGETS = {
         'menu': ('Click here', ['#snItem']),
         'undo': ('Press ⌃⌥⌫ or click', ['#snKeys [data-a="restore"]']),
     },
+    'lilclack': {
+        'type': ('Click and type', ['#note']),
+        'open': ('Click here', ['#lcItem']),
+        'board': ('Pick one', ['.lc-card[data-board="crisp"]', '.lc-card[data-board="snappy"]', '#lcItem']),
+        'rhythm': ('Type fast, then pause', ['#note']),
+        'tone': ('Drag Tone', ['#pTone', '#lcItem']),
+        'toggle': ('Right-click, or ⌃⌥K', ['#lcItem']),
+        'call': ('Start a call', ['[data-do="call"]']),
+        'ding': ('Turn it on', ['[data-pref="returnDing"]', '#pOptH', '#lcItem']),
+    },
     'lildim': {
         'focus': ('Click this window', ['.mk-win:not(.focus)[data-win="notes"] .mk-bar', '.mk-win:not(.focus)[data-win="mail"] .mk-bar', '[data-win="mail"] .mk-bar']),
         'intensity': ('Drag the slider', ['#dmInt', '#dmItem']),
