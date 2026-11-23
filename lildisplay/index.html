@@ -186,11 +186,13 @@
             background: var(--bg);
             color: var(--text);
             line-height: 1.55;
-            overflow: hidden;
+            overflow-x: hidden;
             transition: background 0.3s ease, color 0.3s ease;
         }
         a { color: inherit; }
         [hidden] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
         .bg-pattern {
             position: fixed; inset: 0;
@@ -230,25 +232,77 @@
         .desk-copy { display: flex; flex-direction: column; gap: 0.15rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--text); text-align: left; max-width: 640px; }
         .desk-copy b { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1rem, 1.5vw, 1.35rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
         .desk-copy > span { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; }
-        .topbar {
-            position: absolute; left: 0; right: 0; top: 0; z-index: 6;
-            display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem 1.4rem;
-            padding: 14px clamp(14px, 2.4vw, 36px) 6px;
-        }
-        .topbar .desk-copy { flex: 1 1 300px; max-width: none; }
-        .top-dl { display: flex; flex-wrap: wrap; gap: 0.9rem; }
-        .top-dl .s-btn { padding: 13px 20px; font-size: 15px; gap: 10px; box-shadow: 5px 5px 0 var(--border); }
-        .top-dl .s-btn svg { width: 20px; height: 20px; }
-        .top-dl .s-btn:hover { box-shadow: 7px 7px 0 var(--border); }
-        .topbar .desk-copy b { font-size: clamp(1.35rem, 2.3vw, 2.1rem); }
-        .topbar .desk-copy > span { font-size: clamp(0.78rem, 0.95vw, 0.92rem); }
-        .topbar .desk-copy .k { font-size: 0.78em; }
-        @media (max-width: 1760px) { .topbar .desk-facts { display: none; } }
+        /* The panel right of the Mac: what LilDisplay is, links down to the sections, downloads.
+           sizes()/placeAside() set its left/top/width on wide windows; on phones it sits on top. */
+        .topbar { position: absolute; left: 0; top: 0; z-index: 6; display: flex; flex-direction: column; gap: 14px; }
+        .a-kick { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
+        .a-kick .k { margin-right: 0.4rem; font-size: 0.68rem; font-weight: 700; display: inline-block; background: var(--yellow); color: #000; border: 2px solid var(--border); padding: 0 0.4rem; box-shadow: 2px 2px 0 var(--border); transform: rotate(-1.5deg); }
+        .a-title { font-size: clamp(1.4rem, 1.9vw, 2.15rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; }
+        .a-text { font-size: clamp(0.9rem, 0.95vw, 1.02rem); color: var(--text-muted); line-height: 1.45; }
+        .a-links { display: flex; flex-direction: column; gap: 9px; }
+        .a-links a { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.98rem;
+            padding: 9px 13px; background: var(--bg-elevated); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); transition: transform 0.15s, box-shadow 0.15s; }
+        .a-links a i { font-style: normal; font-family: 'Space Mono', monospace; }
+        .a-links a:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--border); }
+        .a-links a:nth-child(1) i { color: inherit; } .a-links a:nth-child(1):hover { background: var(--primary); color: #000; }
+        .a-links a:nth-child(2):hover { background: var(--secondary); color: #000; }
+        .a-links a:nth-child(3):hover { background: var(--yellow); color: #000; }
+        .a-links a:nth-child(4):hover { background: var(--pink); color: #000; }
+        .top-dl { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 4px; }
+        .top-dl .s-btn { padding: 10px 14px; font-size: 13.5px; gap: 8px; box-shadow: 4px 4px 0 var(--border); }
+        .top-dl .s-btn svg { width: 17px; height: 17px; }
+        .top-dl .s-btn:hover { box-shadow: 6px 6px 0 var(--border); }
         @media (max-width: 699px) {
-            .topbar { padding: 10px 12px 4px; gap: 0.5rem; }
-            .top-dl { gap: 0.6rem; }
-            .top-dl .s-btn { padding: 9px 12px; font-size: 12.5px; box-shadow: 3px 3px 0 var(--border); }
+            .topbar { right: 0; padding: 10px 12px 4px; gap: 8px; }
+            .a-kick, .a-text { display: none; }
+            .a-title { font-size: 1.2rem; }
+            .a-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .a-links a { font-size: 0.78rem; padding: 5px 8px; box-shadow: 2px 2px 0 var(--border); }
+            .top-dl { gap: 0.6rem; margin-top: 0; }
+            .top-dl .s-btn { padding: 8px 11px; font-size: 12px; box-shadow: 3px 3px 0 var(--border); }
         }
+
+        /* ========== Below the first screen: set-up, what's included, price, questions ========== */
+        .fold { height: 100vh; height: 100svh; pointer-events: none; }
+        @media (max-width: 699px) { .fold, .below { display: none; } }   /* phones get the site full screen, which has all of this */
+        .below { position: relative; z-index: 50; background: var(--bg); border-top: var(--border-width) solid var(--border);
+            box-shadow: 0 -18px 40px rgba(0,0,0,0.12); padding: clamp(40px, 6vw, 90px) clamp(16px, 4vw, 60px) 40px; }
+        .below .bs { max-width: 1080px; margin: 0 auto clamp(56px, 7vw, 100px); scroll-margin-top: 24px; }
+        .below h2 { font-size: clamp(1.9rem, 3.4vw, 3rem); letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 8px; }
+        .below h2 .hl { background: linear-gradient(transparent 62%, var(--primary) 62%, var(--primary) 92%, transparent 92%); }
+        .below .bsub { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 26px; }
+        .b-steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; counter-reset: st; }
+        .b-steps li, .b-card { background: var(--bg-elevated); border: var(--border-width) solid var(--border); box-shadow: 6px 6px 0 var(--border); padding: 18px 18px 16px; }
+        .b-steps li { counter-increment: st; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; line-height: 1.45; }
+        .b-steps li::before { content: counter(st); display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-bottom: 12px;
+            font: 700 1.05rem 'Space Mono', monospace; background: var(--yellow); color: #000; border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border); }
+        .b-steps b { display: block; font-size: 1.12rem; margin-bottom: 4px; }
+        .b-steps a { font-weight: 700; }
+        .b-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .b-card h3 { font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .b-card h3 span { font: 700 0.62rem 'Space Mono', monospace; text-transform: uppercase; background: var(--yellow); color: #000; border: 2px solid var(--border); padding: 1px 5px; }
+        .b-card p { color: var(--text-muted); font-size: 0.97rem; line-height: 1.45; }
+        .b-card.mode { border-top-width: 10px; }
+        @media (min-width: 900px) { .b-grid { grid-template-columns: repeat(3, 1fr); } }
+        .b-card.mode:nth-child(1) { border-top-color: var(--primary); } .b-card.mode:nth-child(2) { border-top-color: var(--secondary); } .b-card.mode:nth-child(3) { border-top-color: var(--pink); }
+        .b-modes { margin-bottom: 18px; }
+        .b-price { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; align-items: center; }
+        .b-price .amt { font-size: clamp(3.4rem, 7vw, 5.4rem); font-weight: 700; letter-spacing: -0.05em; line-height: 1; }
+        .b-price .amt small { font-size: 0.45em; vertical-align: top; } .b-price .amt sup { font-size: 0.42em; }
+        .b-price .per { font-family: 'Space Mono', monospace; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin: 8px 0 18px; }
+        .b-price ul { list-style: none; display: grid; gap: 10px; }
+        .b-price li { display: flex; gap: 10px; align-items: center; font-weight: 600; }
+        .b-price li::before { content: '✓'; flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; background: var(--primary); color: #000; border: 2px solid var(--border); font-weight: 700; font-size: 0.85rem; }
+        .b-dl { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+        .b-fine { font-size: 0.85rem; color: var(--text-muted); margin-top: 14px; }
+        .b-faq details { background: var(--bg-elevated); border: 2px solid var(--border); box-shadow: 4px 4px 0 var(--border); padding: 14px 16px; margin-bottom: 12px; }
+        .b-faq summary { cursor: pointer; font-weight: 700; font-size: 1.02rem; }
+        .b-faq p { color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+        .b-foot { max-width: 1080px; margin: 0 auto; padding-top: 22px; border-top: 2px dashed var(--border); display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: space-between;
+            font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--text-muted); }
+        .b-foot a { color: var(--text); }
+        .b-top { display: inline-block; margin-top: 18px; font-family: 'Space Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+        @media (max-width: 760px) { .b-price { grid-template-columns: 1fr; } }
         .desk-facts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.6rem; }
         .desk-facts li { display: flex; flex-direction: column; padding: 0.35rem 0.7rem; background: var(--bg-elevated); border: 2px solid var(--border); box-shadow: 3px 3px 0 var(--border); font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 400; letter-spacing: 0.02em; text-transform: none; color: var(--text-muted); line-height: 1.35; }
         .desk-facts li:nth-child(2) { transform: rotate(-1deg); }
@@ -948,10 +1002,18 @@
 <body>
     <div class="bg-pattern"></div>
 
+    <span id="top-of-page"></span>
     <main class="room" id="room" aria-label="LilDisplay: a Mac on a desk, wired to an iPhone. The website runs on the Mac.">
         <header class="topbar" id="topbar">
-            <div class="desk-copy" id="deskHint"><b>Your iPhone, as a second screen for your Mac.</b><span><span class="k">Live</span> Drag the iPhone, pull the cable, type in the Mac’s browser.</span></div>
-            <ul class="desk-facts" aria-label="At a glance"><li><b>iPhone &amp; iPad</b>as a Mac display</li><li><b>USB or WiFi</b>no router needed</li><li><b>$2.99 once</b>Mac app is free</li></ul>
+            <div class="a-kick"><span class="k">Live</span>Drag the iPhone around.</div>
+            <p class="a-title">Your iPhone, as a second screen for your Mac.</p>
+            <p class="a-text">Drag any window onto it, touch it, type on it, or turn it into a big trackpad. Over USB or WiFi, no router needed.</p>
+            <nav class="a-links" aria-label="More about LilDisplay">
+                <a href="#how"><span>How to set it up</span><i>↓</i></a>
+                <a href="#included"><span>What’s included</span><i>↓</i></a>
+                <a href="#price"><span>Price</span><i>↓</i></a>
+                <a href="#questions"><span>Questions</span><i>↓</i></a>
+            </nav>
             <div class="top-dl">
                 <a href="#pricing" class="s-btn s-pri" data-appstore><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for iOS</a>
                 <a href="LilDisplay-macos.dmg" class="s-btn s-sec-btn" download><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for Mac</a>
@@ -1258,6 +1320,77 @@
 
         <div class="coach" id="coach"></div>
     </main>
+    <div class="fold" aria-hidden="true"></div>
+    <div class="below" id="more">
+        <section class="bs" id="how">
+            <h2>Set it up in <span class="hl">a minute</span>.</h2>
+            <p class="bsub">Once per Mac. After that, plug in (or tap Connect) and go.</p>
+            <ol class="b-steps">
+                <li><b>Get the iPhone app</b>LilDisplay on the <a href="#price" data-appstore>App Store</a>, for iPhone and iPad.</li>
+                <li><b>Get the Mac app</b><a href="LilDisplay-macos.dmg" download>Download it</a> (free), drag it to Applications and open it.</li>
+                <li><b>Allow two things</b>Click <b style="display:inline">Allow</b> for Screen Recording and Accessibility, so the Mac can send its screen and take your touches.</li>
+                <li><b>Connect</b>Plug in the cable, or on WiFi scan the QR code in the Mac menu once. Then tap <b style="display:inline">Connect</b>.</li>
+            </ol>
+        </section>
+
+        <section class="bs" id="included">
+            <h2>What’s included</h2>
+            <p class="bsub">Everything, in one app. Switch modes any time in the iPhone menu.</p>
+            <div class="b-grid b-modes">
+                <article class="b-card mode"><h3>Display</h3><p>A real extra screen. Drag windows onto it, like any monitor.</p></article>
+                <article class="b-card mode"><h3>Remote</h3><p>The extra screen, plus touch, gestures and typing.</p></article>
+                <article class="b-card mode"><h3>Trackpad <span>new</span></h3><p>No extra screen. The whole phone is a Mac trackpad.</p></article>
+            </div>
+            <div class="b-grid">
+                <div class="b-card"><h3>USB or WiFi</h3><p>Under 10 ms over USB. WiFi goes device to device, no router needed.</p></div>
+                <div class="b-card"><h3>Pair once</h3><p>Scan the QR code on your Mac once, then just tap Connect.</p></div>
+                <div class="b-card"><h3>Touch &amp; 13 gestures</h3><p>Tap, scroll, pinch, swipe between Spaces, Mission Control.</p></div>
+                <div class="b-card"><h3>Keyboard</h3><p>Type on your Mac with ⌘ ⌥ ⌃ ⇧, Esc, Tab and arrows.</p></div>
+                <div class="b-card"><h3>Lid closed</h3><p>Keep working with your MacBook shut.</p></div>
+                <div class="b-card"><h3>iPad, Pencil, Duo</h3><p>Apple Pencil is a precise pointer. iPhone Duo adapts as you fold.</p></div>
+            </div>
+        </section>
+
+        <section class="bs" id="price">
+            <h2>Pay once. <span class="hl">No subscription.</span></h2>
+            <p class="bsub">Try it free first. The Mac app is always free.</p>
+            <div class="b-price b-card">
+                <div>
+                    <div class="amt"><small>$</small>2<sup>99</sup></div>
+                    <div class="per">One-time purchase</div>
+                    <div class="b-dl">
+                        <a href="#price" class="s-btn s-pri" data-appstore><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for iOS</a>
+                        <a href="LilDisplay-macos.dmg" class="s-btn s-sec-btn" download><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for Mac</a>
+                    </div>
+                    <p class="b-fine">iOS 15.6+ · macOS 14.6+ · Mac app v3.3 · <a href="support.html#older-versions">Older versions</a></p>
+                </div>
+                <ul>
+                    <li>3 free sessions, no card needed</li>
+                    <li>Display, Remote and Trackpad modes</li>
+                    <li>USB and peer-to-peer WiFi</li>
+                    <li>iPhone and iPad, one purchase</li>
+                    <li>All future updates</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="bs b-faq" id="questions">
+            <h2>Good to know</h2>
+            <p class="bsub">More answers on the <a href="support.html">Support page</a>.</p>
+            <details><summary>Is it a real second display or just mirroring?</summary><p>A real extended display: macOS sees a new screen you can drag windows onto.</p></details>
+            <details><summary>Do the devices need to be on the same WiFi?</summary><p>No. WiFi mode connects peer-to-peer, straight between your devices. USB works too and is fastest.</p></details>
+            <details><summary>Can I use my MacBook with the lid closed?</summary><p>Yes. Turn on Keep Awake When Lid Is Closed in the LilDisplay menu on your Mac.</p></details>
+            <details><summary>Is there a subscription?</summary><p>No. 3 free sessions, then a one-time unlock that covers your iPhone and iPad.</p></details>
+            <details><summary>What data do you collect?</summary><p>None. The picture and your touches go directly between your devices.</p></details>
+            <a class="b-top" href="#top-of-page">↑ Back to the desk</a>
+        </section>
+
+        <footer class="b-foot">
+            <span>LilDisplay · <a href="/">LilStudio</a></span>
+            <span><a href="support.html">Support</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:support@lildisplay.app">support@lildisplay.app</a></span>
+        </footer>
+    </div>
+
 
     <script>
     (function () {
@@ -1388,7 +1521,7 @@
         }
 
         // ================= Geometry =================
-        const PHW = { portrait: { w: 320, h: 693 }, landscape: { w: 693, h: 320 } };
+        const PHW = { portrait: { w: 290, h: 628 }, landscape: { w: 628, h: 290 } };   // smaller world = bigger text on the iPhone
         const MENU_H = 24, BAR_H = 30, CLIP = 5, PLUG = 22;
         const G = { vw: 0, vh: 0, floor: 0, mobile: false, mac: {}, ph: {} };
         let sm = 1, sp = 1, Wm = 880, Hm = 550, PW = { ...PHW.portrait }, PO = { x: -320, y: 0 }, SIDE = 'left';
@@ -1401,7 +1534,7 @@
             const vw = room.clientWidth, vh = room.clientHeight;
             const mobile = vw < 700;
             const deskH = mobile ? clamp(vh * 0.1, 60, 110) : clamp(vh * 0.07, 42, 86);
-            G.top = $('#topbar').offsetHeight + 4;   // the bar with the headline and downloads
+            G.top = (mobile ? $('#topbar').offsetHeight : 0) + 4;   // phones: the panel sits on top; wider: right of the Mac
             const topH = clamp(deskH * (mobile ? 0.18 : 0.34), 16, 30);
             const deskTop = vh - deskH;
             G.vw = vw; G.vh = vh; G.mobile = mobile; G.topH = topH;
@@ -1415,15 +1548,19 @@
             // Mac height ≈ 0.625 × width; iPhone ≈ 0.2 × width beside it, ≈ 0.26 × width tall on its side.
             G.lift = clamp(vh * 0.075, 40, 100);
             const M = mobile ? 10 : 18, TOP = G.top, avail = G.floor - G.lift - TOP;
-            const gapSide = clamp(vw * 0.03, 36, 90);
-            const wSide = Math.min((vw - 2 * M - gapSide) / 1.22, avail / 0.68);
-            const wTop = Math.min(vw - 2 * M - 36, (avail - 52 - 30) / (0.68 + 0.257));   // 36: room for the plug in the Mac's right port
+            const gapSide = clamp(vw * 0.024, 28, 80);
+            G.panel = mobile ? 0 : clamp(vw * 0.175, 236, 350);   // the text + links right of the Mac
+            G.pgap = mobile ? 0 : clamp(vw * 0.02, 22, 50);
+            const room4 = vw - G.panel - G.pgap;
+            const lead = vw < 1200 ? 60 : 30;   // the Drag/Rotate chips above the iPhone stick out on the left
+            const wSide = Math.min((room4 - 2 * M - lead - gapSide) / 1.22, avail / 0.625);   // iPhone beside it ≈ 0.22 × Mac width
+            const wTop = Math.min(room4 - 2 * M - 36, (avail - 52 - 30) / (0.625 + 0.257));   // 36: room for the plug in the Mac's right port
             G.layout = mobile || wTop > wSide * 1.06 ? 'top' : 'side';
             G.gap = gapSide;
             const macW0 = G.layout === 'top' ? wTop : wSide;   // natural size; the iPhone is sized from this
             G.macW0 = macW0;
             let macW = G.macOverride ? Math.min(G.macOverride, macW0) : macW0;   // narrower while making room
-            const lidW = macW * 0.9, bez = Math.max(7, lidW * 0.025), sw = lidW - bez * 2, sh = sw * 0.6875;   // 10% taller than 16:10
+            const lidW = macW * 0.9, bez = Math.max(7, lidW * 0.025), sw = lidW - bez * 2, sh = sw * 0.625;   // 16:10, like a real MacBook
             const lidH = sh + bez * 2 + bez * 0.5, baseH = Math.max(11, macW * 0.032);
             G.mac = { w: macW, h: lidH + baseH, lidW, lidH, lidX: (macW - lidW) / 2, bez, sw, sh, baseH, sx: (macW - lidW) / 2 + bez, sy: bez };
             mac.w = macW; mac.h = lidH + baseH;
@@ -1431,14 +1568,14 @@
             Object.assign(macLid.style, { left: G.mac.lidX + 'px', width: lidW + 'px', height: lidH + 'px' });
             Object.assign(macScreen.style, { left: (bez - 3) + 'px', top: (bez - 3) + 'px', width: sw + 'px', height: sh + 'px' });
             $('#macBase').style.height = baseH + 'px';
-            sm = clamp(sw / 840, 0.74, 1.4);
+            sm = clamp(sw / 740, 0.74, 1.6);   // a 740-pt wide desktop: bigger, easier-to-read windows
             Wm = sw / sm; Hm = sh / sm;
             Object.assign(macWorld.style, { width: Wm + 'px', height: Hm + 'px', transform: `scale(${sm})` });
             macWorld.classList.toggle('narrow', Wm < 600);
 
             // iPhone (portrait outer height); the same phone on its side in landscape
             const sh0 = (macW0 * 0.9 - 2 * Math.max(7, macW0 * 0.9 * 0.025)) * 0.6875;
-            const phH = G.layout === 'top' ? macW0 * 0.55 : sh0 * 0.8;
+            const phH = G.layout === 'top' ? macW0 * 0.55 : sh0 * 0.74;
             const pb = Math.max(6, phH * 0.032), psh = phH - pb * 2, psw = psh * 320 / 693;
             G.ph = { pw: psw + pb * 2, ph: phH, pb, psw, psh };
             applyPhone();
@@ -1674,7 +1811,7 @@
                 Object.assign(WIN.terminal, { x: 30, y: 50, w: 300, h: 170, closed: true });
             } else {
                 // Tiled: Notes over Terminal in a left column, the browser fills the rest (8-point gutters)
-                const g = 8, top = MENU_H + g, bottom = Hm - 62, cw = Math.round(Wm * 0.35), nh = Math.round((bottom - top - g) * 0.62);
+                const g = 8, top = MENU_H + g, bottom = Hm - 62, cw = Math.round(Wm * 0.36), nh = Math.round((bottom - top - g) * 0.74);
                 Object.assign(n, { x: g, y: top, w: cw, h: nh });
                 Object.assign(WIN.terminal, { x: g, y: top + nh + g, w: cw, h: bottom - top - nh - g });
                 Object.assign(b, { x: cw + 2 * g, y: top, w: Wm - cw - 3 * g, h: bottom - top });
@@ -2792,10 +2929,11 @@
                 [mac, ph].forEach(b => { b.vx = b.vy = b.tilt = b.tv = b.sq = b.sqv = 0; b.drag = null; });
                 setMount(null);
                 if (topLay) {
-                    mac.x = (G.vw - mac.w - 36) / 2; mac.y = G.floor - G.lift - mac.h;
+                    mac.x = (G.vw - G.panel - G.pgap - mac.w - 36) / 2; mac.y = G.floor - G.lift - mac.h;
                     ph.x = mac.x + G.mac.lidX + G.mac.lidW * 0.06; ph.y = Math.max(G.top + 50, mac.y - ph.h - 30);
                 } else {
-                    const gap = G.gap, x0 = (G.vw - (ph.w + gap + mac.w)) / 2;
+                    const gap = G.gap, lead = Math.max(14, (240 - ph.w) / 2 + 12);   // the Drag/Rotate chips above the iPhone stick out
+                    const x0 = Math.max(lead, lead + (G.vw - lead - G.panel - G.pgap - (ph.w + gap + mac.w)) / 2);
                     ph.x = x0; mac.x = x0 + ph.w + gap;
                     mac.y = G.floor - G.lift - mac.h;
                     ph.y = Math.max(G.top + 50, mac.y + (G.mac.lidH - ph.h) / 2);
@@ -2815,7 +2953,16 @@
             arrange();
             if (reset) { Object.values(WIN).forEach(w => { if (!inR(w.x + w.w / 2, w.y + 15, macRect()) && !S.connected) gatherWins(); }); clampPhoneWins(); }
             Object.values(WIN).forEach(w => { if (!S.connected || !onPhone(w)) { w.w = Math.min(w.w, Wm); clampWin(w); } });
+            placeAside();
             renderAll(); draw(); wake();
+        }
+        // The panel right of the Mac, beside its lid where the Mac first stands (it doesn't follow drags).
+        function placeAside() {
+            const tb = $('#topbar');
+            if (G.mobile) { tb.style.left = tb.style.top = tb.style.width = ''; return; }
+            Object.assign(tb.style, { left: (G.vw - 18 - G.panel) + 'px', width: G.panel + 'px' });
+            const macTop = G.floor - G.lift - mac.h;
+            tb.style.top = Math.max(16, macTop + G.mac.lidH / 2 - tb.offsetHeight / 2) + 'px';
         }
 
         // ================= Boot =================
